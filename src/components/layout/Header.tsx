@@ -1,0 +1,28 @@
+import { Menu } from "lucide-react";
+
+interface HeaderProps {
+	onToggleSidebar: () => void;
+}
+
+export default function Header({ onToggleSidebar }: HeaderProps) {
+	return (
+		<header className="h-12 bg-white flex items-center px-4 justify-between">
+			{/* 왼쪽 섹션 */}
+			<section className="flex items-center gap-2">
+				<button
+					onClick={onToggleSidebar}
+					className="p-1.5 hover:bg-gray-100 rounded transition-colors"
+					aria-label="메뉴 열기">
+					<Menu className="w-5 h-5 text-gray-600" />
+				</button>
+			</section>
+
+			{/* 오른쪽 섹션 */}
+			<section className="flex items-center gap-4">
+				<button className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors">
+					로그인
+				</button>
+			</section>
+		</header>
+	);
+}
