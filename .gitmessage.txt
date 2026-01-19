@@ -1,0 +1,5 @@
+#1 feature: 프로젝트 세팅
+- 
+
+Resolves: #1
+See also: None
