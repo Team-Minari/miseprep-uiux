@@ -1,27 +1,25 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Plus, Inbox, MoreHorizontal } from "lucide-react";
 import { personalCarts, sharedCarts } from "../../mock/cartData.ts";
-import { useModalStore } from "../../store/useModalStore";
+import {
+	useIsSidebarOpen,
+	useOpenSearchModal,
+	useOpenCreateCartModal,
+	useOpenCreateSharedCartModal,
+} from "../../store/useModalStore";
 
-interface SidebarProps {
-	isOpen: boolean;
-}
-
-export default function Sidebar({ isOpen }: SidebarProps) {
-	// 모달 store에서 액션 가져오기
-	const openSearchModal = useModalStore((state) => state.openSearchModal);
-	const openCreateCartModal = useModalStore(
-		(state) => state.openCreateCartModal
-	);
-	const openCreateSharedCartModal = useModalStore(
-		(state) => state.openCreateSharedCartModal
-	);
+export default function Sidebar() {
+	// store에서 상태 및 액션 가져오기
+	const isSidebarOpen = useIsSidebarOpen();
+	const openSearchModal = useOpenSearchModal();
+	const openCreateCartModal = useOpenCreateCartModal();
+	const openCreateSharedCartModal = useOpenCreateSharedCartModal();
 
 	return (
 		<>
 			{/* 사이드바 본체 */}
 			<AnimatePresence>
-				{isOpen && (
+				{isSidebarOpen && (
 					<motion.aside
 						initial={{ x: -280 }}
 						animate={{ x: 0 }}

@@ -1,31 +1,27 @@
-import { useState } from "react";
 import Header from "../components/layout/Header.tsx";
 import Sidebar from "../components/layout/Sidebar.tsx";
 import SearchModal from "../components/modals/SearchModal";
 import CreateCartModal from "../components/modals/CreateCartModal";
-import { useModalStore } from "../store/useModalStore";
+import {
+	useIsSearchModalOpen,
+	useIsCreateCartModalOpen,
+	useIsCreateSharedCartModalOpen,
+} from "../store/useModalStore";
 
 export default function MainPage() {
-	// 사이드바 열림/닫힘 상태
-	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
 	// store에서 모달 상태 가져옴
-	const isSearchModalOpen = useModalStore((state) => state.isSearchModalOpen);
-	const isCreateCartModalOpen = useModalStore(
-		(state) => state.isCreateCartModalOpen
-	);
-	const isCreateSharedCartModalOpen = useModalStore(
-		(state) => state.isCreateSharedCartModalOpen
-	);
+	const isSearchModalOpen = useIsSearchModalOpen();
+	const isCreateCartModalOpen = useIsCreateCartModalOpen();
+	const isCreateSharedCartModalOpen = useIsCreateSharedCartModalOpen();
 
 	return (
 		<div className="h-screen flex flex-col overflow-hidden bg-white">
 			{/* 헤더 */}
-			<Header onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)} />
+			<Header />
 
 			<div className="flex flex-1 overflow-hidden">
 				{/* 사이드바 */}
-				<Sidebar isOpen={isSidebarOpen} />
+				<Sidebar />
 
 				{/* 메인 콘텐츠 영역 */}
 				<main className="flex-1 overflow-auto">
@@ -120,9 +116,9 @@ export default function MainPage() {
 			{/* 모달 컴포넌트들은 store의 상태에 따라 조건부 렌더링 */}
 			{isSearchModalOpen && <SearchModal />}
 
-			{isCreateCartModalOpen && <CreateCartModal isShared={false} />}
-
-			{isCreateSharedCartModalOpen && <CreateCartModal isShared={true} />}
+			{(isCreateCartModalOpen || isCreateSharedCartModalOpen) && (
+				<CreateCartModal />
+			)}
 		</div>
 	);
 }

@@ -1,14 +1,17 @@
 import { motion } from "framer-motion";
 import { X, Plus, Trash2 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useModalStore } from "../../store/useModalStore";
+import React, { useState, useEffect } from "react";
+import {
+	useIsCreateSharedCartModalOpen,
+	useCloseCreateCartModal,
+	useCloseCreateSharedCartModal,
+} from "../../store/useModalStore";
 
-// 공유 장바구니 여부
-interface CreateCartModalProps {
-	isShared: boolean;
-}
+export default function CreateCartModal() {
+	// store에서 공유 장바구니 모달 여부 확인
+	const isCreateSharedCartModalOpen = useIsCreateSharedCartModalOpen();
+	const isShared = isCreateSharedCartModalOpen;
 
-export default function CreateCartModal({ isShared }: CreateCartModalProps) {
 	// 폼 상태
 	const [isPublic, setIsPublic] = useState(false);
 	const [cartName, setCartName] = useState("");
@@ -16,17 +19,59 @@ export default function CreateCartModal({ isShared }: CreateCartModalProps) {
 	const [emails, setEmails] = useState<string[]>([""]);
 
 	// 모달 닫기 액션 가져오기
-	const closeCreateCartModal = useModalStore(
-		(state) => state.closeCreateCartModal
-	);
-	const closeCreateSharedCartModal = useModalStore(
-		(state) => state.closeCreateSharedCartModal
-	);
+	const closeCreateCartModal = useCloseCreateCartModal();
+	const closeCreateSharedCartModal = useCloseCreateSharedCartModal();
 
 	// isShared 값에 따라 적절한 닫기 함수 선택
 	const handleClose = isShared
 		? closeCreateSharedCartModal
 		: closeCreateCartModal;
+
+	const handleSetPrivate = () => {
+		setIsPublic(false);
+	};
+
+	const handleSetPublic = () => {
+		setIsPublic(true);
+	};
+
+	const handleCartNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setCartName(e.target.value);
+	};
+
+	const handleBudgetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setBudget(e.target.value);
+	};
+
+	const handleAddEmail = () => {
+		setEmails([...emails, ""]);
+	};
+
+	const handleRemoveEmail = (index: number) => {
+		setEmails(emails.filter((_, i) => i !== index));
+	};
+
+	const handleEmailChange = (index: number, value: string) => {
+		const newEmails = [...emails];
+		newEmails[index] = value;
+		setEmails(newEmails);
+	};
+
+	const handleStopPropagation = (e: React.MouseEvent) => {
+		e.stopPropagation();
+	};
+
+	// 폼 제출 핸들러
+	const handleSubmit = () => {
+		console.log({
+			isShared,
+			isPublic,
+			cartName,
+			budget,
+			emails: emails.filter((email) => email.trim() !== ""),
+		});
+		handleClose();
+	};
 
 	// ESC 키로 모달 닫기
 	useEffect(() => {
@@ -38,37 +83,6 @@ export default function CreateCartModal({ isShared }: CreateCartModalProps) {
 		window.addEventListener("keydown", handleKeyDown);
 		return () => window.removeEventListener("keydown", handleKeyDown);
 	}, [handleClose]);
-
-	// 이메일 입력 핸들러
-	const handleAddEmail = () => {
-		setEmails([...emails, ""]);
-	};
-
-	// 추가한 이메일 삭제 버튼 핸들러
-	const handleRemoveEmail = (index: number) => {
-		setEmails(emails.filter((_, i) => i !== index));
-	};
-
-	/**
-	 * 이메일 값 변경
-	 */
-	const handleEmailChange = (index: number, value: string) => {
-		const newEmails = [...emails];
-		newEmails[index] = value;
-		setEmails(newEmails);
-	};
-
-	// 추후 API 연동하여 폼 제출 시 데이터 제공
-	const handleSubmit = () => {
-		console.log({
-			isShared,
-			isPublic,
-			cartName,
-			budget,
-			emails: emails.filter((email) => email.trim() !== ""),
-		});
-		handleClose();
-	};
 
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -88,7 +102,7 @@ export default function CreateCartModal({ isShared }: CreateCartModalProps) {
 				exit={{ opacity: 0, scale: 0.95, y: 20 }}
 				transition={{ type: "spring", damping: 25, stiffness: 300 }}
 				className="relative bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden"
-				onClick={(e) => e.stopPropagation()}>
+				onClick={handleStopPropagation}>
 				{/* 헤더 */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
 					<h2 className="text-lg font-semibold text-gray-900">
@@ -110,21 +124,19 @@ export default function CreateCartModal({ isShared }: CreateCartModalProps) {
 						</label>
 						<div className="flex gap-2">
 							<button
-								onClick={() => setIsPublic(false)}
-								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
-									!isPublic
-										? "border-blue-500 bg-blue-50 text-blue-700"
-										: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-								}`}>
+								onClick={handleSetPrivate}
+								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${!isPublic
+									? "border-blue-500 bg-blue-50 text-blue-700"
+									: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+									}`}>
 								비공개
 							</button>
 							<button
-								onClick={() => setIsPublic(true)}
-								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
-									isPublic
-										? "border-blue-500 bg-blue-50 text-blue-700"
-										: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-								}`}>
+								onClick={handleSetPublic}
+								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${isPublic
+									? "border-blue-500 bg-blue-50 text-blue-700"
+									: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+									}`}>
 								공개
 							</button>
 						</div>
@@ -141,7 +153,7 @@ export default function CreateCartModal({ isShared }: CreateCartModalProps) {
 							id="cart-name"
 							type="text"
 							value={cartName}
-							onChange={(e) => setCartName(e.target.value)}
+							onChange={handleCartNameChange}
 							placeholder="예: 생활용품 구매 목록"
 							className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 						/>
@@ -159,7 +171,7 @@ export default function CreateCartModal({ isShared }: CreateCartModalProps) {
 								id="budget"
 								type="text"
 								value={budget}
-								onChange={(e) => setBudget(e.target.value)}
+								onChange={handleBudgetChange}
 								placeholder="0"
 								className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
 							/>
