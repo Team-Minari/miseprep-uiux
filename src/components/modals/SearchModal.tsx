@@ -1,14 +1,22 @@
 import { motion } from "framer-motion";
 import { Search, X } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useModalStore } from "../../store/useModalStore";
+import React, { useState, useEffect } from "react";
+import { useCloseSearchModal } from "../../store/useModalStore";
 
 export default function SearchModal() {
 	// 검색어 상태
 	const [searchQuery, setSearchQuery] = useState("");
 
 	// store에서 모달 닫기 액션 가져오기
-	const closeSearchModal = useModalStore((state) => state.closeSearchModal);
+	const closeSearchModal = useCloseSearchModal();
+
+	const handleSearchQueryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchQuery(e.target.value);
+	};
+
+	const handleStopPropagation = (e: React.MouseEvent) => {
+		e.stopPropagation();
+	};
 
 	// ESC 키로 모달 닫기
 	useEffect(() => {
@@ -39,14 +47,14 @@ export default function SearchModal() {
 				exit={{ opacity: 0, scale: 0.95, y: -20 }}
 				transition={{ type: "spring", damping: 25, stiffness: 300 }}
 				className="relative bg-white rounded-lg shadow-xl w-full max-w-2xl mx-4 overflow-hidden"
-				onClick={(e) => e.stopPropagation()}>
+				onClick={handleStopPropagation}>
 				{/* 검색 입력 영역 */}
 				<div className="flex items-center gap-3 px-4 py-3 border-b border-gray-200">
 					<Search className="w-5 h-5 text-gray-400" />
 					<input
 						type="text"
 						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
+						onChange={handleSearchQueryChange}
 						placeholder="검색..."
 						autoFocus
 						className="flex-1 text-base outline-none"

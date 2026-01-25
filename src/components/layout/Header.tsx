@@ -1,16 +1,20 @@
 import { Menu } from "lucide-react";
+import { useToggleSidebar } from "../../store/useModalStore";
 
-interface HeaderProps {
-	onToggleSidebar: () => void;
-}
+export default function Header() {
+	const toggleSidebar = useToggleSidebar();
 
-export default function Header({ onToggleSidebar }: HeaderProps) {
+	// 이벤트 핸들러
+	const handleToggleSidebar = () => {
+		toggleSidebar();
+	};
+
 	return (
 		<header className="h-12 bg-white flex items-center px-4 justify-between">
 			{/* 왼쪽 섹션 */}
 			<section className="flex items-center gap-2">
 				<button
-					onClick={onToggleSidebar}
+					onClick={handleToggleSidebar}
 					className="p-1.5 hover:bg-gray-100 rounded transition-colors"
 					aria-label="메뉴 열기">
 					<Menu className="w-5 h-5 text-gray-600" />
