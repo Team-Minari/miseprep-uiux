@@ -1,12 +1,14 @@
 import { Routes, Route } from "react-router-dom";
-import MainPage from "../pages/MainPage.tsx";
+import GlobalLayout from "../components/layout/GlobalLayout";
+import MainPage from "../pages/MainPage";
 
 export default function AppRouter() {
 	return (
-		<>
-			<Routes>
+		<Routes>
+			<Route element={<GlobalLayout />}>
 				<Route path="/" element={<MainPage />} />
-			</Routes>
-		</>
+			</Route>
+		</Routes>
 	);
 }
+
