@@ -22,8 +22,14 @@ export default function Header() {
 			</section>
 
 			{/* 오른쪽 섹션 */}
-			<section className="flex items-center gap-4">
-				<button className="px-3 py-1.5 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors">
+			<section className="flex items-center gap-1">
+				<button className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors">
+					베스트
+				</button>
+				<button className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors">
+					전체 카테고리
+				</button>
+				<button className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors">
 					로그인
 				</button>
 			</section>
