@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface CarouselSlide {
@@ -103,7 +103,7 @@ const TOTAL = slides.length;
 
 export default function MainCarousel() {
 	const [current, setCurrent] = useState(0);
-	const [isPlaying, setIsPlaying] = useState(true);
+	const [isPlaying] = useState(true);
 
 	const next = useCallback(() => {
 		setCurrent((prev) => (prev + 1) % TOTAL);
