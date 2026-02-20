@@ -125,18 +125,20 @@ export default function CreateCartModal() {
 						<div className="flex gap-2">
 							<button
 								onClick={handleSetPrivate}
-								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${!isPublic
-									? "border-blue-500 bg-blue-50 text-blue-700"
-									: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-									}`}>
+								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+									!isPublic
+										? "border-blue-500 bg-blue-50 text-blue-700"
+										: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+								}`}>
 								비공개
 							</button>
 							<button
 								onClick={handleSetPublic}
-								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${isPublic
-									? "border-blue-500 bg-blue-50 text-blue-700"
-									: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
-									}`}>
+								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
+									isPublic
+										? "border-blue-500 bg-blue-50 text-blue-700"
+										: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+								}`}>
 								공개
 							</button>
 						</div>

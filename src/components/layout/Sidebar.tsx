@@ -21,11 +21,11 @@ export default function Sidebar() {
 			<AnimatePresence>
 				{isSidebarOpen && (
 					<motion.aside
-						initial={{ x: -280 }}
+						initial={{ x: 400 }}
 						animate={{ x: 0 }}
-						exit={{ x: -280 }}
+						exit={{ x: 400 }}
 						transition={{ type: "spring", damping: 25, stiffness: 200 }}
-						className="fixed top-20 bottom-8 left-3 w-64 bg-[#fbfbfa] border border-gray-200 rounded-2xl z-50 flex flex-col shadow-lg overflow-hidden">
+						className="fixed top-14 bottom-8 right-2 w-80 bg-[#fbfbfa] border border-gray-200 rounded-2xl z-50 flex flex-col shadow-lg overflow-hidden">
 						{/* 유저 섹션 */}
 						<section className="p-3 border-b border-gray-200">
 							<button className="w-full flex items-center gap-2 p-1.5 hover:bg-gray-200/50 rounded transition-colors">
