@@ -127,7 +127,7 @@ export default function CreateCartModal() {
 								onClick={handleSetPrivate}
 								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
 									!isPublic
-										? "border-blue-500 bg-blue-50 text-blue-700"
+										? "border-[#D9CEBC] bg-[#FDFBF6] text-[#9E8E70]"
 										: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
 								}`}>
 								비공개
@@ -136,7 +136,7 @@ export default function CreateCartModal() {
 								onClick={handleSetPublic}
 								className={`flex-1 px-4 py-2 rounded-lg border-2 transition-all ${
 									isPublic
-										? "border-blue-500 bg-blue-50 text-blue-700"
+										? "border-[#D9CEBC] bg-[#FDFBF6] text-[#9E8E70]"
 										: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
 								}`}>
 								공개
@@ -157,7 +157,7 @@ export default function CreateCartModal() {
 							value={cartName}
 							onChange={handleCartNameChange}
 							placeholder="예: 생활용품 구매 목록"
-							className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+							className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9CEBC] focus:border-transparent"
 						/>
 					</div>
 
@@ -175,7 +175,7 @@ export default function CreateCartModal() {
 								value={budget}
 								onChange={handleBudgetChange}
 								placeholder="0"
-								className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+								className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9CEBC] focus:border-transparent"
 							/>
 							<span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm">
 								원
@@ -197,7 +197,7 @@ export default function CreateCartModal() {
 											value={email}
 											onChange={(e) => handleEmailChange(index, e.target.value)}
 											placeholder="example@email.com"
-											className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+											className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9CEBC] focus:border-transparent"
 										/>
 										{emails.length > 1 && (
 											<button
@@ -212,7 +212,7 @@ export default function CreateCartModal() {
 								{/* 이메일 추가 버튼 */}
 								<button
 									onClick={handleAddEmail}
-									className="flex items-center gap-1 text-sm text-blue-600 hover:text-blue-700 font-medium">
+									className="flex items-center gap-1 text-sm text-[#9E8E70] hover:text-[#8B7D60] font-medium">
 									<Plus className="w-4 h-4" />
 									이메일 추가
 								</button>
@@ -231,7 +231,7 @@ export default function CreateCartModal() {
 					<button
 						onClick={handleSubmit}
 						disabled={!cartName.trim()}
-						className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed rounded-lg transition-colors">
+						className="px-4 py-2 text-sm font-medium text-[#9E8E70] bg-[#FDFBF6] border-2 border-[#D9CEBC] hover:bg-[#F7F3E9] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed rounded-lg transition-colors">
 						생성하기
 					</button>
 				</div>
