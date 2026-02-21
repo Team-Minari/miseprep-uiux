@@ -1,6 +1,6 @@
 import { motion } from "motion/react";
 import { ShoppingCart } from "lucide-react";
-import SubHeader from "../components/layout/SubHeader";
+import SubHeader from "../../components/layout/SubHeader.tsx";
 
 export default function LoginPage() {
 	const handleKakaoLogin = () => {

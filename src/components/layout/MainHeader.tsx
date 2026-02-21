@@ -27,7 +27,7 @@ export default function MainHeader() {
 	};
 
 	return (
-		<header className="bg-[#FDFAF4] border-b border-[#EDE8D8]">
+		<header className="bg-[#F7F3E9] border-b border-[#E8E2D0]">
 			<div className="max-w-7xl mx-auto px-6 py-10">
 				<div className="flex items-center mb-5">
 					<div className="flex items-center gap-3">

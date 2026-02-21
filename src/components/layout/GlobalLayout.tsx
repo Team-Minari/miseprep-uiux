@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import SubHeader from "./SubHeader";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Sidebar.tsx";
 import SearchModal from "../modals/SearchModal";
 import CreateCartModal from "../modals/CreateCartModal";
 import {
@@ -9,6 +9,7 @@ import {
 	useIsCreateSharedCartModalOpen,
 } from "../../store/useModalStore";
 import MainHeader from "./MainHeader";
+import Footer from "./Footer.tsx";
 
 export default function GlobalLayout() {
 	// store에서 모달 상태 가져옴
@@ -38,6 +39,7 @@ export default function GlobalLayout() {
 			{(isCreateCartModalOpen || isCreateSharedCartModalOpen) && (
 				<CreateCartModal />
 			)}
+			<Footer />
 		</div>
 	);
 }
