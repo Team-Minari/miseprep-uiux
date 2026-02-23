@@ -1,32 +1,22 @@
 import { motion } from "framer-motion";
-import { X, Plus, Trash2 } from "lucide-react";
+import { X } from "lucide-react";
 import React, { useState, useEffect } from "react";
-import {
-	useIsCreateSharedCartModalOpen,
-	useCloseCreateCartModal,
-	useCloseCreateSharedCartModal,
-} from "../../store/useCartModalStore.ts";
+import { useCloseAddToCartModal } from "../../store/useCartModalStore.ts";
 
-export default function CreateCartModal() {
-	// store에서 모달 모드 확인
-	const isCreateSharedCartModalOpen = useIsCreateSharedCartModalOpen();
-	const isShared = isCreateSharedCartModalOpen;
-
+// 장바구니 존재 X -> 장바구니 생성 모달
+export default function AddToCartModal() {
 	// 폼 상태
 	const [isPublic, setIsPublic] = useState(false);
 	const [cartName, setCartName] = useState("");
 	const [budget, setBudget] = useState("");
 	const [purpose, setPurpose] = useState("");
-	const [emails, setEmails] = useState<string[]>([""]);
 
 	// 모달 닫기 액션 가져오기
-	const closeCreateCartModal = useCloseCreateCartModal();
-	const closeCreateSharedCartModal = useCloseCreateSharedCartModal();
+	const closeAddToCartModal = useCloseAddToCartModal();
 
-	// 모드에 따라 적절한 닫기 함수 선택
-	const handleClose = isShared
-		? closeCreateSharedCartModal
-		: closeCreateCartModal;
+	const handleClose = () => {
+		closeAddToCartModal();
+	};
 
 	const handleSetPrivate = () => {
 		setIsPublic(false);
@@ -48,33 +38,18 @@ export default function CreateCartModal() {
 		setPurpose(e.target.value);
 	};
 
-	const handleAddEmail = () => {
-		setEmails([...emails, ""]);
-	};
-
-	const handleRemoveEmail = (index: number) => {
-		setEmails(emails.filter((_, i) => i !== index));
-	};
-
-	const handleEmailChange = (index: number, value: string) => {
-		const newEmails = [...emails];
-		newEmails[index] = value;
-		setEmails(newEmails);
-	};
-
 	const handleStopPropagation = (e: React.MouseEvent) => {
 		e.stopPropagation();
 	};
 
 	// 폼 제출 핸들러
-	const handleSubmit = () => {
+	const handleSubmit = (type: "personal" | "shared") => {
 		console.log({
-			isShared,
+			isShared: type === "shared",
 			isPublic,
 			cartName,
 			budget,
 			purpose,
-			emails: emails.filter((email) => email.trim() !== ""),
 		});
 		handleClose();
 	};
@@ -112,7 +87,7 @@ export default function CreateCartModal() {
 				{/* 헤더 */}
 				<div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
 					<h2 className="text-lg font-semibold text-gray-900">
-						{isShared ? "새 공유 장바구니 만들기" : "새 장바구니 만들기"}
+						새 장바구니 만들기
 					</h2>
 					<button
 						onClick={handleClose}
@@ -205,43 +180,6 @@ export default function CreateCartModal() {
 							className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9CEBC] focus:border-transparent"
 						/>
 					</div>
-
-					{/* 공유 장바구니일 경우에만 초대 멤버 표시 */}
-					{isShared && (
-						<div>
-							<label className="block text-sm font-medium text-gray-700 mb-2">
-								초대할 사람 (선택사항)
-							</label>
-							<div className="space-y-2">
-								{emails.map((email, index) => (
-									<div key={index} className="flex gap-2">
-										<input
-											type="email"
-											value={email}
-											onChange={(e) => handleEmailChange(index, e.target.value)}
-											placeholder="example@email.com"
-											className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9CEBC] focus:border-transparent"
-										/>
-										{emails.length > 1 && (
-											<button
-												onClick={() => handleRemoveEmail(index)}
-												className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors">
-												<Trash2 className="w-4 h-4" />
-											</button>
-										)}
-									</div>
-								))}
-
-								{/* 이메일 추가 버튼 */}
-								<button
-									onClick={handleAddEmail}
-									className="flex items-center gap-1 text-sm text-[#9E8E70] hover:text-[#8B7D60] font-medium">
-									<Plus className="w-4 h-4" />
-									이메일 추가
-								</button>
-							</div>
-						</div>
-					)}
 				</div>
 
 				{/* 푸터 - 액션 버튼 */}
@@ -252,10 +190,16 @@ export default function CreateCartModal() {
 						취소
 					</button>
 					<button
-						onClick={() => handleSubmit()}
+						onClick={() => handleSubmit("personal")}
 						disabled={!cartName.trim()}
 						className="px-4 py-2 text-sm font-medium text-[#9E8E70] bg-[#FDFBF6] border-2 border-[#D9CEBC] hover:bg-[#F7F3E9] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed rounded-lg transition-colors">
-						생성하기
+						개인 장바구니 생성
+					</button>
+					<button
+						onClick={() => handleSubmit("shared")}
+						disabled={!cartName.trim()}
+						className="px-4 py-2 text-sm font-medium text-[#9E8E70] bg-[#FDFBF6] border-2 border-[#D9CEBC] hover:bg-[#F7F3E9] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed rounded-lg transition-colors">
+						공유 장바구니 생성
 					</button>
 				</div>
 			</motion.div>

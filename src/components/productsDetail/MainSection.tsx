@@ -19,6 +19,11 @@ import {
 	useSetSelectedOption,
 	useGetTotalPrice,
 } from "../../store/useProductStore";
+import { personalCarts, sharedCarts } from "../../mock/cartData";
+import {
+	useOpenAddToCartModal,
+	useOpenSelectCartModal,
+} from "../../store/useCartModalStore.ts";
 
 export default function MainSection() {
 	// Store 커스텀 훅으로 상태 구독
@@ -33,8 +38,20 @@ export default function MainSection() {
 	const selectedOption = useSelectedOption();
 	const setSelectedOption = useSetSelectedOption();
 	const getTotalPrice = useGetTotalPrice();
+	const openAddToCartModal = useOpenAddToCartModal();
+	const openSelectCartModal = useOpenSelectCartModal();
 
 	const totalPrice = getTotalPrice();
+
+	// 장바구니 버튼 클릭 핸들러
+	const handleAddToCart = () => {
+		const hasCartData = personalCarts.length > 0 || sharedCarts.length > 0;
+		if (hasCartData) {
+			openSelectCartModal();
+		} else {
+			openAddToCartModal();
+		}
+	};
 
 	return (
 		<div className="grid grid-cols-2 gap-12 mb-16">
@@ -66,11 +83,10 @@ export default function MainSection() {
 						<button
 							key={index}
 							onClick={() => setSelectedImageIndex(index)}
-							className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
-								selectedImageIndex === index
+							className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
 									? "border-[#FFC107]"
 									: "border-gray-200 hover:border-gray-300"
-							}`}>
+								}`}>
 							<img
 								src={image}
 								alt={`상품 이미지 ${index + 1}`}
@@ -97,11 +113,10 @@ export default function MainSection() {
 						{[...Array(5)].map((_, i) => (
 							<Star
 								key={i}
-								className={`w-5 h-5 ${
-									i < Math.floor(product.rating)
+								className={`w-5 h-5 ${i < Math.floor(product.rating)
 										? "fill-yellow-400 text-yellow-400"
 										: "fill-gray-200 text-gray-200"
-								}`}
+									}`}
 							/>
 						))}
 					</div>
@@ -195,10 +210,9 @@ export default function MainSection() {
 
 				{/* Action Buttons */}
 				<div className="flex gap-3 mb-6">
-					<button className="flex-1 bg-[#F7F3E9] hover:bg-[#F3EEE0] text-gray-900 font-bold py-4 px-6 rounded-xl transition-colors text-lg">
-						구매하기
-					</button>
-					<button className="flex-1 bg-gray-900 hover:bg-gray-800 text-white font-bold py-4 px-6 rounded-xl transition-colors text-lg flex items-center justify-center gap-2">
+					<button
+						onClick={handleAddToCart}
+						className="flex-1 bg-[#F7F3E9] hover:bg-[#F3EEE0] text-gray-900 font-bold py-4 px-6 rounded-xl transition-colors text-lg flex items-center justify-center gap-2">
 						<ShoppingCart className="w-5 h-5" />
 						장바구니
 					</button>

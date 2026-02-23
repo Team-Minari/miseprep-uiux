@@ -1,21 +1,26 @@
 import { Outlet } from "react-router-dom";
 import SubHeader from "./SubHeader";
 import Sidebar from "./Sidebar.tsx";
-import SearchModal from "../modals/SearchModal";
+
 import CreateCartModal from "../modals/CreateCartModal";
+import SelectCartModal from "../modals/SelectCartModal";
+import AddToCartModal from "../modals/AddToCartModal";
 import {
-	useIsSearchModalOpen,
 	useIsCreateCartModalOpen,
 	useIsCreateSharedCartModalOpen,
-} from "../../store/useModalStore";
+	useIsAddToCartModalOpen,
+	useIsSelectCartModalOpen,
+} from "../../store/useCartModalStore.ts";
 import MainHeader from "./MainHeader";
 import Footer from "./Footer.tsx";
 
 export default function GlobalLayout() {
 	// store에서 모달 상태 가져옴
-	const isSearchModalOpen = useIsSearchModalOpen();
+
 	const isCreateCartModalOpen = useIsCreateCartModalOpen();
 	const isCreateSharedCartModalOpen = useIsCreateSharedCartModalOpen();
+	const isAddToCartModalOpen = useIsAddToCartModalOpen();
+	const isSelectCartModalOpen = useIsSelectCartModalOpen();
 
 	return (
 		<div className="min-h-screen flex flex-col bg-white">
@@ -34,11 +39,11 @@ export default function GlobalLayout() {
 			</div>
 
 			{/* 모달 컴포넌트들은 store의 상태에 따라 조건부 렌더링 */}
-			{isSearchModalOpen && <SearchModal />}
-
 			{(isCreateCartModalOpen || isCreateSharedCartModalOpen) && (
 				<CreateCartModal />
 			)}
+			{isAddToCartModalOpen && <AddToCartModal />}
+			{isSelectCartModalOpen && <SelectCartModal />}
 			<Footer />
 		</div>
 	);

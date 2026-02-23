@@ -2,6 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ShoppingCart } from "lucide-react";
 import { categories, getProductsByCategory } from "../../mock/product";
+import { personalCarts, sharedCarts } from "../../mock/cartData";
+import {
+	useOpenAddToCartModal,
+	useOpenSelectCartModal,
+} from "../../store/useCartModalStore.ts";
 
 interface ProductSectionProps {
 	title: string;
@@ -13,6 +18,19 @@ export default function ProductSection({ title }: ProductSectionProps) {
 
 	const currentCategory = categories.find((c) => c.id === activeCategory)!;
 	const currentProducts = getProductsByCategory(activeCategory);
+
+	const openAddToCartModal = useOpenAddToCartModal();
+	const openSelectCartModal = useOpenSelectCartModal();
+
+	const handleAddToCart = (e: React.MouseEvent) => {
+		e.stopPropagation(); // 상세 페이지로 이동하는 부모 클릭 이벤트 방지
+		const hasCartData = personalCarts.length > 0 || sharedCarts.length > 0;
+		if (hasCartData) {
+			openSelectCartModal();
+		} else {
+			openAddToCartModal();
+		}
+	};
 
 	return (
 		<section className="w-full bg-white py-16">
@@ -54,6 +72,7 @@ export default function ProductSection({ title }: ProductSectionProps) {
 								/>
 								{/* 장바구니 버튼 */}
 								<button
+									onClick={handleAddToCart}
 									className="absolute bottom-2.5 right-2.5 w-9 h-9 bg-white rounded-full shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
 									aria-label="장바구니 담기">
 									<ShoppingCart className="w-4 h-4 text-gray-700" />

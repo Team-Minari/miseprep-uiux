@@ -1,6 +1,6 @@
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useToggleSidebar } from "../../store/useModalStore";
+import { useToggleSidebar } from "../../store/useCartModalStore.ts";
 
 export default function SubHeader() {
 	const toggleSidebar = useToggleSidebar();
