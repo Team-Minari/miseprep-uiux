@@ -2,6 +2,13 @@ import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
+// ModalKey: ModalProvider에서 lazy 임포트 대상 모달을 식별하는 리터럴 유니온 타입
+export type ModalKey =
+	| "createCart"
+	| "createSharedCart"
+	| "addToCart"
+	| "selectCart";
+
 // 사이드바 장바구니 모달 상태를 관리하는 전용 store
 export const useCartModalStore = create(
 	immer(
@@ -156,4 +163,17 @@ export const useOpenSelectCartModal = () => {
 
 export const useCloseSelectCartModal = () => {
 	return useCartModalStore((state) => state.closeSelectCartModal);
+};
+
+// ModalProvider에서 ModalKey로 해당 모달의 open 상태를 조회하는 유틸 훅
+export const useModalOpenState = (key: ModalKey): boolean => {
+	return useCartModalStore((state) => {
+		const stateMap: Record<ModalKey, boolean> = {
+			createCart: state.isCreateCartModalOpen,
+			createSharedCart: state.isCreateSharedCartModalOpen,
+			addToCart: state.isAddToCartModalOpen,
+			selectCart: state.isSelectCartModalOpen,
+		};
+		return stateMap[key];
+	});
 };

@@ -83,10 +83,11 @@ export default function MainSection() {
 						<button
 							key={index}
 							onClick={() => setSelectedImageIndex(index)}
-							className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${selectedImageIndex === index
+							className={`aspect-square rounded-lg overflow-hidden border-2 transition-all ${
+								selectedImageIndex === index
 									? "border-[#FFC107]"
 									: "border-gray-200 hover:border-gray-300"
-								}`}>
+							}`}>
 							<img
 								src={image}
 								alt={`상품 이미지 ${index + 1}`}
@@ -113,10 +114,11 @@ export default function MainSection() {
 						{[...Array(5)].map((_, i) => (
 							<Star
 								key={i}
-								className={`w-5 h-5 ${i < Math.floor(product.rating)
+								className={`w-5 h-5 ${
+									i < Math.floor(product.rating)
 										? "fill-yellow-400 text-yellow-400"
 										: "fill-gray-200 text-gray-200"
-									}`}
+								}`}
 							/>
 						))}
 					</div>
