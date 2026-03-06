@@ -167,6 +167,23 @@ export default function CreateCartModal() {
 						/>
 					</div>
 
+					{/* 목적 */}
+					<div>
+						<label
+							htmlFor="purpose"
+							className="block text-sm font-medium text-gray-700 mb-2">
+							목적
+						</label>
+						<input
+							id="purpose"
+							type="text"
+							value={purpose}
+							onChange={handlePurposeChange}
+							placeholder="캠핑, 워크샵, 글램핑 등"
+							className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9CEBC] focus:border-transparent"
+						/>
+					</div>
+
 					{/* 예산 */}
 					<div>
 						<label
@@ -187,23 +204,6 @@ export default function CreateCartModal() {
 								원
 							</span>
 						</div>
-					</div>
-
-					{/* 목적 */}
-					<div>
-						<label
-							htmlFor="purpose"
-							className="block text-sm font-medium text-gray-700 mb-2">
-							목적 (선택사항)
-						</label>
-						<input
-							id="purpose"
-							type="text"
-							value={purpose}
-							onChange={handlePurposeChange}
-							placeholder="캠핑, 워크샵, 글램핑 등"
-							className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#D9CEBC] focus:border-transparent"
-						/>
 					</div>
 
 					{/* 공유 장바구니일 경우에만 초대 멤버 표시 */}

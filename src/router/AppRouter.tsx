@@ -3,6 +3,7 @@ import GlobalLayout from "../components/layout/GlobalLayout";
 import MainPage from "../pages/main/MainPage.tsx";
 import LoginPage from "../pages/login/LoginPage.tsx";
 import ProductDetailPage from "../pages/products/ProductDetailPage.tsx";
+import CartDetailPage from "../pages/cart/CartDetailPage.tsx";
 
 export default function AppRouter() {
 	return (
@@ -12,6 +13,7 @@ export default function AppRouter() {
 			<Route element={<GlobalLayout />}>
 				<Route path="/" element={<MainPage />} />
 				<Route path="/product/:id" element={<ProductDetailPage />} />
+				<Route path="/cart" element={<CartDetailPage />} />
 			</Route>
 		</Routes>
 	);
