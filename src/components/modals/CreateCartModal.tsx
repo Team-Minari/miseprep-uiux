@@ -172,7 +172,7 @@ export default function CreateCartModal() {
 						<label
 							htmlFor="purpose"
 							className="block text-sm font-medium text-gray-700 mb-2">
-							목적
+							목적 <span className="text-red-500">*</span>
 						</label>
 						<input
 							id="purpose"

@@ -1,6 +1,9 @@
 import { Search, ShoppingCart } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function MainHeader() {
+	const navigate = useNavigate();
+
 	const handleAllCategory = () => {
 		alert("전체 카테고리 메뉴는 현재 구현 예정입니다.");
 	};
@@ -30,13 +33,13 @@ export default function MainHeader() {
 		<header className="bg-[#F7F3E9] border-b border-[#E8E2D0]">
 			<div className="max-w-7xl mx-auto px-6 py-10">
 				<div className="flex items-center mb-5">
-					<div className="flex items-center gap-3">
+					<div
+						className="flex items-center gap-3 cursor-pointer"
+						onClick={() => navigate("/")}>
 						<ShoppingCart className="w-11 h-11 text-gray-900" />
 						<div className="flex items-baseline gap-1.5">
-							<span className="text-4xl font-bold text-gray-900">공유</span>
-							<span className="text-4xl font-normal text-gray-800">
-								장바구니
-							</span>
+							<span className="text-5xl font-semibold text-gray-900">Mise</span>
+							<span className="text-3xl font-normal text-gray-800">Prep</span>
 						</div>
 					</div>
 					<div className="ml-8 w-full max-w-xl">

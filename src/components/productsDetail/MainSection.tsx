@@ -1,5 +1,4 @@
 import {
-	Star,
 	ChevronLeft,
 	ChevronRight,
 	ShoppingCart,
@@ -15,8 +14,6 @@ import {
 	useQuantity,
 	useIncreaseQuantity,
 	useDecreaseQuantity,
-	useSelectedOption,
-	useSetSelectedOption,
 	useGetTotalPrice,
 } from "../../store/useProductStore";
 import { personalCarts, sharedCarts } from "../../mock/cartData";
@@ -35,8 +32,6 @@ export default function MainSection() {
 	const quantity = useQuantity();
 	const increaseQuantity = useIncreaseQuantity();
 	const decreaseQuantity = useDecreaseQuantity();
-	const selectedOption = useSelectedOption();
-	const setSelectedOption = useSetSelectedOption();
 	const getTotalPrice = useGetTotalPrice();
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
@@ -99,111 +94,55 @@ export default function MainSection() {
 			</div>
 
 			{/* Right: Product Info */}
-			<div>
+			<div className="flex flex-col justify-start">
 				{/* Product Title */}
-				<div className="mb-4">
-					<h1 className="text-3xl font-bold text-gray-900 mb-2">
+				<div className="mb-6">
+					<h1 className="text-[32px] leading-tight font-bold text-gray-900 mb-3">
 						{product.name}
 					</h1>
-					<p className="text-lg text-gray-600">{product.subtitle}</p>
-				</div>
-
-				{/* Rating */}
-				<div className="flex items-center gap-3 mb-6 pb-6 border-b border-gray-200">
-					<div className="flex items-center gap-1">
-						{[...Array(5)].map((_, i) => (
-							<Star
-								key={i}
-								className={`w-5 h-5 ${
-									i < Math.floor(product.rating)
-										? "fill-yellow-400 text-yellow-400"
-										: "fill-gray-200 text-gray-200"
-								}`}
-							/>
-						))}
-					</div>
-					<span className="text-lg font-medium text-gray-900">
-						{product.rating}
-					</span>
-					<span className="text-gray-500">
-						리뷰 {product.reviewCount.toLocaleString()}개
-					</span>
+					<p className="text-[17px] text-gray-600">{product.subtitle}</p>
 				</div>
 
 				{/* Price */}
 				<div className="mb-6">
-					<div className="flex items-baseline gap-3 mb-2">
-						<span className="text-3xl font-bold text-red-600">
-							{product.discount}%
-						</span>
-						<span className="text-4xl font-bold text-gray-900">
-							{product.price.toLocaleString()}원
-						</span>
-					</div>
-					<div className="text-lg text-gray-400 line-through">
-						{product.originalPrice.toLocaleString()}원
-					</div>
-				</div>
-
-				{/* Stock Info */}
-				<div className="mb-6">
-					<span
-						className={`text-sm font-medium ${product.stock > 0 ? "text-green-600" : "text-red-600"}`}>
-						{product.stock > 0 ? `재고 ${product.stock}개` : "품절"}
+					<span className="text-[36px] font-bold text-[#1F2937] tracking-tight">
+						{product.price.toLocaleString()}원
 					</span>
 				</div>
 
-				{/* Options */}
-				<div className="mb-6">
-					<label className="block text-sm font-medium text-gray-900 mb-2">
-						옵션 선택
-					</label>
-					<select
-						value={selectedOption}
-						onChange={(e) => setSelectedOption(e.target.value)}
-						className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFC107] text-gray-900">
-						<option value="">옵션을 선택해주세요</option>
-						{product.options.map((opt) => (
-							<option key={opt.value} value={opt.value}>
-								{opt.label}
-							</option>
-						))}
-					</select>
-				</div>
-
 				{/* Quantity */}
-				<div className="mb-6">
-					<label className="block text-sm font-medium text-gray-900 mb-2">
+				<div className="mb-[120px]">
+					<label className="block text-[15px] font-medium text-gray-900 mb-3">
 						수량
 					</label>
 					<div className="flex items-center gap-3">
 						<button
 							onClick={decreaseQuantity}
-							className="w-12 h-12 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+							className="w-12 h-12 border border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-center transition-colors text-xl font-medium text-gray-800 pb-0.5">
 							-
 						</button>
-						<span className="w-16 text-center text-lg font-medium">
+						<span className="w-12 text-center text-lg font-semibold text-gray-900">
 							{quantity}
 						</span>
 						<button
 							onClick={increaseQuantity}
-							className="w-12 h-12 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+							className="w-12 h-12 border border-gray-200 rounded-xl hover:bg-gray-50 flex items-center justify-center transition-colors text-xl font-medium text-gray-800 pb-0.5">
 							+
 						</button>
 					</div>
 				</div>
 
 				{/* Total Price */}
-				<div className="bg-gray-50 rounded-xl p-6 mb-6">
+				<div className="bg-[#FAF9F7] rounded-xl p-6.5 px-7 py-6 mb-7">
 					<div className="flex items-center justify-between">
-						<span className="text-lg font-medium text-gray-700">
+						<span className="text-[17px] font-semibold text-[#4B5563]">
 							총 상품금액
 						</span>
-						<div className="text-right">
-							<span className="text-sm text-gray-500 mr-2">
+						<div className="flex items-baseline gap-3">
+							<span className="text-[15px] text-gray-500 font-medium">
 								총 수량 {quantity}개
 							</span>
-							<span className="text-3xl font-bold text-gray-900">
+							<span className="text-[32px] font-bold text-[#1F2937] tracking-tight">
 								{totalPrice.toLocaleString()}원
 							</span>
 						</div>
@@ -211,25 +150,25 @@ export default function MainSection() {
 				</div>
 
 				{/* Action Buttons */}
-				<div className="flex gap-3 mb-6">
+				<div className="flex flex-col gap-4">
 					<button
 						onClick={handleAddToCart}
-						className="flex-1 bg-[#F7F3E9] hover:bg-[#F3EEE0] text-gray-900 font-bold py-4 px-6 rounded-xl transition-colors text-lg flex items-center justify-center gap-2">
-						<ShoppingCart className="w-5 h-5" />
+						className="w-full bg-[#FAF6EC] hover:bg-[#F3EFE4] text-gray-900 font-bold py-4 rounded-xl transition-colors text-[17px] flex items-center justify-center gap-2">
+						<ShoppingCart className="w-[22px] h-[22px]" />
 						장바구니
 					</button>
-				</div>
 
-				{/* Additional Buttons */}
-				<div className="flex gap-3">
-					<button className="flex-1 border border-gray-300 hover:bg-gray-50 py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-						<Heart className="w-5 h-5" />
-						찜하기
-					</button>
-					<button className="flex-1 border border-gray-300 hover:bg-gray-50 py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
-						<Share2 className="w-5 h-5" />
-						공유하기
-					</button>
+					{/* Additional Buttons */}
+					<div className="flex gap-4">
+						<button className="flex-1 border border-gray-200 hover:bg-gray-50 py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 text-[16px] font-medium text-gray-900">
+							<Heart className="w-5 h-5" />
+							찜하기
+						</button>
+						<button className="flex-1 border border-gray-200 hover:bg-gray-50 py-3.5 rounded-xl transition-colors flex items-center justify-center gap-2 text-[16px] font-medium text-gray-900">
+							<Share2 className="w-5 h-5" />
+							공유하기
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
