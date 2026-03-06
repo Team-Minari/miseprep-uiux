@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { X } from "lucide-react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useCloseAddToCartModal } from "../../store/useCartModalStore.ts";
 
 // 장바구니 존재 X -> 장바구니 생성 모달
@@ -14,9 +14,9 @@ export default function AddToCartModal() {
 	// 모달 닫기 액션 가져오기
 	const closeAddToCartModal = useCloseAddToCartModal();
 
-	const handleClose = () => {
+	const handleClose = useCallback(() => {
 		closeAddToCartModal();
-	};
+	}, [closeAddToCartModal]);
 
 	const handleSetPrivate = () => {
 		setIsPublic(false);
