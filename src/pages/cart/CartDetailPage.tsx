@@ -2,6 +2,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
 import { personalCarts, sharedCarts, type CartItem } from "../../mock/cartData";
+import MemberInvite from "../../components/cart/MemberInvite";
 
 export default function CartDetailPage() {
 	const [searchParams] = useSearchParams();
@@ -240,8 +241,15 @@ export default function CartDetailPage() {
 							</div>
 						</div>
 
-						{/* 오른쪽: 주문 요약 패널 (sticky) */}
-						<div className="w-72 shrink-0 sticky top-6">
+						{/* 오른쪽: 주문 요약 패널 + 초대 섹션 (sticky) */}
+						<div className="w-72 shrink-0 sticky top-6 flex flex-col gap-4">
+							{/* 멤버 초대 — 공유 장바구니 전용 */}
+							{cart?.type === "shared" && (
+								<MemberInvite
+									shareLink={`${window.location.origin}/cart?id=${cartId}&type=${cartType}`}
+								/>
+							)}
+
 							<div className="bg-white rounded-2xl border border-[#EDE9E0] shadow-sm px-6 py-6 flex flex-col gap-4">
 								<h2 className="text-base font-semibold text-gray-900">
 									주문 요약

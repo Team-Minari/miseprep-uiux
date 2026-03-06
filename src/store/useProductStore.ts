@@ -21,12 +21,6 @@ export const useProductStore = create(
 
 					// 구매 수량
 					quantity: 1,
-
-					// 선택된 옵션
-					selectedOption: "",
-
-					// 활성 탭 ('detail' | 'review')
-					activeTab: "detail" as string,
 				},
 				(set, get) => ({
 					// ── 상품 데이터 액션 ──
@@ -44,8 +38,6 @@ export const useProductStore = create(
 									...matched,
 									images: [matched.image_url],
 									subtitle: matched.description.slice(0, 30) + "...",
-									originalPrice: Math.round(matched.price * 1.2),
-									discount: 20,
 								};
 							} else {
 								state.currentProduct = productDetail;
@@ -54,8 +46,6 @@ export const useProductStore = create(
 							// UI 상태 초기화
 							state.selectedImageIndex = 0;
 							state.quantity = 1;
-							state.selectedOption = "";
-							state.activeTab = "detail";
 						});
 					},
 
@@ -65,8 +55,6 @@ export const useProductStore = create(
 							state.currentProduct = productDetail;
 							state.selectedImageIndex = 0;
 							state.quantity = 1;
-							state.selectedOption = "";
-							state.activeTab = "detail";
 						}),
 
 					// ── 이미지 갤러리 액션 ──
@@ -115,22 +103,6 @@ export const useProductStore = create(
 					setQuantity: (qty: number) =>
 						set((state) => {
 							state.quantity = Math.max(1, qty);
-						}),
-
-					// ── 옵션 액션 ──
-
-					/** 옵션 선택 */
-					setSelectedOption: (option: string) =>
-						set((state) => {
-							state.selectedOption = option;
-						}),
-
-					// ── 탭 액션 ──
-
-					/** 활성 탭 변경 */
-					setActiveTab: (tab: string) =>
-						set((state) => {
-							state.activeTab = tab;
 						}),
 
 					// ── 파생 값 (Getter) ──
@@ -183,19 +155,6 @@ export const useDecreaseQuantity = () =>
 
 export const useSetQuantity = () =>
 	useProductStore((state) => state.setQuantity);
-
-// 옵션
-export const useSelectedOption = () =>
-	useProductStore((state) => state.selectedOption);
-
-export const useSetSelectedOption = () =>
-	useProductStore((state) => state.setSelectedOption);
-
-// 탭
-export const useActiveTab = () => useProductStore((state) => state.activeTab);
-
-export const useSetActiveTab = () =>
-	useProductStore((state) => state.setActiveTab);
 
 // 파생 값
 export const useGetTotalPrice = () =>

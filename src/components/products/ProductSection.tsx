@@ -95,13 +95,6 @@ export default function ProductSection({ title }: ProductSectionProps) {
 								<p className="text-base font-bold text-gray-900 mt-0.5">
 									{product.price.toLocaleString()}원
 								</p>
-
-								{/* 재고 */}
-								<div className="flex items-center gap-1 mt-0.5">
-									<span className="text-xs text-gray-500">
-										재고 {product.stock}개
-									</span>
-								</div>
 							</div>
 						</div>
 					))}

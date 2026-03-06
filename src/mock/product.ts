@@ -12,22 +12,6 @@ export interface Product {
 }
 
 // ProductDetailPage 전용 확장 타입
-/** 상품 리뷰 */
-export interface ProductReview {
-	id: number;
-	author: string;
-	rating: number;
-	date: string;
-	content: string;
-	helpful: number;
-	image: string | null;
-}
-
-/** 상품 옵션 */
-export interface ProductOption {
-	value: string;
-	label: string;
-}
 
 /** 상품 특징 */
 export interface ProductFeature {
@@ -43,17 +27,9 @@ export interface ProductSpec {
 /** 상품 상세 정보 (Product 확장) */
 export interface ProductDetail extends Product {
 	subtitle: string;
-	originalPrice: number;
-	discount: number;
-	rating: number;
-	reviewCount: number;
-	seller: string;
 	images: string[];
-	options: ProductOption[];
 	features: ProductFeature[];
 	specs: ProductSpec[];
-	reviews: ProductReview[];
-	breadcrumb: string[];
 }
 
 /** 카테고리 (ProductSection 탭) */
@@ -730,23 +706,12 @@ export const productDetail: ProductDetail = {
 
 	// 확장 필드
 	subtitle: "최상급 한우로 만든 부드러운 등심",
-	originalPrice: 55000,
-	discount: 17,
-	rating: 4.9,
-	reviewCount: 28493,
-	seller: "emart 신선식품",
 
 	images: [
 		"https://images.unsplash.com/photo-1763140446057-9becaa30b868?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
 		"https://images.unsplash.com/photo-1763633925155-ad1b70f984d2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
 		"https://images.unsplash.com/photo-1657143378504-681ac84e7b30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
 		"https://images.unsplash.com/photo-1677751177812-eef0b47b888d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-	],
-
-	options: [
-		{ value: "300g", label: "300g (2인분)" },
-		{ value: "500g", label: "500g (3-4인분)" },
-		{ value: "800g", label: "800g (5-6인분)" },
 	],
 
 	features: [
@@ -762,53 +727,6 @@ export const productDetail: ProductDetail = {
 		{ label: "등급", value: "1++등급" },
 		{ label: "보관방법", value: "냉장보관 (0~10℃)" },
 		{ label: "유통기한", value: "제조일로부터 7일" },
-	],
-
-	breadcrumb: ["홈", "신선식품", "정육/계란", "한우"],
-
-	reviews: [
-		{
-			id: 1,
-			author: "김**",
-			rating: 5,
-			date: "2026.02.15",
-			content:
-				"고기 품질이 정말 좋아요! 마블링도 적당하고 신선해서 가족들이 모두 만족했습니다. 다음에도 재구매 의사 있어요.",
-			helpful: 342,
-			image:
-				"https://images.unsplash.com/photo-1758520387434-3ade1dbb4cf7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-		},
-		{
-			id: 2,
-			author: "이**",
-			rating: 5,
-			date: "2026.02.14",
-			content:
-				"처음 구매했는데 육질이 부드럽고 맛있어요. 포장도 깔끔하고 배송도 빨라서 좋았습니다.",
-			helpful: 189,
-			image: null,
-		},
-		{
-			id: 3,
-			author: "박**",
-			rating: 4,
-			date: "2026.02.13",
-			content:
-				"가격 대비 품질이 우수합니다. 다만 양이 조금 적은 것 같아요. 그래도 맛은 최고!",
-			helpful: 127,
-			image:
-				"https://images.unsplash.com/photo-1633177188754-980c2a6b6266?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080",
-		},
-		{
-			id: 4,
-			author: "최**",
-			rating: 5,
-			date: "2026.02.12",
-			content:
-				"진짜 맛있어요!! 특히 구워먹으면 육즙이 살아있어서 환상적입니다. 강력 추천!",
-			helpful: 256,
-			image: null,
-		},
 	],
 };
 
