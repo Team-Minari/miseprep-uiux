@@ -7,23 +7,23 @@ export default function MainHeader() {
 	const handleAllCategory = () => {
 		alert("전체 카테고리 메뉴는 현재 구현 예정입니다.");
 	};
+	const handleCart = () => {
+		navigate("/cart");
+	};
 	const handleBest = () => {
 		alert("베스트 상품 페이지는 현재 구현 예정입니다.");
-	};
-	const handleSale = () => {
-		alert("할인 상품 페이지는 현재 구현 예정입니다.");
 	};
 	const handleDaily = () => {
 		alert("생활용품 카테고리는 현재 구현 예정입니다.");
 	};
-	const handleKitchen = () => {
-		alert("주방용품 카테고리는 현재 구현 예정입니다.");
+	const handleIngredients = () => {
+		alert("식재료 카테고리는 현재 구현 예정입니다.");
 	};
 	const handleOffice = () => {
 		alert("사무용품 카테고리는 현재 구현 예정입니다.");
 	};
-	const handleFashion = () => {
-		alert("패션의류/잡화 카테고리는 현재 구현 예정입니다.");
+	const handleCamping = () => {
+		alert("캠핑용품 카테고리는 현재 구현 예정입니다.");
 	};
 	const handleSearch = () => {
 		alert("검색 기능은 현재 구현 예정입니다.");
@@ -66,14 +66,14 @@ export default function MainHeader() {
 						<span>전체 카테고리</span>
 					</button>
 					<button
+						onClick={handleCart}
+						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
+						장바구니
+					</button>
+					<button
 						onClick={handleBest}
 						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
 						베스트
-					</button>
-					<button
-						onClick={handleSale}
-						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						할인
 					</button>
 					<button
 						onClick={handleDaily}
@@ -81,9 +81,9 @@ export default function MainHeader() {
 						생활용품
 					</button>
 					<button
-						onClick={handleKitchen}
+						onClick={handleIngredients}
 						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						주방용품
+						식재료
 					</button>
 					<button
 						onClick={handleOffice}
@@ -91,9 +91,9 @@ export default function MainHeader() {
 						사무용품
 					</button>
 					<button
-						onClick={handleFashion}
+						onClick={handleCamping}
 						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						패션의류/잡화
+						캠핑용품
 					</button>
 				</nav>
 			</div>

@@ -40,17 +40,15 @@ export interface Category {
 
 // 카테고리 목록
 export const categories: Category[] = [
-	{ id: "food", label: "식품 및 식자재" },
 	{ id: "living", label: "생활용품" },
-	{ id: "kitchen", label: "주방용품" },
+	{ id: "ingredients", label: "식재료" },
 	{ id: "office", label: "사무용품" },
-	{ id: "fashion", label: "패션의류/잡화" },
-	{ id: "books", label: "도서/음반/DVD" },
+	{ id: "camping", label: "캠핑용품" },
 ];
 
 // 전체 상품 데이터
 export const products: Product[] = [
-	// ── 식품 및 식자재 ──
+	// ── 식재료 ──
 	{
 		id: 1,
 		image_url:
@@ -60,7 +58,7 @@ export const products: Product[] = [
 			"피코크 브랜드의 프리미엄 한우 불고기 밀키트. 신선한 한우와 특제 양념으로 간편하게 불고기를 즐길 수 있습니다.",
 		price: 12900,
 		stock: 150,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-15T09:00:00",
 		updated_at: "2026-02-20T14:30:00",
 	},
@@ -73,7 +71,7 @@ export const products: Product[] = [
 			"노브랜드 국내산 신선 계란 30구. HACCP 인증 농장에서 당일 수거한 계란을 안전하게 배송합니다.",
 		price: 6900,
 		stock: 300,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-10T08:00:00",
 		updated_at: "2026-02-21T10:00:00",
 	},
@@ -86,7 +84,7 @@ export const products: Product[] = [
 			"풀무원 국산콩 100%로 만든 두부. 고소한 맛과 부드러운 식감이 특징입니다.",
 		price: 3480,
 		stock: 500,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-12T09:30:00",
 		updated_at: "2026-02-19T11:00:00",
 	},
@@ -99,7 +97,7 @@ export const products: Product[] = [
 			"CJ제일제당 햇반. 100% 국내산 쌀로 지은 즉석밥으로 전자레인지 2분이면 갓 지은 밥맛을 즐길 수 있습니다.",
 		price: 14900,
 		stock: 800,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-05T07:00:00",
 		updated_at: "2026-02-20T09:00:00",
 	},
@@ -112,7 +110,7 @@ export const products: Product[] = [
 			"동원 참치. 깨끗한 바다에서 잡은 참치를 신선하게 가공한 프리미엄 참치캔입니다.",
 		price: 8900,
 		stock: 600,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-08T10:00:00",
 		updated_at: "2026-02-18T15:00:00",
 	},
@@ -125,7 +123,7 @@ export const products: Product[] = [
 			"오뚜기 진라면 순한맛. 깊고 진한 국물 맛에 순한 매운맛을 더해 누구나 즐길 수 있는 라면입니다.",
 		price: 3200,
 		stock: 1200,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-03T08:00:00",
 		updated_at: "2026-02-21T08:00:00",
 	},
@@ -138,7 +136,7 @@ export const products: Product[] = [
 			"노브랜드 냉동 새우. 급속 냉동으로 신선함을 그대로 유지한 대하급 새우입니다.",
 		price: 9900,
 		stock: 200,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-14T11:00:00",
 		updated_at: "2026-02-19T16:00:00",
 	},
@@ -151,7 +149,7 @@ export const products: Product[] = [
 			"피코크 로제파스타 소스. 토마토와 크림의 조화로운 맛으로 집에서도 레스토랑급 파스타를 즐길 수 있습니다.",
 		price: 4500,
 		stock: 400,
-		category: "food",
+		category: "ingredients",
 		created_at: "2026-01-20T09:00:00",
 		updated_at: "2026-02-20T12:00:00",
 	},
@@ -262,112 +260,6 @@ export const products: Product[] = [
 		updated_at: "2026-02-20T10:00:00",
 	},
 
-	// ── 주방용품 ──
-	{
-		id: 17,
-		image_url:
-			"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "클리어 밀폐용기 4P세트",
-		description:
-			"락앤락 클리어 밀폐용기 세트. 강력한 밀폐력으로 식재료를 신선하게 보관할 수 있습니다.",
-		price: 19900,
-		stock: 180,
-		category: "kitchen",
-		created_at: "2026-01-10T08:00:00",
-		updated_at: "2026-02-19T13:00:00",
-	},
-	{
-		id: 18,
-		image_url:
-			"https://images.unsplash.com/photo-1585664811087-47f65abbad64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "IH 프라이팬 28cm",
-		description:
-			"해피콜 IH 프라이팬. 인덕션 호환 가능한 논스틱 코팅 프라이팬으로 모든 열원에서 사용 가능합니다.",
-		price: 34900,
-		stock: 120,
-		category: "kitchen",
-		created_at: "2026-01-08T09:00:00",
-		updated_at: "2026-02-20T16:00:00",
-	},
-	{
-		id: 19,
-		image_url:
-			"https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "식기건조대 스텐 대형",
-		description:
-			"노브랜드 스테인리스 식기건조대. 녹슬지 않는 스텐 소재로 위생적으로 식기를 건조할 수 있습니다.",
-		price: 15900,
-		stock: 90,
-		category: "kitchen",
-		created_at: "2026-01-15T10:00:00",
-		updated_at: "2026-02-18T14:00:00",
-	},
-	{
-		id: 20,
-		image_url:
-			"https://images.unsplash.com/photo-1594226801341-41427b4e5c22?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "도마 항균 양면 대형",
-		description:
-			"키친아트 항균 양면 도마. 고밀도 소재로 칼 자국이 잘 생기지 않으며 항균 처리되어 위생적입니다.",
-		price: 12900,
-		stock: 200,
-		category: "kitchen",
-		created_at: "2026-01-12T08:00:00",
-		updated_at: "2026-02-21T10:00:00",
-	},
-	{
-		id: 21,
-		image_url:
-			"https://images.unsplash.com/photo-1544233726-9f1d2b27be8b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "전기압력밥솥 6인용",
-		description:
-			"쿠쿠 전기압력밥솥. 다양한 취사 모드와 간편한 세척으로 매일 맛있는 밥을 지을 수 있습니다.",
-		price: 89000,
-		stock: 50,
-		category: "kitchen",
-		created_at: "2026-01-02T07:00:00",
-		updated_at: "2026-02-20T12:00:00",
-	},
-	{
-		id: 22,
-		image_url:
-			"https://images.unsplash.com/photo-1593618998160-e34014e67546?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "칼갈이 세라믹 2단",
-		description:
-			"노브랜드 세라믹 칼갈이. 2단계 연마 시스템으로 무디어진 칼날을 간편하게 복원시킵니다.",
-		price: 8900,
-		stock: 300,
-		category: "kitchen",
-		created_at: "2026-01-17T09:00:00",
-		updated_at: "2026-02-19T15:00:00",
-	},
-	{
-		id: 23,
-		image_url:
-			"https://images.unsplash.com/photo-1556911220-e15b29be8c4f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "실리콘 주방장갑 2P",
-		description:
-			"실리쿡 실리콘 주방장갑. 내열 250℃까지 견디며 미끄럼 방지 처리로 안전하게 사용할 수 있습니다.",
-		price: 5900,
-		stock: 350,
-		category: "kitchen",
-		created_at: "2026-01-19T10:00:00",
-		updated_at: "2026-02-21T09:00:00",
-	},
-	{
-		id: 24,
-		image_url:
-			"https://images.unsplash.com/photo-1530982011887-3cc11cc85693?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "유리 계량컵 500ml",
-		description:
-			"테팔 유리 계량컵. 내열 유리 소재로 전자레인지 사용 가능하며 눈금이 선명합니다.",
-		price: 7900,
-		stock: 280,
-		category: "kitchen",
-		created_at: "2026-01-21T08:00:00",
-		updated_at: "2026-02-20T14:00:00",
-	},
-
 	// ── 사무용품 ──
 	{
 		id: 25,
@@ -474,215 +366,58 @@ export const products: Product[] = [
 		updated_at: "2026-02-19T16:00:00",
 	},
 
-	// ── 패션의류/잡화 ──
+	// ── 캠핑용품 ──
 	{
-		id: 33,
+		id: 49,
 		image_url:
-			"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "기본 코튼 티셔츠 (화이트)",
+			"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+		name: "원터치 팝업 텐트 3-4인용",
 		description:
-			"노브랜드 기본 코튼 티셔츠. 100% 면 소재로 부드러운 착용감과 다양한 스타일링이 가능합니다.",
-		price: 9900,
-		stock: 500,
-		category: "fashion",
-		created_at: "2026-01-08T08:00:00",
-		updated_at: "2026-02-20T09:00:00",
+			"노브랜드 원터치 텐트. 3초 만에 펼쳐지는 간편한 설치로 초보 캠퍼에게 추천하는 제품입니다.",
+		price: 49900,
+		stock: 100,
+		category: "camping",
+		created_at: "2026-01-20T08:00:00",
+		updated_at: "2026-02-20T15:00:00",
 	},
 	{
-		id: 34,
+		id: 50,
 		image_url:
-			"https://images.unsplash.com/photo-1542272604-787c3835535d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "슬림핏 청바지 32인치",
+			"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+		name: "캠핑용 폴딩 체어 세트 (2P)",
 		description:
-			"스파오 슬림핏 청바지. 신축성 있는 데님 소재로 편안한 착용감과 깔끔한 실루엣을 제공합니다.",
-		price: 29900,
-		stock: 220,
-		category: "fashion",
-		created_at: "2026-01-10T09:00:00",
+			"노브랜드 접이식 캠핑 의자. 튼튼한 프레임과 내구성이 뛰어난 옥스퍼드 원단으로 편안한 휴식을 제공합니다.",
+		price: 29800,
+		stock: 150,
+		category: "camping",
+		created_at: "2026-01-22T09:00:00",
 		updated_at: "2026-02-19T11:00:00",
 	},
 	{
-		id: 35,
+		id: 51,
 		image_url:
-			"https://images.unsplash.com/photo-1460353581641-37baddab0fa2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "클래식 스니커즈 270mm",
+			"https://images.unsplash.com/photo-1596263576925-d90d63691097?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+		name: "프리미엄 캠핑 화로대",
 		description:
-			"노브랜드 클래식 스니커즈. 심플한 디자인으로 어떤 코디에나 어울리는 데일리 슈즈입니다.",
-		price: 24900,
-		stock: 180,
-		category: "fashion",
-		created_at: "2026-01-12T10:00:00",
+			"튼튼한 스테인리스 소재의 캠핑 화로대. 컴팩트한 사이즈로 수납과 이동이 편리합니다.",
+		price: 35900,
+		stock: 80,
+		category: "camping",
+		created_at: "2026-01-25T10:00:00",
 		updated_at: "2026-02-21T13:00:00",
 	},
 	{
-		id: 36,
+		id: 52,
 		image_url:
-			"https://images.unsplash.com/photo-1588850561407-ed78c334e67a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "야구모자 베이지",
+			"https://images.unsplash.com/photo-1533900298318-6b8da08a523e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+		name: "대용량 아이스박스 30L",
 		description:
-			"내셔널지오그래픽 야구모자. 코튼 소재의 편안한 착용감과 브랜드 로고 자수가 포인트입니다.",
-		price: 19900,
-		stock: 300,
-		category: "fashion",
-		created_at: "2026-01-15T08:00:00",
-		updated_at: "2026-02-20T14:00:00",
-	},
-	{
-		id: 37,
-		image_url:
-			"https://images.unsplash.com/photo-1591561954557-26941169b49e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "캔버스 토트백 대형",
-		description:
-			"폴로 캔버스 토트백. 넉넉한 수납공간과 견고한 캔버스 소재로 데일리 백으로 활용 가능합니다.",
-		price: 34900,
-		stock: 130,
-		category: "fashion",
-		created_at: "2026-01-18T09:00:00",
-		updated_at: "2026-02-19T15:00:00",
-	},
-	{
-		id: 38,
-		image_url:
-			"https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "양말 5켤레 세트",
-		description:
-			"노브랜드 양말 세트. 코튼 혼방 소재로 통기성이 좋으며 데일리용으로 최적화된 기본 양말입니다.",
-		price: 7900,
-		stock: 600,
-		category: "fashion",
-		created_at: "2026-01-20T10:00:00",
-		updated_at: "2026-02-20T12:00:00",
-	},
-	{
-		id: 39,
-		image_url:
-			"https://images.unsplash.com/photo-1511499767150-a48a237f0083?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "선글라스 UV400",
-		description:
-			"썬스톤 선글라스. UV400 자외선 차단으로 눈을 보호하며 스타일리시한 디자인이 특징입니다.",
-		price: 14900,
-		stock: 250,
-		category: "fashion",
-		created_at: "2026-01-22T08:00:00",
-		updated_at: "2026-02-21T10:00:00",
-	},
-	{
-		id: 40,
-		image_url:
-			"https://images.unsplash.com/photo-1515562141589-67f0d569b6c0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "실버 팔찌 체인형",
-		description:
-			"반클리프 실버 팔찌. 925 스털링 실버 소재로 고급스러운 광택과 심플한 체인 디자인이 매력적입니다.",
-		price: 49900,
-		stock: 80,
-		category: "fashion",
-		created_at: "2026-01-25T09:00:00",
-		updated_at: "2026-02-20T16:00:00",
-	},
-
-	// ── 도서/음반/DVD ──
-	{
-		id: 41,
-		image_url:
-			"https://images.unsplash.com/photo-1544947950-fa07a98d237f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "원씽 (게리 켈러)",
-		description:
-			"위즈덤하우스 출판. 성공한 사람들의 단 하나의 비밀을 밝히는 자기계발 베스트셀러입니다.",
-		price: 16800,
-		stock: 400,
-		category: "books",
-		created_at: "2026-01-03T07:00:00",
-		updated_at: "2026-02-18T09:00:00",
-	},
-	{
-		id: 42,
-		image_url:
-			"https://images.unsplash.com/photo-1532012197267-da84d127e765?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "모던 리액트 Deep Dive",
-		description:
-			"한빛미디어 출판. React의 핵심 개념부터 고급 패턴까지 깊이 있게 다루는 기술 서적입니다.",
+			"강력한 보냉 성능을 자랑하는 아이스박스. 여름철 캠핑 및 야외 활동 시 식재료를 신선하게 보관합니다.",
 		price: 45000,
-		stock: 150,
-		category: "books",
-		created_at: "2026-01-06T08:00:00",
-		updated_at: "2026-02-21T11:00:00",
-	},
-	{
-		id: 43,
-		image_url:
-			"https://images.unsplash.com/photo-1614613535308-eb5fbd3d2c17?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "aespa - Armageddon (정규 1집)",
-		description:
-			"SM엔터테인먼트. aespa의 첫 정규 앨범으로 미래적 세계관과 강렬한 퍼포먼스가 담겨 있습니다.",
-		price: 18900,
-		stock: 350,
-		category: "books",
-		created_at: "2026-01-10T09:00:00",
-		updated_at: "2026-02-20T13:00:00",
-	},
-	{
-		id: 44,
-		image_url:
-			"https://images.unsplash.com/photo-1511379938547-c1f69419868d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "BTS - Proof (앤솔로지 앨범)",
-		description: "유니버설뮤직. BTS의 9년 활동을 총망라한 앤솔로지 앨범입니다.",
-		price: 24900,
-		stock: 200,
-		category: "books",
-		created_at: "2026-01-08T10:00:00",
-		updated_at: "2026-02-19T14:00:00",
-	},
-	{
-		id: 45,
-		image_url:
-			"https://images.unsplash.com/photo-1632501641765-e568d28b0015?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "보드게임 - 스플렌더",
-		description:
-			"롤링다이스. 전략적 보석 수집 보드게임으로 2-4인 플레이 가능, 30분 내외 플레이 타임입니다.",
-		price: 39900,
-		stock: 100,
-		category: "books",
-		created_at: "2026-01-14T11:00:00",
-		updated_at: "2026-02-20T10:00:00",
-	},
-	{
-		id: 46,
-		image_url:
-			"https://images.unsplash.com/photo-1543002588-bfa74002ed7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "혼자 공부하는 파이썬 (2판)",
-		description:
-			"길벗 출판. 프로그래밍 입문자를 위한 파이썬 학습서로 실습 중심의 친절한 설명이 특징입니다.",
-		price: 22000,
-		stock: 280,
-		category: "books",
-		created_at: "2026-01-16T09:00:00",
-		updated_at: "2026-02-21T12:00:00",
-	},
-	{
-		id: 47,
-		image_url:
-			"https://images.unsplash.com/photo-1478720568477-152d9b164e26?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "인터스텔라 4K UHD 블루레이",
-		description:
-			"워너브라더스. 크리스토퍼 놀란 감독의 명작 SF 영화를 4K UHD 화질로 감상할 수 있습니다.",
-		price: 28900,
 		stock: 120,
-		category: "books",
-		created_at: "2026-01-12T10:00:00",
-		updated_at: "2026-02-19T16:00:00",
-	},
-	{
-		id: 48,
-		image_url:
-			"https://images.unsplash.com/photo-1484755560615-a4c64e778571?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-		name: "Harry Styles - Harry's House",
-		description:
-			"소니뮤직. Harry Styles의 3집 앨범으로 팝과 인디 사운드가 조화를 이룬 음반입니다.",
-		price: 19900,
-		stock: 190,
-		category: "books",
-		created_at: "2026-01-20T08:00:00",
-		updated_at: "2026-02-20T15:00:00",
+		category: "camping",
+		created_at: "2026-01-28T08:00:00",
+		updated_at: "2026-02-20T14:00:00",
 	},
 ];
 
@@ -700,7 +435,7 @@ export const productDetail: ProductDetail = {
 		"최상급 1++등급 한우로 만든 부드러운 등심입니다. 적절한 마블링으로 고소하고 깊은 맛을 느낄 수 있으며, 스테이크·구이·샤브샤브 등 다양하게 활용 가능합니다.",
 	price: 45800,
 	stock: 75,
-	category: "food",
+	category: "ingredients",
 	created_at: "2026-01-02T07:00:00",
 	updated_at: "2026-02-21T18:00:00",
 
