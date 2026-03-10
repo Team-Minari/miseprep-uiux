@@ -1,22 +1,47 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
-import { personalCarts, sharedCarts, type CartItem } from "../../mock/cartData";
+import {
+	ShoppingBag,
+	Minus,
+	Plus,
+	Trash2,
+	Heart,
+	User,
+	ShoppingCart,
+} from "lucide-react";
+import {
+	personalCarts,
+	sharedCarts,
+	publicCarts,
+	type CartItem,
+} from "../../mock/cartData";
 import MemberInvite from "../../components/cart/MemberInvite";
+import { useOpenSelectCartModal } from "../../store/useCartModalStore";
 
 export default function CartDetailPage() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
+	const openSelectCartModal = useOpenSelectCartModal();
 
 	const cartId = Number(searchParams.get("id"));
 	const cartType = searchParams.get("type") as "personal" | "shared" | null;
+	const source = searchParams.get("source"); // "public" 이면 publicCarts에서 조회
+	const isPublic = source === "public";
 
-	// 해당 장바구니 찾기
-	const allCarts = [
-		...personalCarts.map((c) => ({ ...c, type: "personal" as const })),
-		...sharedCarts.map((c) => ({ ...c, type: "shared" as const })),
-	];
-	const cart = allCarts.find((c) => c.id === cartId && c.type === cartType);
+	// 해당 장바구니 찾기 (source에 따라 데이터 소스 분기)
+	const cart = (() => {
+		if (isPublic) {
+			const found = publicCarts.find((c) => c.id === cartId);
+			if (!found) return undefined;
+			// PublicCart를 CartDetailPage 내부 형식으로 변환
+			return { ...found, type: found.type as "personal" | "shared" };
+		}
+		const allCarts = [
+			...personalCarts.map((c) => ({ ...c, type: "personal" as const })),
+			...sharedCarts.map((c) => ({ ...c, type: "shared" as const })),
+		];
+		return allCarts.find((c) => c.id === cartId && c.type === cartType);
+	})();
 
 	// 로컬 상품 목록 상태 (수량 변경 및 삭제용)
 	const [items, setItems] = useState<CartItem[]>(cart?.items ?? []);
@@ -97,7 +122,7 @@ export default function CartDetailPage() {
 		<div className="bg-[white]">
 			{/* 페이지 헤더 */}
 			<div className="bg-white border-b border-[white]">
-				<div className="max-w-7xl mx-auto px-6 pt-8 pb-5 flex items-center gap-4">
+				<div className="max-w-7xl mx-auto px-6 pt-8 pb-5 flex items-center justify-between gap-4">
 					<div className="flex items-center gap-2 pl-6">
 						<h1 className="text-xl font-semibold text-gray-900">
 							{cart?.name ?? "장바구니"}
@@ -108,6 +133,24 @@ export default function CartDetailPage() {
 							</span>
 						)}
 					</div>
+					{/* 공개 장바구니: 소유자 + 읽기 전용 안내 */}
+					{isPublic && cart && "ownerName" in cart && (
+						<div className="flex items-center gap-3 pr-6">
+							<span className="flex items-center gap-1 text-sm text-gray-500">
+								<User className="w-3.5 h-3.5" />
+								{(cart as { ownerName: string }).ownerName}
+							</span>
+							{"likeCount" in cart && (
+								<span className="flex items-center gap-1 text-sm text-[#C8A97A]">
+									<Heart className="w-3.5 h-3.5 fill-[#C8A97A]" />
+									{(cart as { likeCount: number }).likeCount}
+								</span>
+							)}
+							<span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full">
+								읽기 전용
+							</span>
+						</div>
+					)}
 				</div>
 			</div>
 
@@ -149,14 +192,14 @@ export default function CartDetailPage() {
 										className="w-4 h-4 rounded border-gray-300 accent-gray-800 cursor-pointer"
 									/>
 									<span className="text-sm font-medium text-gray-700">
-										전체 선택
+										{isPublic ? "담을 상품 선택" : "전체 선택"}
 										<span className="ml-1 text-gray-400">
 											({checkedIds.size}/{items.length})
 										</span>
 									</span>
 								</label>
 
-								{checkedIds.size > 0 && (
+								{!isPublic && checkedIds.size > 0 && (
 									<button
 										onClick={handleDeleteChecked}
 										className="text-sm text-red-400 hover:text-red-600 transition-colors">
@@ -204,23 +247,29 @@ export default function CartDetailPage() {
 												</p>
 											</div>
 
-											{/* 수량 컨트롤 */}
-											<div className="flex items-center gap-2">
-												<button
-													onClick={() => handleDecrease(item.id)}
-													disabled={item.quantity <= 1}
-													className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#D9CEBC] bg-white hover:bg-[#F7F3E9] disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
-													<Minus className="w-3.5 h-3.5 text-gray-600" />
-												</button>
-												<span className="w-8 text-center text-sm font-semibold text-gray-800">
-													{item.quantity}
+											{/* 수량 표시 — 공개 장바구니는 텍스트만, 내 장바구니는 +/- 컨트롤 */}
+											{isPublic ? (
+												<span className="text-sm text-gray-500 px-2">
+													×{item.quantity}
 												</span>
-												<button
-													onClick={() => handleIncrease(item.id)}
-													className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#D9CEBC] bg-white hover:bg-[#F7F3E9] transition-colors">
-													<Plus className="w-3.5 h-3.5 text-gray-600" />
-												</button>
-											</div>
+											) : (
+												<div className="flex items-center gap-2">
+													<button
+														onClick={() => handleDecrease(item.id)}
+														disabled={item.quantity <= 1}
+														className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#D9CEBC] bg-white hover:bg-[#F7F3E9] disabled:opacity-30 disabled:cursor-not-allowed transition-colors">
+														<Minus className="w-3.5 h-3.5 text-gray-600" />
+													</button>
+													<span className="w-8 text-center text-sm font-semibold text-gray-800">
+														{item.quantity}
+													</span>
+													<button
+														onClick={() => handleIncrease(item.id)}
+														className="w-8 h-8 flex items-center justify-center rounded-lg border border-[#D9CEBC] bg-white hover:bg-[#F7F3E9] transition-colors">
+														<Plus className="w-3.5 h-3.5 text-gray-600" />
+													</button>
+												</div>
+											)}
 
 											{/* 소계 */}
 											<div className="w-24 text-right">
@@ -229,12 +278,14 @@ export default function CartDetailPage() {
 												</p>
 											</div>
 
-											{/* 삭제 버튼 */}
-											<button
-												onClick={() => handleDelete(item.id)}
-												className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
-												<Trash2 className="w-4 h-4" />
-											</button>
+											{/* 삭제 버튼 — 공개 장바구니 읽기 전용 시 숨김 */}
+											{!isPublic && (
+												<button
+													onClick={() => handleDelete(item.id)}
+													className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+													<Trash2 className="w-4 h-4" />
+												</button>
+											)}
 										</div>
 									);
 								})}
@@ -243,23 +294,25 @@ export default function CartDetailPage() {
 
 						{/* 오른쪽: 주문 요약 패널 + 초대 섹션 (sticky) */}
 						<div className="w-72 shrink-0 sticky top-6 flex flex-col gap-4">
-							{/* 멤버 초대 — 공유 장바구니 전용 */}
-							{cart?.type === "shared" && (
+							{/* 멤버 초대 — 내 공유 장바구니 전용 (공개 장바구니에서는 숨김) */}
+							{!isPublic && cart?.type === "shared" && (
 								<MemberInvite
-									shareLink={`${window.location.origin}/cart?id=${cartId}&type=${cartType}`}
+									shareLink={`${window.location.origin}/cart/detail?id=${cartId}&type=${cartType}`}
 								/>
 							)}
 
 							<div className="bg-white rounded-2xl border border-[#EDE9E0] shadow-sm px-6 py-6 flex flex-col gap-4">
 								<h2 className="text-base font-semibold text-gray-900">
-									주문 요약
+									{isPublic ? "담기 요약" : "주문 요약"}
 								</h2>
 
 								{/* 체크된 상품별 소계 목록 */}
 								<div className="flex flex-col gap-2">
 									{checkedItems.length === 0 ? (
 										<p className="text-sm text-gray-400 text-center py-2">
-											선택된 상품이 없습니다
+											{isPublic
+												? "담을 상품을 선택해 주세요"
+												: "선택된 상품이 없습니다"}
 										</p>
 									) : (
 										checkedItems.map((item) => (
@@ -292,11 +345,35 @@ export default function CartDetailPage() {
 									</div>
 								</div>
 
-								<button
-									disabled={checkedItems.length === 0}
-									className="w-full py-3.5 bg-[#F7F3E9] hover:bg-[#F3EEE0] disabled:opacity-40 disabled:cursor-not-allowed text-black font-semibold rounded-xl transition-colors text-sm tracking-wide shadow-sm">
-									주문하기 ({checkedItems.length})
-								</button>
+								{isPublic ? (
+									/* 공개 장바구니: 선택 상품 담기 + 모두 담기 버튼 */
+									<div className="flex flex-col gap-2">
+										<button
+											disabled={checkedItems.length === 0}
+											onClick={openSelectCartModal}
+											className="w-full py-3.5 bg-[#F7F3E9] hover:bg-[#F3EEE0] disabled:opacity-40 disabled:cursor-not-allowed text-black font-semibold rounded-xl transition-colors text-sm tracking-wide shadow-sm flex items-center justify-center gap-2">
+											<ShoppingCart className="w-4 h-4" />
+											선택 상품 담기 ({checkedItems.length})
+										</button>
+										<button
+											onClick={() => {
+												// 모두 선택 후 모달 열기
+												setCheckedIds(new Set(items.map((i) => i.id)));
+												openSelectCartModal();
+											}}
+											className="w-full py-3.5 border border-[#D9CEBC] hover:bg-[#FDFBF6] text-gray-700 font-semibold rounded-xl transition-colors text-sm tracking-wide flex items-center justify-center gap-2">
+											<ShoppingCart className="w-4 h-4" />
+											모두 담기 ({items.length})
+										</button>
+									</div>
+								) : (
+									/* 내 장바구니: 주문하기 버튼 */
+									<button
+										disabled={checkedItems.length === 0}
+										className="w-full py-3.5 bg-[#F7F3E9] hover:bg-[#F3EEE0] disabled:opacity-40 disabled:cursor-not-allowed text-black font-semibold rounded-xl transition-colors text-sm tracking-wide shadow-sm">
+										주문하기 ({checkedItems.length})
+									</button>
+								)}
 							</div>
 						</div>
 					</div>

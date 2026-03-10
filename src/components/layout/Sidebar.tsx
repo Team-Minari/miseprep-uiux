@@ -18,7 +18,7 @@ export default function Sidebar() {
 
 	const handleCartClick = (cartId: number, cartType: "personal" | "shared") => {
 		closeSidebar();
-		navigate(`/cart?id=${cartId}&type=${cartType}`);
+		navigate(`/cart/detail?id=${cartId}&type=${cartType}`);
 	};
 
 	return (
