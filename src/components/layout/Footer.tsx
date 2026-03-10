@@ -9,7 +9,7 @@ export default function Footer() {
 						<div className="flex items-center gap-2">
 							<ShoppingCart className="w-5 h-5 text-gray-800" />
 							<span className="text-lg font-semibold text-gray-900">
-								공유장바구니
+								MisePrep | 공유 장바구니
 							</span>
 						</div>
 						<p className="text-sm text-gray-600">
@@ -45,7 +45,7 @@ export default function Footer() {
 				</div>
 
 				<div className="flex flex-col gap-3 text-sm text-gray-600 md:flex-row md:items-center md:justify-between">
-					<p>대전광역시 한밭대학교 | ©2026 gongjang-mall</p>
+					<p>대전광역시 한밭대학교 | ©2026 MisePrep</p>
 				</div>
 			</div>
 		</footer>
