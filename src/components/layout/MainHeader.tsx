@@ -11,19 +11,19 @@ export default function MainHeader() {
 		navigate("/cart");
 	};
 	const handleBest = () => {
-		alert("베스트 상품 페이지는 현재 구현 예정입니다.");
+		navigate("/products?category=best");
 	};
 	const handleDaily = () => {
-		alert("생활용품 카테고리는 현재 구현 예정입니다.");
+		navigate("/products?category=living");
 	};
 	const handleIngredients = () => {
-		alert("식재료 카테고리는 현재 구현 예정입니다.");
+		navigate("/products?category=ingredients");
 	};
 	const handleOffice = () => {
-		alert("사무용품 카테고리는 현재 구현 예정입니다.");
+		navigate("/products?category=office");
 	};
 	const handleCamping = () => {
-		alert("캠핑용품 카테고리는 현재 구현 예정입니다.");
+		navigate("/products?category=camping");
 	};
 	const handleSearch = () => {
 		alert("검색 기능은 현재 구현 예정입니다.");
