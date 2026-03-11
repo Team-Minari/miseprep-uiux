@@ -136,19 +136,16 @@ export default function CartDetailPage() {
 					{/* 공개 장바구니: 소유자 + 읽기 전용 안내 */}
 					{isPublic && cart && "ownerName" in cart && (
 						<div className="flex items-center gap-3 pr-6">
-							<span className="flex items-center gap-1 text-sm text-gray-500">
+							<span className="flex items-center gap-1 text-m text-gray-500">
 								<User className="w-3.5 h-3.5" />
 								{(cart as { ownerName: string }).ownerName}
 							</span>
 							{"likeCount" in cart && (
-								<span className="flex items-center gap-1 text-sm text-[#C8A97A]">
+								<span className="flex items-center gap-1 text-m text-[#C8A97A]">
 									<Heart className="w-3.5 h-3.5 fill-[#C8A97A]" />
 									{(cart as { likeCount: number }).likeCount}
 								</span>
 							)}
-							<span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full">
-								읽기 전용
-							</span>
 						</div>
 					)}
 				</div>
@@ -215,9 +212,8 @@ export default function CartDetailPage() {
 									return (
 										<div
 											key={item.id}
-											className={`flex items-center gap-5 px-6 py-5 transition-colors ${
-												isChecked ? "bg-white" : "bg-gray-50/60"
-											}`}>
+											className={`flex items-center gap-5 px-6 py-5 transition-colors ${isChecked ? "bg-white" : "bg-gray-50/60"
+												}`}>
 											{/* 체크박스 */}
 											<input
 												type="checkbox"
