@@ -17,7 +17,8 @@ export default function ProductSection({ title }: ProductSectionProps) {
 	const [activeCategory, setActiveCategory] = useState(categories[0].id);
 
 	const currentCategory = categories.find((c) => c.id === activeCategory)!;
-	const currentProducts = getProductsByCategory(activeCategory);
+	// categories[0] = best → 초기 탭은 베스트, 최대 8개(4열 × 2행) 표시
+	const currentProducts = getProductsByCategory(activeCategory).slice(0, 8);
 
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
@@ -102,7 +103,9 @@ export default function ProductSection({ title }: ProductSectionProps) {
 
 				{/* 전체보기 버튼 */}
 				<div className="flex justify-center mt-10">
-					<button className="px-16 py-4 border border-gray-200 rounded-2xl flex items-center justify-center gap-1.5 text-gray-500 font-medium hover:bg-gray-50 hover:border-gray-300 transition-all">
+					<button
+						onClick={() => navigate(`/products?category=${activeCategory}`)}
+						className="px-16 py-4 border border-gray-200 rounded-2xl flex items-center justify-center gap-1.5 text-gray-500 font-medium hover:bg-gray-50 hover:border-gray-300 transition-all">
 						<span>{currentCategory.label} 전체보기</span>
 						<svg
 							className="w-4 h-4"

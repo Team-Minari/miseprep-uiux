@@ -1,0 +1,128 @@
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { ShoppingCart } from "lucide-react";
+import { categories, getProductsByCategory } from "../../mock/product";
+import type { Product } from "../../mock/product";
+import { personalCarts, sharedCarts } from "../../mock/cartData";
+import {
+	useOpenAddToCartModal,
+	useOpenSelectCartModal,
+} from "../../store/useCartModalStore";
+
+const PAGE_SIZE = 24; // 4열 × 6행
+
+// ─────────────────────────────────────────
+// ProductCard
+// ─────────────────────────────────────────
+function ProductCard({ product }: { product: Product }) {
+	const navigate = useNavigate();
+	const openAddToCartModal = useOpenAddToCartModal();
+	const openSelectCartModal = useOpenSelectCartModal();
+
+	const handleAddToCart = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		const hasCartData = personalCarts.length > 0 || sharedCarts.length > 0;
+		if (hasCartData) {
+			openSelectCartModal();
+		} else {
+			openAddToCartModal();
+		}
+	};
+
+	return (
+		<div
+			className="group flex flex-col cursor-pointer"
+			onClick={() => navigate(`/product/${product.id}`)}>
+			{/* 상품 이미지 */}
+			<div
+				className="relative w-full rounded-xl overflow-hidden mb-3"
+				style={{ aspectRatio: "1 / 1" }}>
+				<img
+					src={product.image_url}
+					alt={product.name}
+					className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+				/>
+				{/* 장바구니 담기 버튼 */}
+				<button
+					onClick={handleAddToCart}
+					className="absolute bottom-2.5 right-2.5 w-9 h-9 bg-white rounded-full shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
+					aria-label="장바구니 담기">
+					<ShoppingCart className="w-4 h-4 text-gray-700" />
+				</button>
+			</div>
+
+			{/* 상품 정보 */}
+			<div className="flex flex-col gap-1">
+				<p className="text-sm text-gray-900 leading-snug line-clamp-2">
+					{product.name}
+				</p>
+				<p className="text-xs text-gray-400 line-clamp-1">
+					{product.description}
+				</p>
+				<p className="text-base font-bold text-gray-900 mt-0.5">
+					{product.price.toLocaleString()}원
+				</p>
+			</div>
+		</div>
+	);
+}
+
+// ─────────────────────────────────────────
+// CategoryProductListPage
+// ─────────────────────────────────────────
+export default function CategoryProductListPage() {
+	const [searchParams] = useSearchParams();
+
+	// URL ?category= 파라미터로 카테고리 결정. 없으면 best(첫 번째 카테고리).
+	const categoryId = searchParams.get("category") ?? categories[0].id;
+
+	// mock 데이터에서 직접 getProductsByCategory 사용 (best 포함 모든 카테고리 동일 처리)
+	const filteredProducts = getProductsByCategory(categoryId).slice(
+		0,
+		PAGE_SIZE
+	);
+	const categoryLabel =
+		categories.find((c) => c.id === categoryId)?.label ?? categoryId;
+
+	return (
+		<div className="min-h-screen bg-white">
+			{/* 페이지 헤더 */}
+			<div className="bg-white">
+				<div className="max-w-7xl mx-auto px-6 py-10">
+					<h1 className="text-3xl font-bold text-gray-900">{categoryLabel}</h1>
+					<p className="mt-2 text-sm text-gray-500">
+						{categoryId === "best"
+							? "가장 인기 있는 베스트 상품을 모아봤어요"
+							: `${categoryLabel} 카테고리의 다양한 상품을 확인해 보세요`}
+					</p>
+				</div>
+			</div>
+
+			{/* 본문 */}
+			<div className="max-w-7xl mx-auto px-6 pb-16">
+				{/* 결과 카운트 */}
+				<p className="text-sm text-gray-400 mb-6">
+					<span className="font-medium text-gray-700">
+						{filteredProducts.length}개
+					</span>
+					의 상품
+				</p>
+
+				{/* 상품 그리드: 4열 × 6행 */}
+				{filteredProducts.length > 0 ? (
+					<div className="grid grid-cols-4 gap-x-6 gap-y-16">
+						{filteredProducts.map((product) => (
+							<ProductCard key={product.id} product={product} />
+						))}
+					</div>
+				) : (
+					<div className="flex flex-col items-center justify-center py-32 gap-4 text-gray-400">
+						<ShoppingCart className="w-14 h-14 opacity-20" />
+						<p className="text-base">
+							{categoryLabel} 카테고리에 등록된 상품이 없습니다.
+						</p>
+					</div>
+				)}
+			</div>
+		</div>
+	);
+}
