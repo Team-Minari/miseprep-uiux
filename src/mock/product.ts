@@ -38,6 +38,15 @@ export interface Category {
 	label: string;
 }
 
+export interface ProductSnapshot {
+	id: number;
+	image_url: string;
+	name: string;
+	description: string;
+	price: number;
+	category: string;
+}
+
 // 카테고리 목록
 export const categories: Category[] = [
 	{ id: "best", label: "베스트" },
@@ -1575,3 +1584,23 @@ export const getProductsByCategory = (categoryId: string): Product[] =>
 /** 상품 ID로 단일 상품 조회 */
 export const findProductById = (id: number): Product | undefined =>
 	products.find((p) => p.id === id);
+
+export const getCategoryLabel = (categoryId: string): string =>
+	categories.find((category) => category.id === categoryId)?.label ?? categoryId;
+
+export const toProductDetail = (product: ProductSnapshot): ProductDetail => ({
+	...productDetail,
+	...product,
+	subtitle: `${getCategoryLabel(product.category)} 카테고리 상품`,
+	images: [product.image_url],
+	features: [
+		{ text: `${product.name} 상품 상세 페이지입니다.` },
+		{ text: "목록, 장바구니, 상세 페이지에서 동일한 상품 기준 정보를 제공합니다." },
+		{ text: `${getCategoryLabel(product.category)} 카테고리의 대표 상품 정보입니다.` },
+	],
+	specs: [
+		{ label: "카테고리", value: getCategoryLabel(product.category) },
+		{ label: "상품명", value: product.name },
+		{ label: "가격", value: `${product.price.toLocaleString("ko-KR")}원` },
+	],
+});

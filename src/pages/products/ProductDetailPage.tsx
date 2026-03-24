@@ -1,31 +1,28 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useParams } from "react-router";
+import { useLocation } from "react-router-dom";
 import { useLoadProduct } from "../../store/useProductStore.ts";
 import MainSection from "../../components/productsDetail/MainSection.tsx";
-import ContentSection from "../../components/productsDetail/ContentSection.tsx";
+import type { ProductSnapshot } from "../../mock/product";
 
 export default function ProductDetailPage() {
 	const { id } = useParams<{ id: string }>();
+	const location = useLocation();
 	const loadProduct = useLoadProduct();
+	const fallbackProduct = (location.state as { fallbackProduct?: ProductSnapshot } | null)
+		?.fallbackProduct;
 
 	// URL 파라미터의 ID가 변경될 때 상품 데이터 로드
 	useEffect(() => {
 		if (id) {
-			loadProduct(Number(id));
+			loadProduct(Number(id), fallbackProduct);
 		}
-	}, [id, loadProduct]);
-
-	// 스크롤 제어용 Refs
-	const detailRef = useRef<HTMLDivElement>(null);
+	}, [fallbackProduct, id, loadProduct]);
 
 	return (
 		<div className="min-h-screen w-full bg-white">
-			<div className="max-w-7xl mb-6 mx-auto px-4 py-8">
-				{/* 상품 메인 (이미지 갤러리 + 상품 정보) */}
+			<div className="mx-auto mb-6 max-w-7xl px-4 py-8">
 				<MainSection />
-
-				{/* 상품 상세 정보 */}
-				<ContentSection sectionRef={detailRef} />
 			</div>
 		</div>
 	);

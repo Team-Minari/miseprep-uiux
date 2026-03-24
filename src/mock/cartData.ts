@@ -4,23 +4,34 @@ export interface CartItem {
 	productId: number;
 	name: string;
 	price: number;
-	quantity: number;
 	thumbnail: string;
+	addedBy?: string;
+	addedByAvatar?: string;
+	description?: string;
+	category?: CartCategory;
+}
+
+export interface CartParticipant {
+	id: number;
+	name: string;
+	email: string;
+	role: "owner" | "member";
+	avatar: string;
+}
+
+export interface CartBase {
+	id: number;
+	name: string;
+	items: CartItem[];
+	budget?: number;
+	participants?: CartParticipant[];
 }
 
 // 개인 장바구니 타입 (내 장바구니 - private)
-export interface PersonalCart {
-	id: number;
-	name: string;
-	items: CartItem[];
-}
+export interface PersonalCart extends CartBase {}
 
 // 공유 장바구니 타입 (내 장바구니 - shared with team)
-export interface SharedCart {
-	id: number;
-	name: string;
-	items: CartItem[];
-}
+export interface SharedCart extends CartBase {}
 
 // 공개 장바구니 카테고리 (ProductSection 카테고리와 동일)
 export type CartCategory = "living" | "ingredients" | "office" | "camping";
@@ -34,6 +45,8 @@ export interface PublicCart {
 	category: CartCategory; // 장바구니 주요 카테고리
 	items: CartItem[];
 	likeCount: number; // 인기도 지표
+	budget?: number;
+	participants?: CartParticipant[];
 }
 
 // ─────────────────────────────────────────
@@ -44,33 +57,37 @@ export const personalCarts: PersonalCart[] = [
 	{
 		id: 1,
 		name: "겨울 옷 쇼핑 목록",
+		budget: 250000,
 		items: [
 			{
 				id: 1,
 				productId: 101,
-				name: "울 혼방 롱 코트",
-				price: 128000,
-				quantity: 1,
+				name: "유기농 브로콜리 400g",
+				price: 3200,
 				thumbnail:
-					"https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=200&q=80",
+					"https://images.unsplash.com/photo-1490645935967-10de6ba17061?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+				description: "신선한 유기농 브로콜리. 비타민C와 식이섬유가 풍부합니다.",
+				category: "ingredients",
 			},
 			{
 				id: 2,
 				productId: 102,
-				name: "캐시미어 터틀넥 니트",
-				price: 56000,
-				quantity: 2,
+				name: "제주 감귤 3kg",
+				price: 14900,
 				thumbnail:
-					"https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=200&q=80",
+					"https://images.unsplash.com/photo-1568702846914-96b305d2ead1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+				description: "새콤달콤한 제주산 감귤. 비타민이 풍부한 겨울 과일입니다.",
+				category: "ingredients",
 			},
 			{
 				id: 3,
 				productId: 103,
-				name: "퀼팅 패딩 조끼",
-				price: 45000,
-				quantity: 1,
+				name: "국내산 사과 5개입",
+				price: 8900,
 				thumbnail:
-					"https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200&q=80",
+					"https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+				description: "아삭하고 달콤한 국내산 사과. 아침 식사 대용으로도 좋습니다.",
+				category: "ingredients",
 			},
 		],
 	},
@@ -80,24 +97,68 @@ export const sharedCarts: SharedCart[] = [
 	{
 		id: 1,
 		name: "Wisoft 겨울 워크숍",
+		budget: 120000,
+		participants: [
+			{
+				id: 1,
+				name: "정하늘",
+				email: "haneul@wisoft.io",
+				role: "owner",
+				avatar: "정",
+			},
+			{
+				id: 2,
+				name: "박지수",
+				email: "jisu@wisoft.io",
+				role: "member",
+				avatar: "박",
+			},
+			{
+				id: 3,
+				name: "김도윤",
+				email: "doyoon@wisoft.io",
+				role: "member",
+				avatar: "김",
+			},
+		],
 		items: [
 			{
 				id: 4,
-				productId: 201,
-				name: "사무용 볼펜 세트 12P",
-				price: 8900,
-				quantity: 5,
+				productId: 25,
+				name: "볼펜 0.5mm 10자루",
+				price: 3900,
 				thumbnail:
-					"https://images.unsplash.com/photo-1532153975070-2e9ab71f1b14?w=200&q=80",
+					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+				addedBy: "정하늘",
+				addedByAvatar: "정",
+				description: "부드러운 필기감과 선명한 잉크로 오랜 시간 사용 가능한 볼펜입니다.",
+				category: "office",
 			},
 			{
 				id: 5,
-				productId: 202,
-				name: "A4 복사용지 500매",
-				price: 12000,
-				quantity: 3,
+				productId: 27,
+				name: "A4 복사용지 80g 500매",
+				price: 5900,
 				thumbnail:
-					"https://images.unsplash.com/photo-1568667256549-094345857637?w=200&q=80",
+					"https://images.unsplash.com/photo-1568702846914-96b305d2ead1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+				addedBy: "박지수",
+				addedByAvatar: "박",
+				description:
+					"양면 인쇄에 적합한 80g 고백색도 용지로 다양한 프린터와 호환됩니다.",
+				category: "office",
+			},
+			{
+				id: 6,
+				productId: 31,
+				name: "무선 마우스 M185",
+				price: 19900,
+				thumbnail:
+					"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
+				addedBy: "김도윤",
+				addedByAvatar: "김",
+				description:
+					"초소형 수신기와 긴 배터리 수명으로 편리한 무선 환경을 제공합니다.",
+				category: "office",
 			},
 		],
 	},
@@ -124,7 +185,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 301,
 				name: "스테인리스 주방 가위",
 				price: 12900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80",
 			},
@@ -133,7 +193,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 302,
 				name: "실리콘 주걱 세트 3P",
 				price: 8500,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80",
 			},
@@ -142,7 +201,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 303,
 				name: "대나무 도마",
 				price: 15000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&q=80",
 			},
@@ -161,7 +219,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 401,
 				name: "크리넥스 티슈 250매×6입",
 				price: 12900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1584556812952-905ffd0c611a?w=400&q=80",
 			},
@@ -170,7 +227,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 402,
 				name: "샤워기 헤드 교체용",
 				price: 19800,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1584622781564-1d987f7333c1?w=400&q=80",
 			},
@@ -179,7 +235,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 403,
 				name: "행거 수납봉 2P",
 				price: 6500,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
 			},
@@ -198,7 +253,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 901,
 				name: "에스프레소 머신용 분쇄기",
 				price: 89000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80",
 			},
@@ -207,7 +261,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 902,
 				name: "스테인리스 텀블러 500ml",
 				price: 22000,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80",
 			},
@@ -226,7 +279,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1101,
 				name: "페리오 치약 세트 3입",
 				price: 7900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=400&q=80",
 			},
@@ -235,7 +287,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1102,
 				name: "유한락스 표백제 2L",
 				price: 3900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=400&q=80",
 			},
@@ -254,7 +305,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1103,
 				name: "해피바스 바디워시 500ml",
 				price: 6900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80",
 			},
@@ -263,7 +313,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1104,
 				name: "순수한면 생리대 중형 32매",
 				price: 8900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1583947215259-38e31be8751f?w=400&q=80",
 			},
@@ -282,7 +331,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1105,
 				name: "데일리 모이스처 로션 200ml",
 				price: 18900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=400&q=80",
 			},
@@ -291,7 +339,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1106,
 				name: "쓰레기봉투 20L×50매",
 				price: 5900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1610141189012-7f4eaa5e3505?w=400&q=80",
 			},
@@ -310,7 +357,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1107,
 				name: "선크림 SPF50+ 50ml",
 				price: 24000,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80",
 			},
@@ -319,7 +365,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1108,
 				name: "알로에 수딩 젤 300ml",
 				price: 9900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=400&q=80",
 			},
@@ -338,7 +383,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1109,
 				name: "스카치 투명테이프 3입",
 				price: 4500,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586380951230-e6703d9f6833?w=400&q=80",
 			},
@@ -347,7 +391,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1110,
 				name: "크리넥스 티슈 250매×6입",
 				price: 12900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1584556812952-905ffd0c611a?w=400&q=80",
 			},
@@ -366,7 +409,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1111,
 				name: "LED 무드등 소형",
 				price: 15000,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
 			},
@@ -385,7 +427,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1112,
 				name: "강아지 간식 100g",
 				price: 8500,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80",
 			},
@@ -406,7 +447,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 701,
 				name: "진라면 순한맛 5입",
 				price: 3200,
-				quantity: 20,
 				thumbnail:
 					"https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80",
 			},
@@ -415,7 +455,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 702,
 				name: "햇반 210g×12개",
 				price: 14900,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80",
 			},
@@ -424,7 +463,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 703,
 				name: "참치 135g×4캔",
 				price: 8900,
-				quantity: 10,
 				thumbnail:
 					"https://images.unsplash.com/photo-1534483509719-3feaee7c30da?w=400&q=80",
 			},
@@ -443,7 +481,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1001,
 				name: "국내산 계란 30구",
 				price: 6900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&q=80",
 			},
@@ -452,7 +489,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 1002,
 				name: "로제파스타 소스 200g",
 				price: 4500,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80",
 			},
@@ -471,7 +507,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2001,
 				name: "한우 불고기 밀키트 450g",
 				price: 12900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1763140446057-9becaa30b868?w=400&q=80",
 			},
@@ -480,7 +515,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2002,
 				name: "냉동 새우 500g",
 				price: 9900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400&q=80",
 			},
@@ -499,7 +533,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2003,
 				name: "국산콩 두부 300g×2입",
 				price: 3480,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1557142046-c704a3adf364?w=400&q=80",
 			},
@@ -508,7 +541,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2004,
 				name: "현미밥 즉석 18개입",
 				price: 18900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80",
 			},
@@ -527,7 +559,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2005,
 				name: "햇반 210g×12개",
 				price: 14900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80",
 			},
@@ -536,7 +567,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2006,
 				name: "국내산 계란 30구",
 				price: 6900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&q=80",
 			},
@@ -555,7 +585,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2007,
 				name: "참치 135g×4캔",
 				price: 8900,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1534483509719-3feaee7c30da?w=400&q=80",
 			},
@@ -564,7 +593,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2008,
 				name: "진라면 순한맛 5입",
 				price: 3200,
-				quantity: 10,
 				thumbnail:
 					"https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80",
 			},
@@ -583,7 +611,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2009,
 				name: "로제파스타 소스 200g",
 				price: 4500,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80",
 			},
@@ -602,7 +629,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2010,
 				name: "진라면 순한맛 5입",
 				price: 3200,
-				quantity: 6,
 				thumbnail:
 					"https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80",
 			},
@@ -621,7 +647,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2011,
 				name: "국산콩 두부 300g×2입",
 				price: 3480,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1557142046-c704a3adf364?w=400&q=80",
 			},
@@ -640,7 +665,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 2012,
 				name: "냉동 새우 500g",
 				price: 9900,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400&q=80",
 			},
@@ -661,7 +685,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 501,
 				name: "무선 마우스 M185",
 				price: 19900,
-				quantity: 8,
 				thumbnail:
 					"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80",
 			},
@@ -670,7 +693,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 502,
 				name: "포스트잇 6색 6패드",
 				price: 7900,
-				quantity: 10,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&q=80",
 			},
@@ -679,7 +701,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 503,
 				name: "A4 복사용지 80g 500매",
 				price: 5900,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1568702846914-96b305d2ead1?w=400&q=80",
 			},
@@ -698,7 +719,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 801,
 				name: "볼펜 0.5mm 10자루",
 				price: 3900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400&q=80",
 			},
@@ -707,7 +727,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 802,
 				name: "형광펜 6색 세트",
 				price: 3900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&q=80",
 			},
@@ -716,7 +735,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 803,
 				name: "USB 메모리 64GB",
 				price: 12900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1618410320928-25228d811631?w=400&q=80",
 			},
@@ -735,7 +753,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3001,
 				name: "무선 마우스 M185",
 				price: 19900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80",
 			},
@@ -744,7 +761,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3002,
 				name: "USB 메모리 64GB",
 				price: 12900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1618410320928-25228d811631?w=400&q=80",
 			},
@@ -763,7 +779,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3003,
 				name: "포스트잇 76×76mm 6색 6패드",
 				price: 7900,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&q=80",
 			},
@@ -772,7 +787,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3004,
 				name: "볼펜 0.5mm 10자루",
 				price: 3900,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400&q=80",
 			},
@@ -791,7 +805,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3005,
 				name: "투명 파일 케이스 20개입",
 				price: 4900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80",
 			},
@@ -800,7 +813,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3006,
 				name: "스테이플러 대용량 No.10",
 				price: 6900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=400&q=80",
 			},
@@ -819,7 +831,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3007,
 				name: "A4 복사용지 80g 500매",
 				price: 5900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1568702846914-96b305d2ead1?w=400&q=80",
 			},
@@ -838,7 +849,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3008,
 				name: "형광펜 6색 세트",
 				price: 3900,
-				quantity: 6,
 				thumbnail:
 					"https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&q=80",
 			},
@@ -857,7 +867,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3009,
 				name: "볼펜 0.5mm 10자루",
 				price: 3900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400&q=80",
 			},
@@ -876,7 +885,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3010,
 				name: "무선 마우스 M185",
 				price: 19900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80",
 			},
@@ -895,7 +903,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 3011,
 				name: "포스트잇 76×76mm 6색 6패드",
 				price: 7900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400&q=80",
 			},
@@ -916,7 +923,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 601,
 				name: "원터치 팝업 텐트 3-4인용",
 				price: 49900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -925,7 +931,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 602,
 				name: "캠핑용 폴딩 체어 세트 (2P)",
 				price: 29800,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80",
 			},
@@ -944,7 +949,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4001,
 				name: "프리미엄 캠핑 화로대",
 				price: 35900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1596263576925-d90d63691097?w=400&q=80",
 			},
@@ -953,7 +957,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4002,
 				name: "원터치 팝업 텐트 3-4인용",
 				price: 49900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -972,7 +975,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4003,
 				name: "대용량 아이스박스 30L",
 				price: 45000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400&q=80",
 			},
@@ -981,7 +983,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4004,
 				name: "캠핑용 폴딩 체어 세트 (2P)",
 				price: 29800,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80",
 			},
@@ -1000,7 +1001,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4005,
 				name: "대용량 아이스박스 30L",
 				price: 45000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400&q=80",
 			},
@@ -1019,7 +1019,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4006,
 				name: "프리미엄 캠핑 화로대",
 				price: 35900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1596263576925-d90d63691097?w=400&q=80",
 			},
@@ -1028,7 +1027,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4007,
 				name: "원터치 팝업 텐트 3-4인용",
 				price: 49900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -1047,7 +1045,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4008,
 				name: "캠핑용 폴딩 체어 세트 (2P)",
 				price: 29800,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80",
 			},
@@ -1066,7 +1063,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4009,
 				name: "대용량 아이스박스 30L",
 				price: 45000,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400&q=80",
 			},
@@ -1085,7 +1081,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4010,
 				name: "프리미엄 캠핑 화로대",
 				price: 35900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1596263576925-d90d63691097?w=400&q=80",
 			},
@@ -1104,7 +1099,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4011,
 				name: "원터치 팝업 텐트 3-4인용",
 				price: 49900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -1123,7 +1117,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 4012,
 				name: "캠핑용 폴딩 체어 세트 (2P)",
 				price: 29800,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80",
 			},
@@ -1144,7 +1137,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5001,
 				name: "섬유유연제 1L",
 				price: 5900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=400&q=80",
 			},
@@ -1163,7 +1155,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5002,
 				name: "물걸레 청소포 30매",
 				price: 4900,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=400&q=80",
 			},
@@ -1182,7 +1173,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5003,
 				name: "베이비 바디워시 300ml",
 				price: 12900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80",
 			},
@@ -1201,7 +1191,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5004,
 				name: "초음파 가습기",
 				price: 29900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
 			},
@@ -1220,7 +1209,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5005,
 				name: "주방세제 500ml",
 				price: 3200,
-				quantity: 8,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=400&q=80",
 			},
@@ -1239,7 +1227,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5006,
 				name: "스테인리스 수건걸이",
 				price: 8900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1584622781564-1d987f7333c1?w=400&q=80",
 			},
@@ -1258,7 +1245,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5007,
 				name: "라벤더 디퓨저 200ml",
 				price: 18000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
 			},
@@ -1277,7 +1263,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5008,
 				name: "핸드워시 250ml",
 				price: 3500,
-				quantity: 10,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80",
 			},
@@ -1296,7 +1281,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5009,
 				name: "투명 수납함 3단",
 				price: 15900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
 			},
@@ -1315,7 +1299,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5010,
 				name: "만능 세탁 세제 2L",
 				price: 9900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585421514284-efb74c2b69ba?w=400&q=80",
 			},
@@ -1334,7 +1317,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5011,
 				name: "비건 클렌징 폼 150ml",
 				price: 16900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1611930022073-b7a4ba5fcccd?w=400&q=80",
 			},
@@ -1353,7 +1335,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5012,
 				name: "돗자리 대형",
 				price: 12000,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
 			},
@@ -1372,7 +1353,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5013,
 				name: "두피 샴푸 500ml",
 				price: 14900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1556228578-0d85b1a4d571?w=400&q=80",
 			},
@@ -1391,7 +1371,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 5014,
 				name: "빨래건조대 접이식",
 				price: 22000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80",
 			},
@@ -1412,7 +1391,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6001,
 				name: "그래놀라 500g",
 				price: 7900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80",
 			},
@@ -1431,7 +1409,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6002,
 				name: "갈비찜 밀키트 600g",
 				price: 15900,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1763140446057-9becaa30b868?w=400&q=80",
 			},
@@ -1450,7 +1427,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6003,
 				name: "생크림 500ml",
 				price: 4200,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80",
 			},
@@ -1469,7 +1445,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6004,
 				name: "레몬 1kg",
 				price: 6900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1534483509719-3feaee7c30da?w=400&q=80",
 			},
@@ -1488,7 +1463,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6005,
 				name: "삼각김밥 10입",
 				price: 9900,
-				quantity: 6,
 				thumbnail:
 					"https://images.unsplash.com/photo-1536304929831-ee1ca9d44906?w=400&q=80",
 			},
@@ -1507,7 +1481,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6006,
 				name: "케일 200g",
 				price: 3500,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1557142046-c704a3adf364?w=400&q=80",
 			},
@@ -1526,7 +1499,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6007,
 				name: "돼지 앞다리살 500g",
 				price: 8900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1763140446057-9becaa30b868?w=400&q=80",
 			},
@@ -1545,7 +1517,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6008,
 				name: "원두 커피 1kg",
 				price: 19900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80",
 			},
@@ -1564,7 +1535,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6009,
 				name: "사과 5입",
 				price: 8900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1534483509719-3feaee7c30da?w=400&q=80",
 			},
@@ -1583,7 +1553,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6010,
 				name: "불닭볶음면 5입",
 				price: 3900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80",
 			},
@@ -1602,7 +1571,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6011,
 				name: "삼겹살 600g",
 				price: 14900,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1763140446057-9becaa30b868?w=400&q=80",
 			},
@@ -1621,7 +1589,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6012,
 				name: "강력분 밀가루 1kg",
 				price: 3200,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80",
 			},
@@ -1640,7 +1607,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6013,
 				name: "냉동 만두 700g",
 				price: 6900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=400&q=80",
 			},
@@ -1659,7 +1625,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 6014,
 				name: "유기농 두유 1L",
 				price: 4500,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1557142046-c704a3adf364?w=400&q=80",
 			},
@@ -1680,7 +1645,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7001,
 				name: "노크식 볼펜 5입",
 				price: 2900,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400&q=80",
 			},
@@ -1699,7 +1663,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7002,
 				name: "화이트보드 마커 6색",
 				price: 5900,
-				quantity: 5,
 				thumbnail:
 					"https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&q=80",
 			},
@@ -1718,7 +1681,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7003,
 				name: "마스킹 테이프 10입",
 				price: 8900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586380951230-e6703d9f6833?w=400&q=80",
 			},
@@ -1737,7 +1699,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7004,
 				name: "뾰족 샤프 0.5mm",
 				price: 3500,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400&q=80",
 			},
@@ -1756,7 +1717,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7005,
 				name: "보드 마카 세트",
 				price: 6900,
-				quantity: 6,
 				thumbnail:
 					"https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&q=80",
 			},
@@ -1775,7 +1735,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7006,
 				name: "타블렛 보호필름",
 				price: 12900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80",
 			},
@@ -1794,7 +1753,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7007,
 				name: "명함 지갑 가죽",
 				price: 15000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=400&q=80",
 			},
@@ -1813,7 +1771,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7008,
 				name: "클립보드 A4",
 				price: 4500,
-				quantity: 8,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80",
 			},
@@ -1832,7 +1789,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7009,
 				name: "스프링 노트 5권",
 				price: 7900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1568702846914-96b305d2ead1?w=400&q=80",
 			},
@@ -1851,7 +1807,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7010,
 				name: "서류 트레이 3단",
 				price: 11900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&q=80",
 			},
@@ -1870,7 +1825,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7011,
 				name: "색연필 36색",
 				price: 15900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400&q=80",
 			},
@@ -1889,7 +1843,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7012,
 				name: "딥펜 세트",
 				price: 22000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?w=400&q=80",
 			},
@@ -1908,7 +1861,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7013,
 				name: "노트북 거치대",
 				price: 29900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=400&q=80",
 			},
@@ -1927,7 +1879,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 7014,
 				name: "2026 위클리 플래너",
 				price: 12900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1568702846914-96b305d2ead1?w=400&q=80",
 			},
@@ -1948,7 +1899,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8001,
 				name: "미니 버너 세트",
 				price: 35000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1596263576925-d90d63691097?w=400&q=80",
 			},
@@ -1967,7 +1917,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8002,
 				name: "캠핑 코펠 세트",
 				price: 42000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1596263576925-d90d63691097?w=400&q=80",
 			},
@@ -1986,7 +1935,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8003,
 				name: "동계용 침낭 -10℃",
 				price: 79900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -2005,7 +1953,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8004,
 				name: "LED 캠핑 랜턴",
 				price: 25900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -2024,7 +1971,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8005,
 				name: "타프 스크린 대형",
 				price: 89000,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -2043,7 +1989,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8006,
 				name: "캠핑 칼세트 3P",
 				price: 18900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1596263576925-d90d63691097?w=400&q=80",
 			},
@@ -2062,7 +2007,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8007,
 				name: "차량용 에어매트",
 				price: 45900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -2081,7 +2025,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8008,
 				name: "방수 돗자리 XL",
 				price: 19900,
-				quantity: 3,
 				thumbnail:
 					"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80",
 			},
@@ -2100,7 +2043,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8009,
 				name: "접이식 수납 박스 50L",
 				price: 22000,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400&q=80",
 			},
@@ -2119,7 +2061,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8010,
 				name: "감성 전구 조명 5m",
 				price: 12900,
-				quantity: 2,
 				thumbnail:
 					"https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=400&q=80",
 			},
@@ -2138,7 +2079,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8011,
 				name: "경량 등산화",
 				price: 59900,
-				quantity: 4,
 				thumbnail:
 					"https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=400&q=80",
 			},
@@ -2157,7 +2097,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8012,
 				name: "핸드드립 세트",
 				price: 28900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80",
 			},
@@ -2176,7 +2115,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8013,
 				name: "접이식 강아지 울타리",
 				price: 35900,
-				quantity: 1,
 				thumbnail:
 					"https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&q=80",
 			},
@@ -2195,7 +2133,6 @@ export const publicCarts: PublicCart[] = [
 				productId: 8014,
 				name: "대용량 핫팩 30입",
 				price: 9900,
-				quantity: 6,
 				thumbnail:
 					"https://images.unsplash.com/photo-1533900298318-6b8da08a523e?w=400&q=80",
 			},
