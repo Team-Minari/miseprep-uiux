@@ -30,6 +30,7 @@ type CartDetail = {
 	type: CartType;
 	items: CartItem[];
 	budget?: number;
+	purpose?: string;
 	participants?: CartParticipant[];
 	ownerName?: string;
 	likeCount?: number;
@@ -151,12 +152,13 @@ export default function CartDetailPage() {
 	const checkedItems = enhancedItems.filter((item) => checkedIds.has(item.id));
 	const totalPrice = checkedItems.reduce((acc, item) => acc + item.price, 0);
 	const showSharedPanel = cart?.type === "shared" && !!cart.participants?.length;
+	const budgetUsage = cart?.budget ? Math.min((totalPrice / cart.budget) * 100, 100) : 0;
 
 	const formatPrice = (price: number) => `${price.toLocaleString("ko-KR")}원`;
 
 	return (
 		<div className="bg-white">
-			<div className="border-b border-[#F0EBE0] bg-white">
+			<div className="bg-white">
 				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-5 pt-8">
 					<div className="flex items-center gap-3 pl-6">
 						<h1 className="text-xl font-semibold text-gray-900">
@@ -166,6 +168,34 @@ export default function CartDetailPage() {
 							<span className="rounded-full border border-[#D9CEBC] bg-[#F7F3E9] px-2 py-0.5 text-sm font-medium text-[#7A6E5A]">
 								공유
 							</span>
+						)}
+						{cart?.purpose && (
+							<span className="rounded-full bg-[#EEF4FF] px-3 py-1 text-sm font-medium text-[#456A9B]">
+								{cart.purpose}
+							</span>
+						)}
+						{cart?.budget && (
+							<div className="ml-2 flex w-fit min-w-[320px] items-end gap-4 px-2 py-1">
+								<div className="flex flex-1 flex-col gap-2">
+									<p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-500">
+										예산
+									</p>
+									<div className="h-2.5 overflow-hidden rounded-full bg-[#E9E1D3]">
+										<div
+											className="h-full rounded-full bg-[#C8A97A]"
+											style={{ width: `${budgetUsage}%` }}
+										/>
+									</div>
+									<div className="flex items-center justify-between gap-3 text-[11px]">
+										<span className="text-gray-500">선택 금액</span>
+										<span className="font-medium text-gray-700">
+											{formatPrice(totalPrice)}
+											<span className="mx-1 text-gray-400">/</span>
+											{formatPrice(cart.budget)}
+										</span>
+									</div>
+								</div>
+							</div>
 						)}
 					</div>
 
