@@ -27,7 +27,7 @@ function getRepresentativeThumbnail(items: PublicCart["items"]): string {
 // 유틸: 장바구니 총 금액 계산
 // ─────────────────────────────────────────
 function calcTotalPrice(items: PublicCart["items"]): number {
-	return items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+	return items.reduce((sum, item) => sum + item.price, 0);
 }
 
 // ─────────────────────────────────────────

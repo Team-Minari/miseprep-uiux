@@ -1,6 +1,10 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { ShoppingCart } from "lucide-react";
-import { categories, getProductsByCategory } from "../../mock/product";
+import {
+	categories,
+	getCategoryLabel,
+	getProductsByCategory,
+} from "../../mock/product";
 import type { Product } from "../../mock/product";
 import { personalCarts, sharedCarts } from "../../mock/cartData";
 import {
@@ -52,10 +56,15 @@ function ProductCard({ product }: { product: Product }) {
 
 			{/* 상품 정보 */}
 			<div className="flex flex-col gap-1">
-				<p className="text-sm text-gray-900 leading-snug line-clamp-2">
+				<div className="mb-1">
+					<span className="rounded-full bg-[#F6F0E4] px-2 py-0.5 text-[11px] font-semibold text-[#7A6E5A]">
+						{getCategoryLabel(product.category)}
+					</span>
+				</div>
+				<p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2">
 					{product.name}
 				</p>
-				<p className="text-xs text-gray-400 line-clamp-1">
+				<p className="text-xs text-gray-500 line-clamp-2 min-h-10">
 					{product.description}
 				</p>
 				<p className="text-base font-bold text-gray-900 mt-0.5">

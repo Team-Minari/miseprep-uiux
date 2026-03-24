@@ -5,6 +5,8 @@ import { devtools } from "zustand/middleware";
 import {
 	productDetail,
 	findProductById,
+	toProductDetail,
+	type ProductSnapshot,
 	type ProductDetail,
 } from "../mock/product";
 
@@ -18,34 +20,28 @@ export const useProductStore = create(
 
 					// 이미지 갤러리 선택 인덱스
 					selectedImageIndex: 0,
-
-					// 구매 수량
-					quantity: 1,
 				},
-				(set, get) => ({
+				(set) => ({
 					// ── 상품 데이터 액션 ──
 
 					/** URL 파라미터의 ID를 기반으로 상품 데이터를 로드하고 UI 상태를 초기화 */
-					loadProduct: (id: number) => {
+					loadProduct: (id: number, fallbackProduct?: ProductSnapshot) => {
 						const matched = findProductById(id);
 
 						set((state) => {
-							if (matched && matched.id === productDetail.id) {
-								state.currentProduct = productDetail;
-							} else if (matched) {
-								state.currentProduct = {
-									...productDetail,
-									...matched,
-									images: [matched.image_url],
-									subtitle: matched.description.slice(0, 30) + "...",
-								};
+							if (matched) {
+								state.currentProduct =
+									matched.id === productDetail.id
+										? productDetail
+										: toProductDetail(matched);
+							} else if (fallbackProduct) {
+								state.currentProduct = toProductDetail(fallbackProduct);
 							} else {
 								state.currentProduct = productDetail;
 							}
 
 							// UI 상태 초기화
 							state.selectedImageIndex = 0;
-							state.quantity = 1;
 						});
 					},
 
@@ -54,7 +50,6 @@ export const useProductStore = create(
 						set((state) => {
 							state.currentProduct = productDetail;
 							state.selectedImageIndex = 0;
-							state.quantity = 1;
 						}),
 
 					// ── 이미지 갤러리 액션 ──
@@ -84,34 +79,6 @@ export const useProductStore = create(
 									? 0
 									: state.selectedImageIndex + 1;
 						}),
-
-					// ── 수량 액션 ──
-
-					/** 수량 증가 */
-					increaseQuantity: () =>
-						set((state) => {
-							state.quantity += 1;
-						}),
-
-					/** 수량 감소 (최소 1) */
-					decreaseQuantity: () =>
-						set((state) => {
-							state.quantity = Math.max(1, state.quantity - 1);
-						}),
-
-					/** 수량 직접 설정 */
-					setQuantity: (qty: number) =>
-						set((state) => {
-							state.quantity = Math.max(1, qty);
-						}),
-
-					// ── 파생 값 (Getter) ──
-
-					/** 총 상품 금액 계산 */
-					getTotalPrice: () => {
-						const { currentProduct, quantity } = get();
-						return currentProduct.price * quantity;
-					},
 				})
 			)
 		),
@@ -143,19 +110,3 @@ export const useSetSelectedImageIndex = () =>
 export const usePrevImage = () => useProductStore((state) => state.prevImage);
 
 export const useNextImage = () => useProductStore((state) => state.nextImage);
-
-// 수량
-export const useQuantity = () => useProductStore((state) => state.quantity);
-
-export const useIncreaseQuantity = () =>
-	useProductStore((state) => state.increaseQuantity);
-
-export const useDecreaseQuantity = () =>
-	useProductStore((state) => state.decreaseQuantity);
-
-export const useSetQuantity = () =>
-	useProductStore((state) => state.setQuantity);
-
-// 파생 값
-export const useGetTotalPrice = () =>
-	useProductStore((state) => state.getTotalPrice);
