@@ -24,6 +24,7 @@ export interface CartBase {
 	name: string;
 	items: CartItem[];
 	budget?: number;
+	purpose?: string;
 	participants?: CartParticipant[];
 }
 
@@ -46,6 +47,7 @@ export interface PublicCart {
 	items: CartItem[];
 	likeCount: number; // 인기도 지표
 	budget?: number;
+	purpose?: string;
 	participants?: CartParticipant[];
 }
 
@@ -58,6 +60,7 @@ export const personalCarts: PersonalCart[] = [
 		id: 1,
 		name: "겨울 옷 쇼핑 목록",
 		budget: 250000,
+		purpose: "겨울 식재료 준비",
 		items: [
 			{
 				id: 1,
@@ -98,6 +101,7 @@ export const sharedCarts: SharedCart[] = [
 		id: 1,
 		name: "Wisoft 겨울 워크숍",
 		budget: 120000,
+		purpose: "워크숍 준비",
 		participants: [
 			{
 				id: 1,
