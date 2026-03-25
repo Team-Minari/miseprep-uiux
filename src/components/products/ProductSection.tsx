@@ -6,11 +6,11 @@ import {
 	getCategoryLabel,
 	getProductsByCategory,
 } from "../../mock/product";
-import { personalCarts, sharedCarts } from "../../mock/cartData";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
 } from "../../store/useCartModalStore.ts";
+import { useAllCartsCount } from "../../store/useCartStore.ts";
 
 interface ProductSectionProps {
 	title: string;
@@ -26,10 +26,11 @@ export default function ProductSection({ title }: ProductSectionProps) {
 
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
+	const cartCount = useAllCartsCount();
 
 	const handleAddToCart = (e: React.MouseEvent) => {
 		e.stopPropagation(); // 상세 페이지로 이동하는 부모 클릭 이벤트 방지
-		const hasCartData = personalCarts.length > 0 || sharedCarts.length > 0;
+		const hasCartData = cartCount > 0;
 		if (hasCartData) {
 			openSelectCartModal();
 		} else {

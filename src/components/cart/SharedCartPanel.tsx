@@ -1,13 +1,20 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, Link, Mail, Users, X } from "lucide-react";
 import type { CartParticipant } from "../../mock/cartData";
+import {
+	useCurrentUserEmail,
+	useRemoveSharedCartParticipant,
+	useTransferSharedCartOwnership,
+} from "../../store/useCartStore";
 
 interface SharedCartPanelProps {
+	cartId: number;
 	shareLink: string;
 	participants: CartParticipant[];
 }
 
 export default function SharedCartPanel({
+	cartId,
 	shareLink,
 	participants,
 }: SharedCartPanelProps) {
@@ -15,6 +22,29 @@ export default function SharedCartPanel({
 	const [inviteEmail, setInviteEmail] = useState("");
 	const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
 	const [emailError, setEmailError] = useState("");
+	const [activeParticipantId, setActiveParticipantId] = useState<number | null>(
+		null
+	);
+	const menuRef = useRef<HTMLDivElement | null>(null);
+	const currentUserEmail = useCurrentUserEmail();
+	const transferSharedCartOwnership = useTransferSharedCartOwnership();
+	const removeSharedCartParticipant = useRemoveSharedCartParticipant();
+
+	const currentParticipant = participants.find(
+		(participant) => participant.email === currentUserEmail
+	);
+	const isCurrentUserOwner = currentParticipant?.role === "owner";
+
+	useEffect(() => {
+		const handlePointerDown = (event: MouseEvent) => {
+			if (!menuRef.current?.contains(event.target as Node)) {
+				setActiveParticipantId(null);
+			}
+		};
+
+		document.addEventListener("mousedown", handlePointerDown);
+		return () => document.removeEventListener("mousedown", handlePointerDown);
+	}, []);
 
 	const handleCopyLink = useCallback(async () => {
 		try {
@@ -50,7 +80,19 @@ export default function SharedCartPanel({
 	};
 
 	const handleRemoveInvitedEmail = (email: string) => {
-		setInvitedEmails((prev) => prev.filter((currentEmail) => currentEmail !== email));
+		setInvitedEmails((prev) =>
+			prev.filter((currentEmail) => currentEmail !== email)
+		);
+	};
+
+	const handleTransferOwnership = (participantId: number) => {
+		transferSharedCartOwnership(cartId, participantId);
+		setActiveParticipantId(null);
+	};
+
+	const handleRemoveParticipant = (participantId: number) => {
+		removeSharedCartParticipant(cartId, participantId);
+		setActiveParticipantId(null);
 	};
 
 	return (
@@ -67,7 +109,7 @@ export default function SharedCartPanel({
 				<p className="text-xs font-medium uppercase tracking-wide text-gray-500">
 					참여자 목록
 				</p>
-				<div className="flex flex-col gap-3">
+				<div ref={menuRef} className="flex flex-col gap-3">
 					{participants.map((participant) => (
 						<div
 							key={participant.id}
@@ -83,9 +125,50 @@ export default function SharedCartPanel({
 									<p className="text-xs text-gray-500">{participant.email}</p>
 								</div>
 							</div>
-							<span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600">
-								{participant.role === "owner" ? "소유자" : "참여자"}
-							</span>
+							<div className="relative">
+								{participant.role === "owner" ? (
+									<span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600">
+										소유자
+									</span>
+								) : isCurrentUserOwner ? (
+									<>
+										<button
+											type="button"
+											onClick={() =>
+												setActiveParticipantId((currentId) =>
+													currentId === participant.id ? null : participant.id
+												)
+											}
+											className="rounded-full bg-white px-2 py-1 text-xs font-medium text-[#456A9B] transition-colors hover:bg-[#EEF4FF]">
+											참여자
+										</button>
+										{activeParticipantId === participant.id && (
+											<div className="absolute right-0 top-[calc(100%+8px)] z-10 min-w-[132px] rounded-xl border border-[#EDE9E0] bg-white p-1 shadow-lg">
+												<button
+													type="button"
+													onClick={() =>
+														handleTransferOwnership(participant.id)
+													}
+													className="w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-[#F7F3E9]">
+													소유자 넘기기
+												</button>
+												<button
+													type="button"
+													onClick={() =>
+														handleRemoveParticipant(participant.id)
+													}
+													className="w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-red-500 transition-colors hover:bg-red-50">
+													참여자 강퇴
+												</button>
+											</div>
+										)}
+									</>
+								) : (
+									<span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600">
+										참여자
+									</span>
+								)}
+							</div>
 						</div>
 					))}
 				</div>
@@ -99,7 +182,9 @@ export default function SharedCartPanel({
 						</p>
 						<div className="flex items-center gap-2 rounded-xl bg-[#F7F3E9] px-3 py-2">
 							<Link className="h-3.5 w-3.5 shrink-0 text-gray-400" />
-							<span className="flex-1 truncate text-xs text-gray-500">{shareLink}</span>
+							<span className="flex-1 truncate text-xs text-gray-500">
+								{shareLink}
+							</span>
 						</div>
 						<button
 							onClick={handleCopyLink}
@@ -153,7 +238,9 @@ export default function SharedCartPanel({
 									<div
 										key={email}
 										className="flex items-center justify-between rounded-lg bg-[#F7F3E9] px-3 py-1.5">
-										<span className="truncate text-xs text-gray-700">{email}</span>
+										<span className="truncate text-xs text-gray-700">
+											{email}
+										</span>
 										<button
 											onClick={() => handleRemoveInvitedEmail(email)}
 											className="ml-2 shrink-0 text-gray-400 transition-colors hover:text-red-500">

@@ -23,16 +23,17 @@ export interface CartBase {
 	id: number;
 	name: string;
 	items: CartItem[];
+	isPublic?: boolean;
 	budget?: number;
 	purpose?: string;
 	participants?: CartParticipant[];
 }
 
 // 개인 장바구니 타입 (내 장바구니 - private)
-export interface PersonalCart extends CartBase {}
+export type PersonalCart = CartBase;
 
 // 공유 장바구니 타입 (내 장바구니 - shared with team)
-export interface SharedCart extends CartBase {}
+export type SharedCart = CartBase;
 
 // 공개 장바구니 카테고리 (ProductSection 카테고리와 동일)
 export type CartCategory = "living" | "ingredients" | "office" | "camping";
@@ -43,6 +44,7 @@ export interface PublicCart {
 	ownerName: string; // 장바구니 소유자 닉네임
 	name: string;
 	type: "personal" | "shared"; // 소유자 기준 개인 or 공유 여부
+	isPublic?: boolean;
 	category: CartCategory; // 장바구니 주요 카테고리
 	items: CartItem[];
 	likeCount: number; // 인기도 지표
@@ -55,10 +57,14 @@ export interface PublicCart {
 // 내 장바구니 데이터
 // ─────────────────────────────────────────
 
+export const CURRENT_USER_EMAIL = "haneul@wisoft.io";
+export const CURRENT_USER_NAME = "정하늘";
+
 export const personalCarts: PersonalCart[] = [
 	{
 		id: 1,
 		name: "겨울 옷 쇼핑 목록",
+		isPublic: false,
 		budget: 250000,
 		purpose: "겨울 식재료 준비",
 		items: [
@@ -89,7 +95,8 @@ export const personalCarts: PersonalCart[] = [
 				price: 8900,
 				thumbnail:
 					"https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
-				description: "아삭하고 달콤한 국내산 사과. 아침 식사 대용으로도 좋습니다.",
+				description:
+					"아삭하고 달콤한 국내산 사과. 아침 식사 대용으로도 좋습니다.",
 				category: "ingredients",
 			},
 		],
@@ -100,6 +107,7 @@ export const sharedCarts: SharedCart[] = [
 	{
 		id: 1,
 		name: "Wisoft 겨울 워크숍",
+		isPublic: true,
 		budget: 120000,
 		purpose: "워크숍 준비",
 		participants: [
@@ -135,7 +143,8 @@ export const sharedCarts: SharedCart[] = [
 					"https://images.unsplash.com/photo-1585336261022-680e295ce3fe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400",
 				addedBy: "정하늘",
 				addedByAvatar: "정",
-				description: "부드러운 필기감과 선명한 잉크로 오랜 시간 사용 가능한 볼펜입니다.",
+				description:
+					"부드러운 필기감과 선명한 잉크로 오랜 시간 사용 가능한 볼펜입니다.",
 				category: "office",
 			},
 			{
@@ -162,6 +171,64 @@ export const sharedCarts: SharedCart[] = [
 				addedByAvatar: "김",
 				description:
 					"초소형 수신기와 긴 배터리 수명으로 편리한 무선 환경을 제공합니다.",
+				category: "office",
+			},
+		],
+	},
+	{
+		id: 2,
+		name: "사내 탕비실 채우기",
+		isPublic: false,
+		budget: 180000,
+		purpose: "팀 공용 간식과 소모품 구매",
+		participants: [
+			{
+				id: 4,
+				name: "박지수",
+				email: "jisu@wisoft.io",
+				role: "owner",
+				avatar: "박",
+			},
+			{
+				id: 5,
+				name: "정하늘",
+				email: "haneul@wisoft.io",
+				role: "member",
+				avatar: "정",
+			},
+			{
+				id: 6,
+				name: "김도윤",
+				email: "doyoon@wisoft.io",
+				role: "member",
+				avatar: "김",
+			},
+		],
+		items: [
+			{
+				id: 7,
+				productId: 41,
+				name: "드립백 커피 20입",
+				price: 16900,
+				thumbnail:
+					"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80",
+				addedBy: "박지수",
+				addedByAvatar: "박",
+				description:
+					"사무실에서 간편하게 마실 수 있는 산미 적은 드립백 커피입니다.",
+				category: "office",
+			},
+			{
+				id: 8,
+				productId: 42,
+				name: "종이컵 1,000개입",
+				price: 7900,
+				thumbnail:
+					"https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?w=400&q=80",
+				addedBy: "정하늘",
+				addedByAvatar: "정",
+				description:
+					"회의실과 탕비실에서 넉넉하게 사용할 수 있는 대용량 종이컵입니다.",
 				category: "office",
 			},
 		],

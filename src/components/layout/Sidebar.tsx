@@ -1,19 +1,23 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Inbox, MoreHorizontal, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { personalCarts, sharedCarts } from "../../mock/cartData.ts";
 import {
 	useIsSidebarOpen,
 	useCloseSidebar,
 	useOpenCreateCartModal,
 	useOpenCreateSharedCartModal,
+	useOpenManageCartModal,
 } from "../../store/useCartModalStore.ts";
+import { usePersonalCarts, useSharedCarts } from "../../store/useCartStore.ts";
 
 export default function Sidebar() {
 	const isSidebarOpen = useIsSidebarOpen();
 	const closeSidebar = useCloseSidebar();
 	const openCreateCartModal = useOpenCreateCartModal();
 	const openCreateSharedCartModal = useOpenCreateSharedCartModal();
+	const openManageCartModal = useOpenManageCartModal();
+	const personalCarts = usePersonalCarts();
+	const sharedCarts = useSharedCarts();
 	const navigate = useNavigate();
 
 	const handleCartClick = (cartId: number, cartType: "personal" | "shared") => {
@@ -76,20 +80,30 @@ export default function Sidebar() {
 
 									<div className="mt-1">
 										{personalCarts.map((cart) => (
-											<button
+											<div
 												key={cart.id}
-												onClick={() => handleCartClick(cart.id, "personal")}
-												className="w-full px-3 pl-6 py-1.5 flex items-center gap-2 text-base text-gray-700 hover:bg-gray-200/50 transition-colors group/item">
+												className="group/item flex w-full items-center gap-2 px-3 py-1.5 pl-6 text-base text-gray-700 transition-colors hover:bg-gray-200/50">
 												<Inbox className="w-4 h-4" />
-												<span className="flex-1 text-left">{cart.name}</span>
+												<button
+													type="button"
+													onClick={() => handleCartClick(cart.id, "personal")}
+													className="flex-1 text-left">
+													{cart.name}
+												</button>
 												<div className="opacity-0 group-hover/item:opacity-100 transition-opacity">
 													<button
-														onClick={(e) => e.stopPropagation()}
+														type="button"
+														onClick={() =>
+															openManageCartModal({
+																id: cart.id,
+																type: "personal",
+															})
+														}
 														className="p-0.5 hover:bg-gray-300/50 rounded">
 														<MoreHorizontal className="w-3.5 h-3.5 text-gray-500" />
 													</button>
 												</div>
-											</button>
+											</div>
 										))}
 
 										<button
@@ -111,20 +125,30 @@ export default function Sidebar() {
 
 									<div className="mt-1">
 										{sharedCarts.map((cart) => (
-											<button
+											<div
 												key={cart.id}
-												onClick={() => handleCartClick(cart.id, "shared")}
-												className="w-full px-3 pl-6 py-1.5 flex items-center gap-2 text-base text-gray-700 hover:bg-gray-200/50 transition-colors group/item">
+												className="group/item flex w-full items-center gap-2 px-3 py-1.5 pl-6 text-base text-gray-700 transition-colors hover:bg-gray-200/50">
 												<Inbox className="w-4 h-4" />
-												<span className="flex-1 text-left">{cart.name}</span>
+												<button
+													type="button"
+													onClick={() => handleCartClick(cart.id, "shared")}
+													className="flex-1 text-left">
+													{cart.name}
+												</button>
 												<div className="opacity-0 group-hover/item:opacity-100 transition-opacity">
 													<button
-														onClick={(e) => e.stopPropagation()}
+														type="button"
+														onClick={() =>
+															openManageCartModal({
+																id: cart.id,
+																type: "shared",
+															})
+														}
 														className="p-0.5 hover:bg-gray-300/50 rounded">
 														<MoreHorizontal className="w-3.5 h-3.5 text-gray-500" />
 													</button>
 												</div>
-											</button>
+											</div>
 										))}
 
 										<button

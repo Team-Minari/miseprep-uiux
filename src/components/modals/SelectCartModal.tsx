@@ -1,12 +1,14 @@
 import { motion } from "framer-motion";
 import { X, Inbox } from "lucide-react";
 import { useEffect } from "react";
-import { personalCarts, sharedCarts } from "../../mock/cartData";
 import { useCloseSelectCartModal } from "../../store/useCartModalStore.ts";
+import { usePersonalCarts, useSharedCarts } from "../../store/useCartStore.ts";
 
 // 장바구니 존재 -> 장바구니 선택 모달
 export default function SelectCartModal() {
 	const closeSelectCartModal = useCloseSelectCartModal();
+	const personalCarts = usePersonalCarts();
+	const sharedCarts = useSharedCarts();
 
 	// 전체 장바구니 목록 (개인 + 공유)
 	const allCarts = [

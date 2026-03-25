@@ -1,16 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { Heart, ShoppingBag, ShoppingCart, Trash2, User } from "lucide-react";
 import {
-	Heart,
-	ShoppingBag,
-	ShoppingCart,
-	Trash2,
-	User,
-} from "lucide-react";
-import {
-	personalCarts,
 	publicCarts,
-	sharedCarts,
 	type CartItem,
 	type CartParticipant,
 } from "../../mock/cartData";
@@ -21,6 +13,7 @@ import {
 } from "../../mock/product";
 import SharedCartPanel from "../../components/cart/SharedCartPanel";
 import { useOpenSelectCartModal } from "../../store/useCartModalStore";
+import { usePersonalCarts, useSharedCarts } from "../../store/useCartStore";
 
 type CartType = "personal" | "shared";
 
@@ -47,6 +40,8 @@ export default function CartDetailPage() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const openSelectCartModal = useOpenSelectCartModal();
+	const personalCarts = usePersonalCarts();
+	const sharedCarts = useSharedCarts();
 
 	const cartId = Number(searchParams.get("id"));
 	const cartType = searchParams.get("type") as CartType | null;
@@ -55,7 +50,9 @@ export default function CartDetailPage() {
 
 	const cart: CartDetail | undefined = useMemo(() => {
 		if (isPublic) {
-			const found = publicCarts.find((currentCart) => currentCart.id === cartId);
+			const found = publicCarts.find(
+				(currentCart) => currentCart.id === cartId
+			);
 			return found ? { ...found, type: found.type } : undefined;
 		}
 
@@ -71,14 +68,20 @@ export default function CartDetailPage() {
 		];
 
 		return allCarts.find(
-			(currentCart) => currentCart.id === cartId && currentCart.type === cartType
+			(currentCart) =>
+				currentCart.id === cartId && currentCart.type === cartType
 		);
-	}, [cartId, cartType, isPublic]);
+	}, [cartId, cartType, isPublic, personalCarts, sharedCarts]);
 
 	const [items, setItems] = useState<CartItem[]>(cart?.items ?? []);
 	const [checkedIds, setCheckedIds] = useState<Set<number>>(
 		new Set(cart?.items.map((item) => item.id) ?? [])
 	);
+
+	useEffect(() => {
+		setItems(cart?.items ?? []);
+		setCheckedIds(new Set(cart?.items.map((item) => item.id) ?? []));
+	}, [cart]);
 
 	const enhancedItems = useMemo<EnrichedCartItem[]>(
 		() =>
@@ -107,7 +110,8 @@ export default function CartDetailPage() {
 		[items]
 	);
 
-	const isAllChecked = enhancedItems.length > 0 && checkedIds.size === enhancedItems.length;
+	const isAllChecked =
+		enhancedItems.length > 0 && checkedIds.size === enhancedItems.length;
 	const isIndeterminate =
 		checkedIds.size > 0 && checkedIds.size < enhancedItems.length;
 
@@ -151,8 +155,11 @@ export default function CartDetailPage() {
 
 	const checkedItems = enhancedItems.filter((item) => checkedIds.has(item.id));
 	const totalPrice = checkedItems.reduce((acc, item) => acc + item.price, 0);
-	const showSharedPanel = cart?.type === "shared" && !!cart.participants?.length;
-	const budgetUsage = cart?.budget ? Math.min((totalPrice / cart.budget) * 100, 100) : 0;
+	const showSharedPanel =
+		cart?.type === "shared" && !!cart.participants?.length;
+	const budgetUsage = cart?.budget
+		? Math.min((totalPrice / cart.budget) * 100, 100)
+		: 0;
 
 	const formatPrice = (price: number) => `${price.toLocaleString("ko-KR")}원`;
 
@@ -243,65 +250,65 @@ export default function CartDetailPage() {
 									: "w-full"
 							}`}>
 							<div className="min-w-0">
-							<div className="mb-1 flex items-center justify-between px-6 py-3">
-								<label className="flex cursor-pointer select-none items-center gap-2.5">
-									<input
-										type="checkbox"
-										checked={isAllChecked}
-										ref={(element) => {
-											if (element) {
-												element.indeterminate = isIndeterminate;
-											}
-										}}
-										onChange={handleToggleAll}
-										className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-gray-800"
-									/>
-									<span className="text-sm font-medium text-gray-700">
-										{isPublic ? "담을 상품 선택" : "전체 선택"}
-										<span className="ml-1 text-gray-400">
-											({checkedIds.size}/{enhancedItems.length})
+								<div className="mb-1 flex items-center justify-between px-6 py-3">
+									<label className="flex cursor-pointer select-none items-center gap-2.5">
+										<input
+											type="checkbox"
+											checked={isAllChecked}
+											ref={(element) => {
+												if (element) {
+													element.indeterminate = isIndeterminate;
+												}
+											}}
+											onChange={handleToggleAll}
+											className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-gray-800"
+										/>
+										<span className="text-sm font-medium text-gray-700">
+											{isPublic ? "담을 상품 선택" : "전체 선택"}
+											<span className="ml-1 text-gray-400">
+												({checkedIds.size}/{enhancedItems.length})
+											</span>
 										</span>
-									</span>
-								</label>
+									</label>
 
-								{!isPublic && checkedIds.size > 0 && (
-									<button
-										onClick={handleDeleteChecked}
-										className="text-sm text-red-400 transition-colors hover:text-red-600">
-										선택 삭제
-									</button>
-								)}
-							</div>
+									{!isPublic && checkedIds.size > 0 && (
+										<button
+											onClick={handleDeleteChecked}
+											className="text-sm text-red-400 transition-colors hover:text-red-600">
+											선택 삭제
+										</button>
+									)}
+								</div>
 
-							<div className="overflow-hidden rounded-2xl bg-white divide-y divide-[#F0EBE0]">
-								{enhancedItems.map((item) => {
-									const isChecked = checkedIds.has(item.id);
+								<div className="overflow-hidden rounded-2xl bg-white divide-y divide-[#F0EBE0]">
+									{enhancedItems.map((item) => {
+										const isChecked = checkedIds.has(item.id);
 
-									return (
-										<div
-											key={item.id}
-											className={`flex items-center gap-5 px-6 py-5 transition-colors ${
-												isChecked ? "bg-white" : "bg-gray-50/60"
-											}`}>
-											<input
-												type="checkbox"
-												checked={isChecked}
-												onChange={() => handleToggleItem(item.id)}
-												className="h-4 w-4 shrink-0 cursor-pointer rounded border-gray-300 accent-gray-800"
-											/>
-
-											<button
-												type="button"
-												onClick={() => handleOpenProduct(item)}
-												className={`h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#F7F3E9] text-left transition hover:scale-[1.02] ${
-													!isChecked ? "opacity-40" : ""
+										return (
+											<div
+												key={item.id}
+												className={`flex items-center gap-5 px-6 py-5 transition-colors ${
+													isChecked ? "bg-white" : "bg-gray-50/60"
 												}`}>
-												<img
-													src={item.fallbackProduct.image_url}
-													alt={item.name}
-													className="h-full w-full object-cover"
+												<input
+													type="checkbox"
+													checked={isChecked}
+													onChange={() => handleToggleItem(item.id)}
+													className="h-4 w-4 shrink-0 cursor-pointer rounded border-gray-300 accent-gray-800"
 												/>
-											</button>
+
+												<button
+													type="button"
+													onClick={() => handleOpenProduct(item)}
+													className={`h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#F7F3E9] text-left transition hover:scale-[1.02] ${
+														!isChecked ? "opacity-40" : ""
+													}`}>
+													<img
+														src={item.fallbackProduct.image_url}
+														alt={item.name}
+														className="h-full w-full object-cover"
+													/>
+												</button>
 
 												<div
 													className={`min-w-0 flex-1 transition-opacity ${
@@ -312,52 +319,53 @@ export default function CartDetailPage() {
 															{item.categoryLabel}
 														</span>
 														{cart?.type === "shared" && item.addedBy && (
-														<span className="rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[#456A9B]">
-															{item.addedBy} 담음
-														</span>
-													)}
+															<span className="rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[#456A9B]">
+																{item.addedBy} 담음
+															</span>
+														)}
+													</div>
+
+													<button
+														type="button"
+														onClick={() => handleOpenProduct(item)}
+														className="block max-w-full text-left">
+														<p className="truncate text-base font-semibold text-gray-900 hover:text-[#7A6E5A]">
+															{item.fallbackProduct.name}
+														</p>
+													</button>
+													<p className="mt-1 line-clamp-2 text-sm text-gray-500">
+														{item.description}
+													</p>
+													<div className="mt-3">
+														<p className="text-sm font-semibold text-gray-800">
+															{formatPrice(item.price)}
+														</p>
+													</div>
 												</div>
 
-												<button
-													type="button"
-													onClick={() => handleOpenProduct(item)}
-													className="block max-w-full text-left">
-													<p className="truncate text-base font-semibold text-gray-900 hover:text-[#7A6E5A]">
-														{item.fallbackProduct.name}
-													</p>
-												</button>
-												<p className="mt-1 line-clamp-2 text-sm text-gray-500">
-													{item.description}
-												</p>
-												<div className="mt-3">
-													<p className="text-sm font-semibold text-gray-800">
+												<div className="w-24 text-right">
+													<p className="text-sm font-bold text-gray-900">
 														{formatPrice(item.price)}
 													</p>
 												</div>
-											</div>
 
-											<div className="w-24 text-right">
-												<p className="text-sm font-bold text-gray-900">
-													{formatPrice(item.price)}
-												</p>
+												{!isPublic && (
+													<button
+														onClick={() => handleDelete(item.id)}
+														className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500">
+														<Trash2 className="h-4 w-4" />
+													</button>
+												)}
 											</div>
-
-											{!isPublic && (
-												<button
-													onClick={() => handleDelete(item.id)}
-													className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500">
-													<Trash2 className="h-4 w-4" />
-												</button>
-											)}
-										</div>
-									);
-								})}
-							</div>
+										);
+									})}
+								</div>
 							</div>
 
 							{showSharedPanel ? (
 								<div className="sticky top-6 flex flex-col gap-4">
 									<SharedCartPanel
+										cartId={cart!.id}
 										shareLink={`${window.location.origin}/cart/detail?id=${cartId}&type=${cartType}`}
 										participants={cart!.participants!}
 									/>
@@ -405,7 +413,9 @@ export default function CartDetailPage() {
 										<span>{checkedItems.length}개</span>
 									</div>
 									<div className="mt-1 flex items-baseline justify-between">
-										<span className="text-sm font-medium text-gray-700">합계</span>
+										<span className="text-sm font-medium text-gray-700">
+											합계
+										</span>
 										<span className="text-xl font-bold text-gray-900">
 											{formatPrice(totalPrice)}
 										</span>
@@ -424,7 +434,9 @@ export default function CartDetailPage() {
 											</button>
 											<button
 												onClick={() => {
-													setCheckedIds(new Set(enhancedItems.map((item) => item.id)));
+													setCheckedIds(
+														new Set(enhancedItems.map((item) => item.id))
+													);
 													openSelectCartModal();
 												}}
 												className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#D9CEBC] py-3.5 text-sm font-semibold tracking-wide text-gray-700 transition-colors hover:bg-[#FDFBF6]">

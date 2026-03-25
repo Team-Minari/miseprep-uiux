@@ -1586,7 +1586,8 @@ export const findProductById = (id: number): Product | undefined =>
 	products.find((p) => p.id === id);
 
 export const getCategoryLabel = (categoryId: string): string =>
-	categories.find((category) => category.id === categoryId)?.label ?? categoryId;
+	categories.find((category) => category.id === categoryId)?.label ??
+	categoryId;
 
 export const toProductDetail = (product: ProductSnapshot): ProductDetail => ({
 	...productDetail,
@@ -1595,8 +1596,12 @@ export const toProductDetail = (product: ProductSnapshot): ProductDetail => ({
 	images: [product.image_url],
 	features: [
 		{ text: `${product.name} 상품 상세 페이지입니다.` },
-		{ text: "목록, 장바구니, 상세 페이지에서 동일한 상품 기준 정보를 제공합니다." },
-		{ text: `${getCategoryLabel(product.category)} 카테고리의 대표 상품 정보입니다.` },
+		{
+			text: "목록, 장바구니, 상세 페이지에서 동일한 상품 기준 정보를 제공합니다.",
+		},
+		{
+			text: `${getCategoryLabel(product.category)} 카테고리의 대표 상품 정보입니다.`,
+		},
 	],
 	specs: [
 		{ label: "카테고리", value: getCategoryLabel(product.category) },

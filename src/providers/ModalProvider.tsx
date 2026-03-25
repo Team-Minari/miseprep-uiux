@@ -12,6 +12,9 @@ const AddToCartModal = lazy(
 const SelectCartModal = lazy(
 	() => import("../components/modals/SelectCartModal")
 );
+const CartManageModal = lazy(
+	() => import("../components/modals/CartManageModal")
+);
 
 const MODAL_MAP: Record<
 	ModalKey,
@@ -21,10 +24,16 @@ const MODAL_MAP: Record<
 	createSharedCart: CreateCartModal,
 	addToCart: AddToCartModal,
 	selectCart: SelectCartModal,
+	manageCart: CartManageModal,
 };
 
 // 중복 렌더링 방지, createCart와 createSharedCart는 같은 컴포넌트이므로 한 번만 렌더링
-const UNIQUE_MODAL_KEYS: ModalKey[] = ["createCart", "addToCart", "selectCart"];
+const UNIQUE_MODAL_KEYS: ModalKey[] = [
+	"createCart",
+	"addToCart",
+	"selectCart",
+	"manageCart",
+];
 
 // 단일 모달 키에 대해 open 상태 구독 + Portal 렌더링
 function ModalPortal({
