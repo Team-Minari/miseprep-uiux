@@ -9,8 +9,9 @@ export default function ProductDetailPage() {
 	const { id } = useParams<{ id: string }>();
 	const location = useLocation();
 	const loadProduct = useLoadProduct();
-	const fallbackProduct = (location.state as { fallbackProduct?: ProductSnapshot } | null)
-		?.fallbackProduct;
+	const fallbackProduct = (
+		location.state as { fallbackProduct?: ProductSnapshot } | null
+	)?.fallbackProduct;
 
 	// URL 파라미터의 ID가 변경될 때 상품 데이터 로드
 	useEffect(() => {

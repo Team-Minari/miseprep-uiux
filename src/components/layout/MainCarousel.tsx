@@ -193,11 +193,16 @@ export default function MainCarousel() {
 								key={`${slideIdx}-${current}`}
 								initial={{ opacity: 0, y: 16 }}
 								animate={{ opacity: 1, y: 0 }}
-								transition={{ duration: 0.4, delay: position * 0.06, ease: "easeOut" }}
+								transition={{
+									duration: 0.4,
+									delay: position * 0.06,
+									ease: "easeOut",
+								}}
 								className="relative rounded-2xl overflow-hidden cursor-pointer select-none group"
 								style={{
 									height: isFocused ? "500px" : "460px",
-									flex: position === 0 || position === VISIBLE - 1 ? 0.82 : 1.18,
+									flex:
+										position === 0 || position === VISIBLE - 1 ? 0.82 : 1.18,
 									marginTop: isFocused ? 0 : "20px",
 								}}>
 								{/* 배경 이미지 */}
@@ -236,7 +241,10 @@ export default function MainCarousel() {
 									{/* 뱃지 */}
 									<span
 										className="text-[11px] font-semibold px-2.5 py-1 rounded-full text-white/90 backdrop-blur-sm"
-										style={{ background: `${slide.badgeColor}55`, border: `1px solid ${slide.badgeColor}88` }}>
+										style={{
+											background: `${slide.badgeColor}55`,
+											border: `1px solid ${slide.badgeColor}88`,
+										}}>
 										{slide.badge}
 									</span>
 								</div>
@@ -279,8 +287,7 @@ export default function MainCarousel() {
 									</p>
 
 									{/* CTA 버튼 */}
-									<button
-										className="flex items-center gap-1.5 text-xs font-semibold text-white/90 hover:text-white transition-colors group/btn">
+									<button className="flex items-center gap-1.5 text-xs font-semibold text-white/90 hover:text-white transition-colors group/btn">
 										<span>{slide.cta}</span>
 										<ArrowRight className="w-3 h-3 transition-transform group-hover/btn:translate-x-0.5" />
 									</button>
@@ -308,10 +315,11 @@ export default function MainCarousel() {
 								className="transition-all duration-300"
 								aria-label={`슬라이드 ${i + 1}`}>
 								<span
-									className={`block rounded-full transition-all duration-300 ${i === current
+									className={`block rounded-full transition-all duration-300 ${
+										i === current
 											? "w-5 h-1.5 bg-[#C8A97A]"
 											: "w-1.5 h-1.5 bg-gray-300 hover:bg-gray-400"
-										}`}
+									}`}
 								/>
 							</button>
 						))}

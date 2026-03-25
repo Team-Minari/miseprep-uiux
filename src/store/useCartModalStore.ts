@@ -7,7 +7,10 @@ export type ModalKey =
 	| "createCart"
 	| "createSharedCart"
 	| "addToCart"
-	| "selectCart";
+	| "selectCart"
+	| "manageCart";
+
+type ManagedCartType = "personal" | "shared";
 
 // 사이드바 장바구니 모달 상태를 관리하는 전용 store
 export const useCartModalStore = create(
@@ -20,6 +23,11 @@ export const useCartModalStore = create(
 				isCreateSharedCartModalOpen: false,
 				isAddToCartModalOpen: false,
 				isSelectCartModalOpen: false,
+				isManageCartModalOpen: false,
+				managedCart: null as null | {
+					id: number;
+					type: ManagedCartType;
+				},
 			},
 			(set) => ({
 				// 사이드바 액션
@@ -76,6 +84,20 @@ export const useCartModalStore = create(
 						state.isSelectCartModalOpen = false;
 					}),
 
+				openManageCartModal: (managedCart: {
+					id: number;
+					type: ManagedCartType;
+				}) =>
+					set((state) => {
+						state.managedCart = managedCart;
+						state.isManageCartModalOpen = true;
+					}),
+				closeManageCartModal: () =>
+					set((state) => {
+						state.isManageCartModalOpen = false;
+						state.managedCart = null;
+					}),
+
 				// 모든 모달 닫기
 				closeAllModals: () =>
 					set((state) => {
@@ -83,6 +105,8 @@ export const useCartModalStore = create(
 						state.isCreateSharedCartModalOpen = false;
 						state.isAddToCartModalOpen = false;
 						state.isSelectCartModalOpen = false;
+						state.isManageCartModalOpen = false;
+						state.managedCart = null;
 					}),
 			})
 		)
@@ -165,6 +189,22 @@ export const useCloseSelectCartModal = () => {
 	return useCartModalStore((state) => state.closeSelectCartModal);
 };
 
+export const useIsManageCartModalOpen = () => {
+	return useCartModalStore((state) => state.isManageCartModalOpen);
+};
+
+export const useOpenManageCartModal = () => {
+	return useCartModalStore((state) => state.openManageCartModal);
+};
+
+export const useCloseManageCartModal = () => {
+	return useCartModalStore((state) => state.closeManageCartModal);
+};
+
+export const useManagedCart = () => {
+	return useCartModalStore((state) => state.managedCart);
+};
+
 // ModalProvider에서 ModalKey로 해당 모달의 open 상태를 조회하는 유틸 훅
 export const useModalOpenState = (key: ModalKey): boolean => {
 	return useCartModalStore((state) => {
@@ -173,6 +213,7 @@ export const useModalOpenState = (key: ModalKey): boolean => {
 			createSharedCart: state.isCreateSharedCartModalOpen,
 			addToCart: state.isAddToCartModalOpen,
 			selectCart: state.isSelectCartModalOpen,
+			manageCart: state.isManageCartModalOpen,
 		};
 		return stateMap[key];
 	});

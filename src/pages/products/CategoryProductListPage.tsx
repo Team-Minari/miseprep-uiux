@@ -6,11 +6,11 @@ import {
 	getProductsByCategory,
 } from "../../mock/product";
 import type { Product } from "../../mock/product";
-import { personalCarts, sharedCarts } from "../../mock/cartData";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
 } from "../../store/useCartModalStore";
+import { useAllCartsCount } from "../../store/useCartStore";
 
 const PAGE_SIZE = 24; // 4열 × 6행
 
@@ -21,10 +21,11 @@ function ProductCard({ product }: { product: Product }) {
 	const navigate = useNavigate();
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
+	const cartCount = useAllCartsCount();
 
 	const handleAddToCart = (e: React.MouseEvent) => {
 		e.stopPropagation();
-		const hasCartData = personalCarts.length > 0 || sharedCarts.length > 0;
+		const hasCartData = cartCount > 0;
 		if (hasCartData) {
 			openSelectCartModal();
 		} else {

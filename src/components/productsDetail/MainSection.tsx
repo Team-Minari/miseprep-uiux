@@ -1,19 +1,20 @@
 import { ShoppingCart } from "lucide-react";
 import { useCurrentProduct } from "../../store/useProductStore";
-import { personalCarts, sharedCarts } from "../../mock/cartData";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
 } from "../../store/useCartModalStore.ts";
 import { getCategoryLabel } from "../../mock/product";
+import { useAllCartsCount } from "../../store/useCartStore.ts";
 
 export default function MainSection() {
 	const product = useCurrentProduct();
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
+	const cartCount = useAllCartsCount();
 
 	const handleAddToCart = () => {
-		const hasCartData = personalCarts.length > 0 || sharedCarts.length > 0;
+		const hasCartData = cartCount > 0;
 		if (hasCartData) {
 			openSelectCartModal();
 		} else {
