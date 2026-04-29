@@ -1,10 +1,11 @@
 import { motion } from "motion/react";
 import { ShoppingCart } from "lucide-react";
 import SubHeader from "../../components/layout/SubHeader.tsx";
+import { getKakaoAuthorizeUrl } from "../../api/auth/authApi";
 
 export default function LoginPage() {
 	const handleKakaoLogin = () => {
-		alert("카카오 로그인은 현재 구현 예정입니다.");
+		window.location.href = getKakaoAuthorizeUrl();
 	};
 
 	return (
