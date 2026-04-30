@@ -10,6 +10,9 @@ import {
 	deleteAllCartItems,
 	checkCartItem,
 	uncheckCartItem,
+	kickParticipant,
+	transferOwnership,
+	joinCart,
 } from "../../api/cart/cartApi";
 import { CART_KEYS } from "./useCart";
 import type {
@@ -17,6 +20,7 @@ import type {
 	UpdateCartSettingRequest,
 	AddCartItemRequest,
 	UpdateCartItemRequest,
+	OwnerTransferRequest,
 } from "../../types/cart";
 
 /** 장바구니 생성 */
@@ -175,6 +179,64 @@ export const useUncheckCartItem = () => {
 			queryClient.invalidateQueries({
 				queryKey: CART_KEYS.items(variables.cartId),
 			});
+		},
+	});
+};
+
+// ── 참여자 관리 Mutation ──
+
+/** 참여자 강퇴 */
+export const useKickParticipant = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			cartId,
+			targetMemberId,
+		}: {
+			cartId: number;
+			targetMemberId: number;
+		}) => kickParticipant(cartId, targetMemberId),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.participants(variables.cartId),
+			});
+		},
+	});
+};
+
+/** 소유권 이전 */
+export const useTransferOwnership = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			cartId,
+			body,
+		}: {
+			cartId: number;
+			body: OwnerTransferRequest;
+		}) => transferOwnership(cartId, body),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.detail(variables.cartId),
+			});
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.participants(variables.cartId),
+			});
+			queryClient.invalidateQueries({ queryKey: CART_KEYS.myList() });
+		},
+	});
+};
+
+/** 초대 링크로 참여 */
+export const useJoinCart = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (token: string) => joinCart(token),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: CART_KEYS.myList() });
 		},
 	});
 };

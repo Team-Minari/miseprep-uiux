@@ -62,3 +62,15 @@ export interface AddCartItemRequest {
 export interface UpdateCartItemRequest {
 	quantity: number;
 }
+
+/** PATCH /api/carts/{cartId}/owner 소유권 이전 */
+export interface OwnerTransferRequest {
+	newOwnerId: number;
+}
+
+/** 소유권 이전 응답 */
+export interface OwnerTransferResponse {
+	prevOwnerId: number;
+	newOwnerId: number;
+	newOwnerName: string;
+}

@@ -9,6 +9,8 @@ import type {
 	UpdateCartSettingRequest,
 	AddCartItemRequest,
 	UpdateCartItemRequest,
+	OwnerTransferRequest,
+	OwnerTransferResponse,
 } from "../../types/cart";
 
 const BASE = "/api/carts";
@@ -97,3 +99,26 @@ export const checkCartItem = (cartId: number, itemId: number) =>
 /** 아이템 체크 해제 */
 export const uncheckCartItem = (cartId: number, itemId: number) =>
 	apiClient.delete(`${BASE}/${cartId}/items/${itemId}/check`);
+
+// ── 참여자 관리 Mutation ──
+
+/** 참여자 강퇴 (소유자 전용) */
+export const kickParticipant = (cartId: number, targetMemberId: number) =>
+	apiClient.delete(`${BASE}/${cartId}/participants/${targetMemberId}`);
+
+/** 소유권 이전 (소유자 전용) */
+export const transferOwnership = (
+	cartId: number,
+	body: OwnerTransferRequest
+) =>
+	apiClient
+		.patch<ApiResponse<OwnerTransferResponse>>(`${BASE}/${cartId}/owner`, body)
+		.then((res) => res.data.data);
+
+/** 초대 링크로 장바구니 참여 */
+export const joinCart = (token: string) =>
+	apiClient
+		.post<ApiResponse<CartResponse>>(`${BASE}/join`, null, {
+			params: { token },
+		})
+		.then((res) => res.data.data);

@@ -3,6 +3,10 @@ import { Check, Link, Mail, Users, X } from "lucide-react";
 import type { ParticipantResponse } from "../../types/cart";
 import { useAuthStore } from "../../store/auth/useAuthStore";
 import { useCartDetail } from "../../hooks/cart/useCart";
+import {
+	useKickParticipant,
+	useTransferOwnership,
+} from "../../hooks/cart/useCartMutation";
 
 interface SharedCartPanelProps {
 	cartId: number;
@@ -23,6 +27,8 @@ export default function SharedCartPanel({
 	const currentUserId = useAuthStore((s) => s.user?.id);
 	const { data: cart } = useCartDetail(cartId);
 	const isCurrentUserOwner = cart?.ownerId === currentUserId;
+	const kickMutation = useKickParticipant();
+	const transferMutation = useTransferOwnership();
 
 	const handleCopyLink = useCallback(async () => {
 		try {
@@ -63,12 +69,19 @@ export default function SharedCartPanel({
 		);
 	};
 
-	const handleTransferOwnership = (_participantMemberId: number) => {
-		// Commit 5에서 API 연동 예정
+	const handleTransferOwnership = (participantMemberId: number) => {
+		const confirmed = window.confirm("소유권을 이전하시겠어요?");
+		if (!confirmed) return;
+		transferMutation.mutate({
+			cartId,
+			body: { newOwnerId: participantMemberId },
+		});
 	};
 
-	const handleRemoveParticipant = (_participantMemberId: number) => {
-		// Commit 5에서 API 연동 예정
+	const handleRemoveParticipant = (participantMemberId: number) => {
+		const confirmed = window.confirm("이 참여자를 강퇴하시겠어요?");
+		if (!confirmed) return;
+		kickMutation.mutate({ cartId, targetMemberId: participantMemberId });
 	};
 
 	return (
