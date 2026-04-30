@@ -1,29 +1,32 @@
-import { useEffect } from "react";
 import { useParams } from "react-router";
-import { useLocation } from "react-router-dom";
-import { useLoadProduct } from "../../store/useProductStore.ts";
+import { useProductDetail } from "../../hooks/product/useProduct";
 import MainSection from "../../components/productsDetail/MainSection.tsx";
-import type { ProductSnapshot } from "../../mock/product";
 
 export default function ProductDetailPage() {
 	const { id } = useParams<{ id: string }>();
-	const location = useLocation();
-	const loadProduct = useLoadProduct();
-	const fallbackProduct = (
-		location.state as { fallbackProduct?: ProductSnapshot } | null
-	)?.fallbackProduct;
+	const productId = Number(id) || 0;
+	const { data: product, isLoading } = useProductDetail(productId);
 
-	// URL 파라미터의 ID가 변경될 때 상품 데이터 로드
-	useEffect(() => {
-		if (id) {
-			loadProduct(Number(id), fallbackProduct);
-		}
-	}, [fallbackProduct, id, loadProduct]);
+	if (isLoading) {
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-white">
+				<p className="text-gray-400">상품 정보를 불러오는 중...</p>
+			</div>
+		);
+	}
+
+	if (!product) {
+		return (
+			<div className="flex min-h-screen items-center justify-center bg-white">
+				<p className="text-gray-400">상품을 찾을 수 없습니다.</p>
+			</div>
+		);
+	}
 
 	return (
 		<div className="min-h-screen w-full bg-white">
 			<div className="mx-auto mb-6 max-w-7xl px-4 py-8">
-				<MainSection />
+				<MainSection product={product} />
 			</div>
 		</div>
 	);

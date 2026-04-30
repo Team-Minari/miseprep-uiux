@@ -6,11 +6,7 @@ import {
 	type CartItem,
 	type CartParticipant,
 } from "../../mock/cartData";
-import {
-	findProductById,
-	getCategoryLabel,
-	type ProductSnapshot,
-} from "../../mock/product";
+import { getCategoryLabel } from "../../types/product";
 import SharedCartPanel from "../../components/cart/SharedCartPanel";
 import { useOpenSelectCartModal } from "../../store/useCartModalStore";
 import { usePersonalCarts, useSharedCarts } from "../../store/useCartStore";
@@ -33,7 +29,6 @@ type EnrichedCartItem = CartItem & {
 	detailProductId: number;
 	description: string;
 	categoryLabel: string;
-	fallbackProduct: ProductSnapshot;
 };
 
 export default function CartDetailPage() {
@@ -85,28 +80,13 @@ export default function CartDetailPage() {
 
 	const enhancedItems = useMemo<EnrichedCartItem[]>(
 		() =>
-			items.map((item) => {
-				const matchedProduct = findProductById(item.productId);
-				const fallbackProduct: ProductSnapshot = {
-					id: item.productId,
-					image_url: matchedProduct?.image_url ?? item.thumbnail,
-					name: matchedProduct?.name ?? item.name,
-					description:
-						matchedProduct?.description ??
-						item.description ??
-						"장바구니에서 담은 상품 상세 정보입니다.",
-					price: matchedProduct?.price ?? item.price,
-					category: matchedProduct?.category ?? item.category ?? "best",
-				};
-
-				return {
-					...item,
-					detailProductId: matchedProduct?.id ?? item.productId,
-					description: fallbackProduct.description,
-					categoryLabel: getCategoryLabel(fallbackProduct.category),
-					fallbackProduct,
-				};
-			}),
+			items.map((item) => ({
+				...item,
+				detailProductId: item.productId,
+				description:
+					item.description ?? "장바구니에서 담은 상품 상세 정보입니다.",
+				categoryLabel: getCategoryLabel(item.category ?? "best"),
+			})),
 		[items]
 	);
 
@@ -148,9 +128,7 @@ export default function CartDetailPage() {
 	};
 
 	const handleOpenProduct = (item: EnrichedCartItem) => {
-		navigate(`/product/${item.detailProductId}`, {
-			state: { fallbackProduct: item.fallbackProduct },
-		});
+		navigate(`/product/${item.detailProductId}`);
 	};
 
 	const checkedItems = enhancedItems.filter((item) => checkedIds.has(item.id));
@@ -304,7 +282,7 @@ export default function CartDetailPage() {
 														!isChecked ? "opacity-40" : ""
 													}`}>
 													<img
-														src={item.fallbackProduct.image_url}
+														src={item.thumbnail}
 														alt={item.name}
 														className="h-full w-full object-cover"
 													/>
@@ -330,7 +308,7 @@ export default function CartDetailPage() {
 														onClick={() => handleOpenProduct(item)}
 														className="block max-w-full text-left">
 														<p className="truncate text-base font-semibold text-gray-900 hover:text-[#7A6E5A]">
-															{item.fallbackProduct.name}
+															{item.name}
 														</p>
 													</button>
 													<p className="mt-1 line-clamp-2 text-sm text-gray-500">

@@ -1,11 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router";
 import { ShoppingCart } from "lucide-react";
-import {
-	categories,
-	getCategoryLabel,
-	getProductsByCategory,
-} from "../../mock/product";
+import { categories, getCategoryLabel } from "../../types/product";
+import { useProducts } from "../../hooks/product/useProduct";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
@@ -21,8 +18,8 @@ export default function ProductSection({ title }: ProductSectionProps) {
 	const [activeCategory, setActiveCategory] = useState(categories[0].id);
 
 	const currentCategory = categories.find((c) => c.id === activeCategory)!;
-	// categories[0] = best → 초기 탭은 베스트, 최대 8개(4열 × 2행) 표시
-	const currentProducts = getProductsByCategory(activeCategory).slice(0, 8);
+	const { data: products = [] } = useProducts({ category: activeCategory });
+	const currentProducts = products.slice(0, 8);
 
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
@@ -72,7 +69,7 @@ export default function ProductSection({ title }: ProductSectionProps) {
 								className="relative w-full rounded-xl overflow-hidden mb-3"
 								style={{ aspectRatio: "1 / 1" }}>
 								<img
-									src={product.image_url}
+									src={product.imageUrl}
 									alt={product.name}
 									className="w-full h-full object-cover"
 								/>

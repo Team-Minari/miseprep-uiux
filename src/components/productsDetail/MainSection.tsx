@@ -1,14 +1,17 @@
 import { ShoppingCart } from "lucide-react";
-import { useCurrentProduct } from "../../store/useProductStore";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
 } from "../../store/useCartModalStore.ts";
-import { getCategoryLabel } from "../../mock/product";
+import { getCategoryLabel } from "../../types/product";
 import { useAllCartsCount } from "../../store/useCartStore.ts";
+import type { Product } from "../../types/product";
 
-export default function MainSection() {
-	const product = useCurrentProduct();
+interface MainSectionProps {
+	product: Product;
+}
+
+export default function MainSection({ product }: MainSectionProps) {
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
 	const cartCount = useAllCartsCount();
@@ -27,7 +30,7 @@ export default function MainSection() {
 			<div className="overflow-hidden rounded-[28px] bg-[#F7F3E9]">
 				<div className="aspect-square">
 					<img
-						src={product.image_url}
+						src={product.imageUrl}
 						alt={product.name}
 						className="h-full w-full object-cover"
 					/>

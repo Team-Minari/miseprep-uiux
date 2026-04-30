@@ -3,9 +3,9 @@ import { ShoppingCart } from "lucide-react";
 import {
 	categories,
 	getCategoryLabel,
-	getProductsByCategory,
-} from "../../mock/product";
-import type { Product } from "../../mock/product";
+	type Product,
+} from "../../types/product";
+import { useProducts } from "../../hooks/product/useProduct";
 import {
 	useOpenAddToCartModal,
 	useOpenSelectCartModal,
@@ -42,7 +42,7 @@ function ProductCard({ product }: { product: Product }) {
 				className="relative w-full rounded-xl overflow-hidden mb-3"
 				style={{ aspectRatio: "1 / 1" }}>
 				<img
-					src={product.image_url}
+					src={product.imageUrl}
 					alt={product.name}
 					className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
 				/>
@@ -85,11 +85,8 @@ export default function CategoryProductListPage() {
 	// URL ?category= 파라미터로 카테고리 결정. 없으면 best(첫 번째 카테고리).
 	const categoryId = searchParams.get("category") ?? categories[0].id;
 
-	// mock 데이터에서 직접 getProductsByCategory 사용 (best 포함 모든 카테고리 동일 처리)
-	const filteredProducts = getProductsByCategory(categoryId).slice(
-		0,
-		PAGE_SIZE
-	);
+	const { data: products = [] } = useProducts({ category: categoryId });
+	const filteredProducts = products.slice(0, PAGE_SIZE);
 	const categoryLabel =
 		categories.find((c) => c.id === categoryId)?.label ?? categoryId;
 
