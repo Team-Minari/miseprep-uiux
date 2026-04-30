@@ -5,10 +5,7 @@ import type { Product } from "../../types/product";
 const BASE = "/api/products";
 
 /** 상품 목록 조회 (카테고리 / 키워드 필터) */
-export const getProducts = (params?: {
-	category?: string;
-	keyword?: string;
-}) =>
+export const getProducts = (params?: { category?: string; keyword?: string }) =>
 	apiClient
 		.get<ApiResponse<Product[]>>(BASE, { params })
 		.then((res) => res.data.data);

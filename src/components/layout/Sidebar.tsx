@@ -8,7 +8,7 @@ import {
 	useOpenCreateSharedCartModal,
 	useOpenManageCartModal,
 } from "../../store/useCartModalStore.ts";
-import { usePersonalCarts, useSharedCarts } from "../../store/useCartStore.ts";
+import { usePersonalCarts, useSharedCarts } from "../../hooks/cart/useCart";
 
 export default function Sidebar() {
 	const isSidebarOpen = useIsSidebarOpen();

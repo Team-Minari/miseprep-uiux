@@ -9,10 +9,7 @@ const PRODUCT_KEYS = {
 };
 
 /** 상품 목록 조회 */
-export const useProducts = (params?: {
-	category?: string;
-	keyword?: string;
-}) =>
+export const useProducts = (params?: { category?: string; keyword?: string }) =>
 	useQuery({
 		queryKey: PRODUCT_KEYS.list(params),
 		queryFn: () => getProducts(params),

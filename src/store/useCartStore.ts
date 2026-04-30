@@ -1,134 +1,49 @@
 import { create } from "zustand";
 import { combine } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import type { CartResponse } from "../types/cart";
+import { useAuthStore } from "./auth/useAuthStore";
 import {
-	CURRENT_USER_EMAIL,
-	personalCarts as initialPersonalCarts,
-	sharedCarts as initialSharedCarts,
-	type CartParticipant,
-	type PersonalCart,
-	type SharedCart,
-} from "../mock/cartData";
+	useMyCarts,
+	useMyCartsCount as useMyCartsCountQuery,
+} from "../hooks/cart/useCart";
 
-type CartType = "personal" | "shared";
-
-type UpdateCartPayload = {
-	name: string;
-	isPublic: boolean;
-	purpose: string;
-	budget?: number;
-};
-
-type CartStore = {
-	personalCarts: PersonalCart[];
-	sharedCarts: SharedCart[];
-	currentUserEmail: string;
-	updateCart: (
-		cartType: CartType,
-		cartId: number,
-		payload: UpdateCartPayload
-	) => void;
-	deleteCart: (cartType: CartType, cartId: number) => void;
-	leaveSharedCart: (cartId: number) => void;
-	transferSharedCartOwnership: (
-		cartId: number,
-		nextOwnerParticipantId: CartParticipant["id"]
-	) => void;
-	removeSharedCartParticipant: (
-		cartId: number,
-		participantId: CartParticipant["id"]
-	) => void;
-};
-
-const findCartIndex = <T extends { id: number }>(carts: T[], cartId: number) =>
-	carts.findIndex((cart) => cart.id === cartId);
-
-export const useCartStore = create<CartStore>()(
+/**
+ * 장바구니 클라이언트 상태 (모달 연동 등에서 사용)
+ * 조회 데이터는 React Query 훅(hooks/cart/useCart)에서 관리
+ * 뮤테이션은 Commit 3에서 API 연동 예정
+ */
+export const useCartStore = create(
 	immer(
 		combine(
 			{
-				personalCarts: initialPersonalCarts,
-				sharedCarts: initialSharedCarts,
-				currentUserEmail: CURRENT_USER_EMAIL,
+				// placeholder — Commit 3에서 mutation 로직 추가 시 사용
+				_placeholder: null as null,
 			},
-			(set) => ({
-				updateCart: (cartType, cartId, payload) =>
-					set((state) => {
-						const targetCarts =
-							cartType === "personal" ? state.personalCarts : state.sharedCarts;
-						const cartIndex = findCartIndex(targetCarts, cartId);
-
-						if (cartIndex === -1) return;
-
-						targetCarts[cartIndex].name = payload.name;
-						targetCarts[cartIndex].isPublic = payload.isPublic;
-						targetCarts[cartIndex].purpose = payload.purpose || undefined;
-						targetCarts[cartIndex].budget = payload.budget;
-					}),
-				deleteCart: (cartType, cartId) =>
-					set((state) => {
-						if (cartType === "personal") {
-							state.personalCarts = state.personalCarts.filter(
-								(cart) => cart.id !== cartId
-							);
-							return;
-						}
-
-						state.sharedCarts = state.sharedCarts.filter(
-							(cart) => cart.id !== cartId
-						);
-					}),
-				leaveSharedCart: (cartId) =>
-					set((state) => {
-						state.sharedCarts = state.sharedCarts.filter(
-							(cart) => cart.id !== cartId
-						);
-					}),
-				transferSharedCartOwnership: (cartId, nextOwnerParticipantId) =>
-					set((state) => {
-						const cart = state.sharedCarts.find((item) => item.id === cartId);
-
-						if (!cart?.participants?.length) return;
-
-						cart.participants = cart.participants.map((participant) => ({
-							...participant,
-							role:
-								participant.id === nextOwnerParticipantId
-									? "owner"
-									: participant.role === "owner"
-										? "member"
-										: participant.role,
-						}));
-					}),
-				removeSharedCartParticipant: (cartId, participantId) =>
-					set((state) => {
-						const cart = state.sharedCarts.find((item) => item.id === cartId);
-
-						if (!cart?.participants?.length) return;
-
-						cart.participants = cart.participants.filter(
-							(participant) => participant.id !== participantId
-						);
-					}),
+			(_set) => ({
+				// Commit 3: updateCart, deleteCart, leaveSharedCart 등 mutation 액션 추가 예정
 			})
 		)
 	)
 );
 
-export const usePersonalCarts = () =>
-	useCartStore((state) => state.personalCarts);
-export const useSharedCarts = () => useCartStore((state) => state.sharedCarts);
-export const useAllCartsCount = () =>
-	useCartStore(
-		(state) => state.personalCarts.length + state.sharedCarts.length
-	);
-export const useCurrentUserEmail = () =>
-	useCartStore((state) => state.currentUserEmail);
-export const useUpdateCart = () => useCartStore((state) => state.updateCart);
-export const useDeleteCart = () => useCartStore((state) => state.deleteCart);
-export const useLeaveSharedCart = () =>
-	useCartStore((state) => state.leaveSharedCart);
-export const useTransferSharedCartOwnership = () =>
-	useCartStore((state) => state.transferSharedCartOwnership);
-export const useRemoveSharedCartParticipant = () =>
-	useCartStore((state) => state.removeSharedCartParticipant);
+// ── React Query 기반 셀렉터 (기존 인터페이스 유지) ──
+
+/** 내 개인 장바구니 목록 */
+export const usePersonalCarts = (): CartResponse[] => {
+	const userId = useAuthStore((s) => s.user?.id);
+	const { data: carts = [] } = useMyCarts();
+	return carts.filter((c) => c.ownerId === userId);
+};
+
+/** 내 공유 장바구니 목록 */
+export const useSharedCarts = (): CartResponse[] => {
+	const userId = useAuthStore((s) => s.user?.id);
+	const { data: carts = [] } = useMyCarts();
+	return carts.filter((c) => c.ownerId !== userId);
+};
+
+/** 전체 장바구니 수 */
+export const useAllCartsCount = (): number => {
+	return useMyCartsCountQuery();
+};

@@ -1,16 +1,13 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useState } from "react";
 import { Check, Link, Mail, Users, X } from "lucide-react";
-import type { CartParticipant } from "../../mock/cartData";
-import {
-	useCurrentUserEmail,
-	useRemoveSharedCartParticipant,
-	useTransferSharedCartOwnership,
-} from "../../store/useCartStore";
+import type { ParticipantResponse } from "../../types/cart";
+import { useAuthStore } from "../../store/auth/useAuthStore";
+import { useCartDetail } from "../../hooks/cart/useCart";
 
 interface SharedCartPanelProps {
 	cartId: number;
 	shareLink: string;
-	participants: CartParticipant[];
+	participants: ParticipantResponse[];
 }
 
 export default function SharedCartPanel({
@@ -22,29 +19,10 @@ export default function SharedCartPanel({
 	const [inviteEmail, setInviteEmail] = useState("");
 	const [invitedEmails, setInvitedEmails] = useState<string[]>([]);
 	const [emailError, setEmailError] = useState("");
-	const [activeParticipantId, setActiveParticipantId] = useState<number | null>(
-		null
-	);
-	const menuRef = useRef<HTMLDivElement | null>(null);
-	const currentUserEmail = useCurrentUserEmail();
-	const transferSharedCartOwnership = useTransferSharedCartOwnership();
-	const removeSharedCartParticipant = useRemoveSharedCartParticipant();
 
-	const currentParticipant = participants.find(
-		(participant) => participant.email === currentUserEmail
-	);
-	const isCurrentUserOwner = currentParticipant?.role === "owner";
-
-	useEffect(() => {
-		const handlePointerDown = (event: MouseEvent) => {
-			if (!menuRef.current?.contains(event.target as Node)) {
-				setActiveParticipantId(null);
-			}
-		};
-
-		document.addEventListener("mousedown", handlePointerDown);
-		return () => document.removeEventListener("mousedown", handlePointerDown);
-	}, []);
+	const currentUserId = useAuthStore((s) => s.user?.id);
+	const { data: cart } = useCartDetail(cartId);
+	const isCurrentUserOwner = cart?.ownerId === currentUserId;
 
 	const handleCopyLink = useCallback(async () => {
 		try {
@@ -85,14 +63,12 @@ export default function SharedCartPanel({
 		);
 	};
 
-	const handleTransferOwnership = (participantId: number) => {
-		transferSharedCartOwnership(cartId, participantId);
-		setActiveParticipantId(null);
+	const handleTransferOwnership = (_participantMemberId: number) => {
+		// Commit 5에서 API 연동 예정
 	};
 
-	const handleRemoveParticipant = (participantId: number) => {
-		removeSharedCartParticipant(cartId, participantId);
-		setActiveParticipantId(null);
+	const handleRemoveParticipant = (_participantMemberId: number) => {
+		// Commit 5에서 API 연동 예정
 	};
 
 	return (
@@ -109,68 +85,67 @@ export default function SharedCartPanel({
 				<p className="text-xs font-medium uppercase tracking-wide text-gray-500">
 					참여자 목록
 				</p>
-				<div ref={menuRef} className="flex flex-col gap-3">
-					{participants.map((participant) => (
-						<div
-							key={participant.id}
-							className="flex items-center justify-between rounded-xl bg-[#FAF8F3] px-4 py-3">
-							<div className="flex items-center gap-3">
-								<span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F0E6D6] font-semibold text-[#7A6E5A]">
-									{participant.avatar}
-								</span>
-								<div>
-									<p className="text-sm font-semibold text-gray-900">
-										{participant.name}
-									</p>
-									<p className="text-xs text-gray-500">{participant.email}</p>
+				<div className="flex flex-col gap-3">
+					{participants.map((participant) => {
+						const isOwner = participant.memberId === cart?.ownerId;
+						const initial =
+							participant.username?.charAt(0)?.toUpperCase() ?? "?";
+
+						return (
+							<div
+								key={participant.memberId}
+								className="flex items-center justify-between rounded-xl bg-[#FAF8F3] px-4 py-3">
+								<div className="flex items-center gap-3">
+									{participant.profileImageUrl ? (
+										<img
+											src={participant.profileImageUrl}
+											alt={participant.username}
+											className="h-10 w-10 rounded-full object-cover"
+										/>
+									) : (
+										<span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#F0E6D6] font-semibold text-[#7A6E5A]">
+											{initial}
+										</span>
+									)}
+									<div>
+										<p className="text-sm font-semibold text-gray-900">
+											{participant.username}
+										</p>
+									</div>
+								</div>
+								<div className="relative">
+									{isOwner ? (
+										<span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600">
+											소유자
+										</span>
+									) : isCurrentUserOwner ? (
+										<div className="flex gap-1">
+											<button
+												type="button"
+												onClick={() =>
+													handleTransferOwnership(participant.memberId)
+												}
+												className="rounded-lg px-2 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-[#F7F3E9]">
+												소유자 넘기기
+											</button>
+											<button
+												type="button"
+												onClick={() =>
+													handleRemoveParticipant(participant.memberId)
+												}
+												className="rounded-lg px-2 py-1 text-xs font-medium text-red-500 transition-colors hover:bg-red-50">
+												강퇴
+											</button>
+										</div>
+									) : (
+										<span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600">
+											참여자
+										</span>
+									)}
 								</div>
 							</div>
-							<div className="relative">
-								{participant.role === "owner" ? (
-									<span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600">
-										소유자
-									</span>
-								) : isCurrentUserOwner ? (
-									<>
-										<button
-											type="button"
-											onClick={() =>
-												setActiveParticipantId((currentId) =>
-													currentId === participant.id ? null : participant.id
-												)
-											}
-											className="rounded-full bg-white px-2 py-1 text-xs font-medium text-[#456A9B] transition-colors hover:bg-[#EEF4FF]">
-											참여자
-										</button>
-										{activeParticipantId === participant.id && (
-											<div className="absolute right-0 top-[calc(100%+8px)] z-10 min-w-[132px] rounded-xl border border-[#EDE9E0] bg-white p-1 shadow-lg">
-												<button
-													type="button"
-													onClick={() =>
-														handleTransferOwnership(participant.id)
-													}
-													className="w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-[#F7F3E9]">
-													소유자 넘기기
-												</button>
-												<button
-													type="button"
-													onClick={() =>
-														handleRemoveParticipant(participant.id)
-													}
-													className="w-full rounded-lg px-3 py-2 text-left text-xs font-medium text-red-500 transition-colors hover:bg-red-50">
-													참여자 강퇴
-												</button>
-											</div>
-										)}
-									</>
-								) : (
-									<span className="rounded-full bg-white px-2 py-1 text-xs font-medium text-gray-600">
-										참여자
-									</span>
-								)}
-							</div>
-						</div>
-					))}
+						);
+					})}
 				</div>
 			</div>
 

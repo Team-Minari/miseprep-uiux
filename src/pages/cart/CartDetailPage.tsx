@@ -1,103 +1,114 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Heart, ShoppingBag, ShoppingCart, Trash2, User } from "lucide-react";
-import {
-	publicCarts,
-	type CartItem,
-	type CartParticipant,
-} from "../../mock/cartData";
 import { getCategoryLabel } from "../../types/product";
+import {
+	useCartDetail,
+	useCartItems,
+	useCartParticipants,
+} from "../../hooks/cart/useCart";
+import { useAuthStore } from "../../store/auth/useAuthStore";
 import SharedCartPanel from "../../components/cart/SharedCartPanel";
 import { useOpenSelectCartModal } from "../../store/useCartModalStore";
-import { usePersonalCarts, useSharedCarts } from "../../store/useCartStore";
+import type { CartItemResponse } from "../../types/cart";
+import { publicCarts, type CartItem } from "../../mock/cartData";
 
-type CartType = "personal" | "shared";
-
-type CartDetail = {
+// ── 공통 아이템 타입 ──
+type UnifiedItem = {
 	id: number;
-	name: string;
-	type: CartType;
-	items: CartItem[];
-	budget?: number;
-	purpose?: string;
-	participants?: CartParticipant[];
-	ownerName?: string;
-	likeCount?: number;
+	productId: number;
+	productName: string;
+	price: number;
+	imageUrl: string;
+	quantity: number;
+	categoryLabel: string;
+	addedBy?: string;
 };
 
-type EnrichedCartItem = CartItem & {
-	detailProductId: number;
-	description: string;
-	categoryLabel: string;
-};
+// mock CartItem → UnifiedItem 변환
+const toUnifiedItem = (item: CartItem): UnifiedItem => ({
+	id: item.id,
+	productId: item.productId,
+	productName: item.name,
+	price: item.price,
+	imageUrl: item.thumbnail,
+	quantity: 1,
+	categoryLabel: getCategoryLabel(item.category ?? "best"),
+	addedBy: item.addedBy,
+});
+
+// API CartItemResponse → UnifiedItem 변환
+const fromApiItem = (item: CartItemResponse): UnifiedItem => ({
+	id: item.id,
+	productId: item.productId,
+	productName: item.productName,
+	price: item.price,
+	imageUrl: item.imageUrl,
+	quantity: item.quantity,
+	categoryLabel: getCategoryLabel("best"),
+});
 
 export default function CartDetailPage() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const openSelectCartModal = useOpenSelectCartModal();
-	const personalCarts = usePersonalCarts();
-	const sharedCarts = useSharedCarts();
+	const currentUserId = useAuthStore((s) => s.user?.id);
 
 	const cartId = Number(searchParams.get("id"));
-	const cartType = searchParams.get("type") as CartType | null;
 	const source = searchParams.get("source");
 	const isPublic = source === "public";
 
-	const cart: CartDetail | undefined = useMemo(() => {
-		if (isPublic) {
-			const found = publicCarts.find(
-				(currentCart) => currentCart.id === cartId
-			);
-			return found ? { ...found, type: found.type } : undefined;
-		}
-
-		const allCarts = [
-			...personalCarts.map((currentCart) => ({
-				...currentCart,
-				type: "personal" as const,
-			})),
-			...sharedCarts.map((currentCart) => ({
-				...currentCart,
-				type: "shared" as const,
-			})),
-		];
-
-		return allCarts.find(
-			(currentCart) =>
-				currentCart.id === cartId && currentCart.type === cartType
-		);
-	}, [cartId, cartType, isPublic, personalCarts, sharedCarts]);
-
-	const [items, setItems] = useState<CartItem[]>(cart?.items ?? []);
-	const [checkedIds, setCheckedIds] = useState<Set<number>>(
-		new Set(cart?.items.map((item) => item.id) ?? [])
+	// ── API 호출 (내 장바구니만) ──
+	const { data: apiCart, isLoading: cartLoading } = useCartDetail(
+		cartId,
+		!isPublic
 	);
+	const { data: apiItems = [], isLoading: itemsLoading } = useCartItems(
+		cartId,
+		!isPublic
+	);
+	const { data: participants = [] } = useCartParticipants(cartId, !isPublic);
+
+	// ── 공개 장바구니 (mock) ──
+	const publicCart = isPublic
+		? publicCarts.find((c) => c.id === cartId)
+		: undefined;
+
+	// ── 통합 데이터 ──
+	const cartName = isPublic ? publicCart?.name : apiCart?.name;
+	const cartPurpose = isPublic ? publicCart?.purpose : apiCart?.purpose;
+	const cartBudget = isPublic ? publicCart?.budget : apiCart?.budget;
+	const isSharedCart = isPublic
+		? publicCart?.type === "shared"
+		: participants.length > 1;
+	const isOwner = !isPublic && apiCart?.ownerId === currentUserId;
+	const ownerName = isPublic ? publicCart?.ownerName : undefined;
+	const likeCount = isPublic ? publicCart?.likeCount : undefined;
+	const linkToken = !isPublic ? apiCart?.linkToken : undefined;
+
+	const allItems = useMemo<UnifiedItem[]>(() => {
+		if (isPublic && publicCart) {
+			return publicCart.items.map(toUnifiedItem);
+		}
+		return apiItems.map(fromApiItem);
+	}, [isPublic, publicCart, apiItems]);
+
+	const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
 
 	useEffect(() => {
-		setItems(cart?.items ?? []);
-		setCheckedIds(new Set(cart?.items.map((item) => item.id) ?? []));
-	}, [cart]);
-
-	const enhancedItems = useMemo<EnrichedCartItem[]>(
-		() =>
-			items.map((item) => ({
-				...item,
-				detailProductId: item.productId,
-				description:
-					item.description ?? "장바구니에서 담은 상품 상세 정보입니다.",
-				categoryLabel: getCategoryLabel(item.category ?? "best"),
-			})),
-		[items]
-	);
+		if (allItems.length > 0) {
+			setCheckedIds(new Set(allItems.map((item) => item.id)));
+		}
+	}, [allItems]);
 
 	const isAllChecked =
-		enhancedItems.length > 0 && checkedIds.size === enhancedItems.length;
+		allItems.length > 0 && checkedIds.size === allItems.length;
 	const isIndeterminate =
-		checkedIds.size > 0 && checkedIds.size < enhancedItems.length;
+		checkedIds.size > 0 && checkedIds.size < allItems.length;
 
 	const handleToggleAll = () => {
 		setCheckedIds(
-			isAllChecked ? new Set() : new Set(enhancedItems.map((item) => item.id))
+			isAllChecked ? new Set() : new Set(allItems.map((item) => item.id))
 		);
 	};
 
@@ -113,53 +124,75 @@ export default function CartDetailPage() {
 		});
 	};
 
-	const handleDelete = (id: number) => {
-		setItems((prev) => prev.filter((item) => item.id !== id));
-		setCheckedIds((prev) => {
-			const next = new Set(prev);
-			next.delete(id);
-			return next;
-		});
+	const handleDelete = (_id: number) => {
+		// Commit 4에서 API 연동 예정
 	};
 
 	const handleDeleteChecked = () => {
-		setItems((prev) => prev.filter((item) => !checkedIds.has(item.id)));
-		setCheckedIds(new Set());
+		// Commit 4에서 API 연동 예정
 	};
 
-	const handleOpenProduct = (item: EnrichedCartItem) => {
-		navigate(`/product/${item.detailProductId}`);
+	const handleOpenProduct = (item: UnifiedItem) => {
+		navigate(`/product/${item.productId}`);
 	};
 
-	const checkedItems = enhancedItems.filter((item) => checkedIds.has(item.id));
-	const totalPrice = checkedItems.reduce((acc, item) => acc + item.price, 0);
-	const showSharedPanel =
-		cart?.type === "shared" && !!cart.participants?.length;
-	const budgetUsage = cart?.budget
-		? Math.min((totalPrice / cart.budget) * 100, 100)
+	const checkedItems = allItems.filter((item) => checkedIds.has(item.id));
+	const totalPrice = checkedItems.reduce(
+		(acc, item) => acc + item.price * item.quantity,
+		0
+	);
+	const showSharedPanel = !isPublic && isSharedCart && participants.length > 0;
+	const budgetUsage = cartBudget
+		? Math.min((totalPrice / cartBudget) * 100, 100)
 		: 0;
 
 	const formatPrice = (price: number) => `${price.toLocaleString("ko-KR")}원`;
 
+	// ── 로딩 / 에러 ──
+	if (!isPublic && (cartLoading || itemsLoading)) {
+		return (
+			<div className="flex min-h-[400px] items-center justify-center bg-white">
+				<p className="text-gray-400">장바구니를 불러오는 중...</p>
+			</div>
+		);
+	}
+
+	if (!isPublic && !apiCart) {
+		return (
+			<div className="flex min-h-[400px] items-center justify-center bg-white">
+				<p className="text-gray-400">장바구니를 찾을 수 없습니다.</p>
+			</div>
+		);
+	}
+
+	if (isPublic && !publicCart) {
+		return (
+			<div className="flex min-h-[400px] items-center justify-center bg-white">
+				<p className="text-gray-400">공개 장바구니를 찾을 수 없습니다.</p>
+			</div>
+		);
+	}
+
 	return (
 		<div className="bg-white">
+			{/* 헤더 */}
 			<div className="bg-white">
 				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-5 pt-8">
 					<div className="flex items-center gap-3 pl-6">
 						<h1 className="text-xl font-semibold text-gray-900">
-							{cart?.name ?? "장바구니"}
+							{cartName ?? "장바구니"}
 						</h1>
-						{cart?.type === "shared" && (
+						{isSharedCart && (
 							<span className="rounded-full border border-[#D9CEBC] bg-[#F7F3E9] px-2 py-0.5 text-sm font-medium text-[#7A6E5A]">
 								공유
 							</span>
 						)}
-						{cart?.purpose && (
+						{cartPurpose && (
 							<span className="rounded-full bg-[#EEF4FF] px-3 py-1 text-sm font-medium text-[#456A9B]">
-								{cart.purpose}
+								{cartPurpose}
 							</span>
 						)}
-						{cart?.budget && (
+						{cartBudget && (
 							<div className="ml-2 flex w-fit min-w-[320px] items-end gap-4 px-2 py-1">
 								<div className="flex flex-1 flex-col gap-2">
 									<p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-gray-500">
@@ -176,7 +209,7 @@ export default function CartDetailPage() {
 										<span className="font-medium text-gray-700">
 											{formatPrice(totalPrice)}
 											<span className="mx-1 text-gray-400">/</span>
-											{formatPrice(cart.budget)}
+											{formatPrice(cartBudget)}
 										</span>
 									</div>
 								</div>
@@ -184,16 +217,16 @@ export default function CartDetailPage() {
 						)}
 					</div>
 
-					{isPublic && cart?.ownerName && (
+					{isPublic && ownerName && (
 						<div className="flex items-center gap-3 pr-6">
 							<span className="flex items-center gap-1 text-sm text-gray-500">
 								<User className="h-3.5 w-3.5" />
-								{cart.ownerName}
+								{ownerName}
 							</span>
-							{typeof cart.likeCount === "number" && (
+							{typeof likeCount === "number" && (
 								<span className="flex items-center gap-1 text-sm text-[#C8A97A]">
 									<Heart className="h-3.5 w-3.5 fill-[#C8A97A]" />
-									{cart.likeCount}
+									{likeCount}
 								</span>
 							)}
 						</div>
@@ -201,8 +234,9 @@ export default function CartDetailPage() {
 				</div>
 			</div>
 
+			{/* 본문 */}
 			<div className="mx-auto max-w-7xl px-6 pb-4 pt-5">
-				{enhancedItems.length === 0 ? (
+				{allItems.length === 0 ? (
 					<div className="flex flex-col items-center justify-center gap-5 rounded-2xl bg-white py-24">
 						<div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#F7F3E9]">
 							<ShoppingBag className="h-12 w-12 text-[#C8BFA8]" />
@@ -233,10 +267,8 @@ export default function CartDetailPage() {
 										<input
 											type="checkbox"
 											checked={isAllChecked}
-											ref={(element) => {
-												if (element) {
-													element.indeterminate = isIndeterminate;
-												}
+											ref={(el) => {
+												if (el) el.indeterminate = isIndeterminate;
 											}}
 											onChange={handleToggleAll}
 											className="h-4 w-4 cursor-pointer rounded border-gray-300 accent-gray-800"
@@ -244,7 +276,7 @@ export default function CartDetailPage() {
 										<span className="text-sm font-medium text-gray-700">
 											{isPublic ? "담을 상품 선택" : "전체 선택"}
 											<span className="ml-1 text-gray-400">
-												({checkedIds.size}/{enhancedItems.length})
+												({checkedIds.size}/{allItems.length})
 											</span>
 										</span>
 									</label>
@@ -259,7 +291,7 @@ export default function CartDetailPage() {
 								</div>
 
 								<div className="overflow-hidden rounded-2xl bg-white divide-y divide-[#F0EBE0]">
-									{enhancedItems.map((item) => {
+									{allItems.map((item) => {
 										const isChecked = checkedIds.has(item.id);
 
 										return (
@@ -282,8 +314,8 @@ export default function CartDetailPage() {
 														!isChecked ? "opacity-40" : ""
 													}`}>
 													<img
-														src={item.thumbnail}
-														alt={item.name}
+														src={item.imageUrl}
+														alt={item.productName}
 														className="h-full w-full object-cover"
 													/>
 												</button>
@@ -296,7 +328,7 @@ export default function CartDetailPage() {
 														<span className="rounded-full bg-[#F6F0E4] px-2 py-0.5 text-[#7A6E5A]">
 															{item.categoryLabel}
 														</span>
-														{cart?.type === "shared" && item.addedBy && (
+														{isSharedCart && item.addedBy && (
 															<span className="rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[#456A9B]">
 																{item.addedBy} 담음
 															</span>
@@ -308,26 +340,28 @@ export default function CartDetailPage() {
 														onClick={() => handleOpenProduct(item)}
 														className="block max-w-full text-left">
 														<p className="truncate text-base font-semibold text-gray-900 hover:text-[#7A6E5A]">
-															{item.name}
+															{item.productName}
 														</p>
 													</button>
-													<p className="mt-1 line-clamp-2 text-sm text-gray-500">
-														{item.description}
-													</p>
-													<div className="mt-3">
+													<div className="mt-3 flex items-center gap-2">
 														<p className="text-sm font-semibold text-gray-800">
 															{formatPrice(item.price)}
 														</p>
+														{item.quantity > 1 && (
+															<span className="text-xs text-gray-400">
+																× {item.quantity}
+															</span>
+														)}
 													</div>
 												</div>
 
 												<div className="w-24 text-right">
 													<p className="text-sm font-bold text-gray-900">
-														{formatPrice(item.price)}
+														{formatPrice(item.price * item.quantity)}
 													</p>
 												</div>
 
-												{!isPublic && (
+												{!isPublic && isOwner && (
 													<button
 														onClick={() => handleDelete(item.id)}
 														className="rounded-lg p-2 text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500">
@@ -340,17 +374,18 @@ export default function CartDetailPage() {
 								</div>
 							</div>
 
-							{showSharedPanel ? (
+							{showSharedPanel && linkToken ? (
 								<div className="sticky top-6 flex flex-col gap-4">
 									<SharedCartPanel
-										cartId={cart!.id}
-										shareLink={`${window.location.origin}/cart/detail?id=${cartId}&type=${cartType}`}
-										participants={cart!.participants!}
+										cartId={cartId}
+										shareLink={`${window.location.origin}/cart/join?token=${linkToken}`}
+										participants={participants}
 									/>
 								</div>
 							) : null}
 						</div>
 
+						{/* 주문 요약 */}
 						<div className={`${showSharedPanel ? "" : "w-full"} px-2`}>
 							<div className="border-t border-[#EDE9E0] pt-8">
 								<h2 className="text-base font-semibold text-gray-900">
@@ -370,15 +405,18 @@ export default function CartDetailPage() {
 												key={item.id}
 												className="flex justify-between gap-3 text-sm text-gray-600">
 												<div className="min-w-0">
-													<p className="truncate">{item.name}</p>
-													{cart?.type === "shared" && item.addedBy && (
+													<p className="truncate">
+														{item.productName}
+														{item.quantity > 1 && ` × ${item.quantity}`}
+													</p>
+													{isSharedCart && item.addedBy && (
 														<p className="mt-1 text-xs text-gray-400">
 															담은 사람 {item.addedBy}
 														</p>
 													)}
 												</div>
 												<span className="shrink-0 font-medium text-gray-800">
-													{formatPrice(item.price)}
+													{formatPrice(item.price * item.quantity)}
 												</span>
 											</div>
 										))
@@ -413,13 +451,13 @@ export default function CartDetailPage() {
 											<button
 												onClick={() => {
 													setCheckedIds(
-														new Set(enhancedItems.map((item) => item.id))
+														new Set(allItems.map((item) => item.id))
 													);
 													openSelectCartModal();
 												}}
 												className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#D9CEBC] py-3.5 text-sm font-semibold tracking-wide text-gray-700 transition-colors hover:bg-[#FDFBF6]">
 												<ShoppingCart className="h-4 w-4" />
-												모두 담기 ({enhancedItems.length})
+												모두 담기 ({allItems.length})
 											</button>
 										</div>
 									) : (

@@ -6,28 +6,18 @@ import {
 	useCloseManageCartModal,
 	useManagedCart,
 } from "../../store/useCartModalStore";
-import {
-	useCurrentUserEmail,
-	useDeleteCart,
-	useLeaveSharedCart,
-	usePersonalCarts,
-	useSharedCarts,
-	useUpdateCart,
-} from "../../store/useCartStore";
+import { usePersonalCarts, useSharedCarts } from "../../hooks/cart/useCart";
+import { useAuthStore } from "../../store/auth/useAuthStore";
 
-type CartType = "personal" | "shared";
-
-const toBudgetInput = (budget?: number) => (budget ? String(budget) : "");
+const toBudgetInput = (budget?: number | null) =>
+	budget ? String(budget) : "";
 
 export default function CartManageModal() {
 	const managedCart = useManagedCart();
 	const closeManageCartModal = useCloseManageCartModal();
 	const personalCarts = usePersonalCarts();
 	const sharedCarts = useSharedCarts();
-	const currentUserEmail = useCurrentUserEmail();
-	const updateCart = useUpdateCart();
-	const deleteCart = useDeleteCart();
-	const leaveSharedCart = useLeaveSharedCart();
+	const currentUserId = useAuthStore((s) => s.user?.id);
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
@@ -64,15 +54,8 @@ export default function CartManageModal() {
 
 	if (!managedCart || !cart) return null;
 
-	const currentParticipant =
-		managedCart.type === "shared"
-			? cart.participants?.find(
-					(participant) => participant.email === currentUserEmail
-				)
-			: undefined;
-
 	const isOwner =
-		managedCart.type === "personal" || currentParticipant?.role === "owner";
+		managedCart.type === "personal" || cart.ownerId === currentUserId;
 	const submitDisabled = !cartName.trim();
 	const actionLabel =
 		managedCart.type === "shared"
@@ -86,7 +69,8 @@ export default function CartManageModal() {
 	};
 
 	const handleSave = () => {
-		updateCart(managedCart.type, managedCart.id, {
+		// Commit 3에서 API 연동 예정
+		console.log("updateCart", managedCart.id, {
 			name: cartName.trim(),
 			isPublic,
 			purpose: purpose.trim(),
@@ -95,7 +79,10 @@ export default function CartManageModal() {
 		handleClose();
 	};
 
-	const navigateIfViewingTargetCart = (cartType: CartType, cartId: number) => {
+	const navigateIfViewingTargetCart = (
+		cartType: "personal" | "shared",
+		cartId: number
+	) => {
 		const currentCartId = Number(searchParams.get("id"));
 		const currentCartType = searchParams.get("type");
 
@@ -112,7 +99,8 @@ export default function CartManageModal() {
 		const confirmed = window.confirm("이 장바구니를 삭제하시겠어요?");
 		if (!confirmed) return;
 
-		deleteCart(managedCart.type, managedCart.id);
+		// Commit 3에서 API 연동 예정
+		console.log("deleteCart", managedCart.id);
 		navigateIfViewingTargetCart(managedCart.type, managedCart.id);
 		handleClose();
 	};
@@ -121,7 +109,8 @@ export default function CartManageModal() {
 		const confirmed = window.confirm("이 공유 장바구니에서 탈퇴하시겠어요?");
 		if (!confirmed) return;
 
-		leaveSharedCart(managedCart.id);
+		// Commit 3에서 API 연동 예정
+		console.log("leaveCart", managedCart.id);
 		navigateIfViewingTargetCart("shared", managedCart.id);
 		handleClose();
 	};

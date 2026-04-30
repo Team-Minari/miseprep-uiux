@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { X, Inbox } from "lucide-react";
 import { useEffect } from "react";
 import { useCloseSelectCartModal } from "../../store/useCartModalStore.ts";
-import { usePersonalCarts, useSharedCarts } from "../../store/useCartStore.ts";
+import { usePersonalCarts, useSharedCarts } from "../../hooks/cart/useCart";
 
 // 장바구니 존재 -> 장바구니 선택 모달
 export default function SelectCartModal() {
