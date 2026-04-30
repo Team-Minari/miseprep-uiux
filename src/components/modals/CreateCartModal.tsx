@@ -7,6 +7,7 @@ import {
 	useCloseCreateSharedCartModal,
 } from "../../store/useCartModalStore.ts";
 import { useCreateCart } from "../../hooks/cart/useCartMutation";
+import { useSendInvitation } from "../../hooks/invitation/useInvitation";
 
 export default function CreateCartModal() {
 	// store에서 모달 모드 확인
@@ -24,6 +25,7 @@ export default function CreateCartModal() {
 	const closeCreateCartModal = useCloseCreateCartModal();
 	const closeCreateSharedCartModal = useCloseCreateSharedCartModal();
 	const createCartMutation = useCreateCart();
+	const sendInvitationMutation = useSendInvitation();
 
 	// 모드에 따라 적절한 닫기 함수 선택
 	const handleClose = isShared
@@ -82,7 +84,17 @@ export default function CreateCartModal() {
 				budget: budgetValue,
 			},
 			{
-				onSuccess: () => {
+				onSuccess: (cart) => {
+					// 공유 장바구니 생성 시 이메일 초대 전송
+					if (isShared) {
+						const validEmails = emails.filter((e) => e.trim() !== "");
+						validEmails.forEach((email) => {
+							sendInvitationMutation.mutate({
+								cartId: cart.id,
+								body: { email },
+							});
+						});
+					}
 					handleClose();
 				},
 			}

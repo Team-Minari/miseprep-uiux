@@ -7,6 +7,7 @@ import {
 	useKickParticipant,
 	useTransferOwnership,
 } from "../../hooks/cart/useCartMutation";
+import { useSendInvitation } from "../../hooks/invitation/useInvitation";
 
 interface SharedCartPanelProps {
 	cartId: number;
@@ -29,6 +30,7 @@ export default function SharedCartPanel({
 	const isCurrentUserOwner = cart?.owner_id === currentUserId;
 	const kickMutation = useKickParticipant();
 	const transferMutation = useTransferOwnership();
+	const sendInvitationMutation = useSendInvitation();
 
 	const handleCopyLink = useCallback(async () => {
 		try {
@@ -58,9 +60,20 @@ export default function SharedCartPanel({
 			setEmailError("이미 초대된 이메일입니다.");
 			return;
 		}
-		setInvitedEmails((prev) => [...prev, email]);
-		setInviteEmail("");
-		setEmailError("");
+
+		sendInvitationMutation.mutate(
+			{ cartId, body: { email } },
+			{
+				onSuccess: () => {
+					setInvitedEmails((prev) => [...prev, email]);
+					setInviteEmail("");
+					setEmailError("");
+				},
+				onError: () => {
+					setEmailError("초대 전송에 실패했습니다.");
+				},
+			}
+		);
 	};
 
 	const handleRemoveInvitedEmail = (email: string) => {
