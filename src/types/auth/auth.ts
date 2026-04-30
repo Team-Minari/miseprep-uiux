@@ -29,6 +29,12 @@ export interface Member {
 	profile_image_url: string | null;
 }
 
+// ── 회원 수정 ──
+export interface UpdateMemberRequest {
+	username?: string;
+	profile_image_url?: string;
+}
+
 // ── 에러 ──
 export interface ErrorDetail {
 	field: string;

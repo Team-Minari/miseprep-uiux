@@ -9,10 +9,9 @@ import type {
 /** 초대 보내기 */
 export const sendInvitation = (cartId: number, body: SendInvitationRequest) =>
 	apiClient
-		.post<ApiResponse<InvitationResponse>>(
-			`/api/carts/${cartId}/invitations`,
-			body
-		)
+		.post<
+			ApiResponse<InvitationResponse>
+		>(`/api/carts/${cartId}/invitations`, body)
 		.then((res) => res.data.data);
 
 /** 내 초대 목록 조회 */
@@ -27,10 +26,9 @@ export const respondInvitation = (
 	body: RespondInvitationRequest
 ) =>
 	apiClient
-		.patch<ApiResponse<InvitationResponse>>(
-			`/api/invitations/${invitationId}`,
-			body
-		)
+		.patch<
+			ApiResponse<InvitationResponse>
+		>(`/api/invitations/${invitationId}`, body)
 		.then((res) => res.data.data);
 
 /** 초대 취소 */
