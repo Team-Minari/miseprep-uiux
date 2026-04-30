@@ -1,37 +1,37 @@
-// ── 백엔드 응답 DTO ──
+// ── 백엔드 응답 DTO (snake_case 직렬화) ──
 
 /** GET /api/carts/me 목록 아이템 */
 export interface CartResponse {
 	id: number;
 	name: string;
 	purpose: string;
-	isPublic: boolean;
+	is_public: boolean;
 	budget: number | null;
-	ownerId: number;
+	owner_id: number;
 }
 
 /** GET /api/carts/{cartId} 상세 */
 export interface CartDetailResponse extends CartResponse {
-	linkToken: string;
+	link_token: string;
 }
 
 /** GET /api/carts/{cartId}/items 아이템 */
 export interface CartItemResponse {
 	id: number;
-	productId: number;
-	productName: string;
+	product_id: number;
+	product_name: string;
 	price: number;
-	imageUrl: string;
+	image_url: string;
 	quantity: number;
 	checked: boolean;
-	checkerId: number | null;
+	checker_id: number | null;
 }
 
 /** GET /api/carts/{cartId}/participants 참여자 */
 export interface ParticipantResponse {
-	memberId: number;
+	member_id: number;
 	username: string;
-	profileImageUrl: string | null;
+	profile_image_url: string | null;
 }
 
 // ── 백엔드 요청 DTO ──
@@ -46,8 +46,8 @@ export interface CreateCartRequest {
 
 /** PATCH /api/carts/{cartId}/settings 장바구니 설정 수정 */
 export interface UpdateCartSettingRequest {
-	cartName?: string;
-	isPublic?: boolean;
+	cart_name?: string;
+	is_public?: boolean;
 	purpose?: string;
 	budget?: number | null;
 }
@@ -65,12 +65,12 @@ export interface UpdateCartItemRequest {
 
 /** PATCH /api/carts/{cartId}/owner 소유권 이전 */
 export interface OwnerTransferRequest {
-	newOwnerId: number;
+	new_owner_id: number;
 }
 
 /** 소유권 이전 응답 */
 export interface OwnerTransferResponse {
-	prevOwnerId: number;
-	newOwnerId: number;
-	newOwnerName: string;
+	prev_owner_id: number;
+	new_owner_id: number;
+	new_owner_name: string;
 }

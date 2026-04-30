@@ -33,14 +33,14 @@ export const useCartStore = create(
 export const usePersonalCarts = (): CartResponse[] => {
 	const userId = useAuthStore((s) => s.user?.id);
 	const { data: carts = [] } = useMyCarts();
-	return carts.filter((c) => c.ownerId === userId);
+	return carts.filter((c) => c.owner_id === userId);
 };
 
 /** 내 공유 장바구니 목록 */
 export const useSharedCarts = (): CartResponse[] => {
 	const userId = useAuthStore((s) => s.user?.id);
 	const { data: carts = [] } = useMyCarts();
-	return carts.filter((c) => c.ownerId !== userId);
+	return carts.filter((c) => c.owner_id !== userId);
 };
 
 /** 전체 장바구니 수 */

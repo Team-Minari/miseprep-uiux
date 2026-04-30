@@ -107,10 +107,7 @@ export const kickParticipant = (cartId: number, targetMemberId: number) =>
 	apiClient.delete(`${BASE}/${cartId}/participants/${targetMemberId}`);
 
 /** 소유권 이전 (소유자 전용) */
-export const transferOwnership = (
-	cartId: number,
-	body: OwnerTransferRequest
-) =>
+export const transferOwnership = (cartId: number, body: OwnerTransferRequest) =>
 	apiClient
 		.patch<ApiResponse<OwnerTransferResponse>>(`${BASE}/${cartId}/owner`, body)
 		.then((res) => res.data.data);

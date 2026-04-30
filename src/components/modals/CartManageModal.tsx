@@ -43,7 +43,7 @@ export default function CartManageModal() {
 	useEffect(() => {
 		if (!cart) return;
 
-		setIsPublic(Boolean(cart.isPublic));
+		setIsPublic(Boolean(cart.is_public));
 		setCartName(cart.name);
 		setPurpose(cart.purpose ?? "");
 		setBudget(toBudgetInput(cart.budget));
@@ -63,7 +63,7 @@ export default function CartManageModal() {
 	if (!managedCart || !cart) return null;
 
 	const isOwner =
-		managedCart.type === "personal" || cart.ownerId === currentUserId;
+		managedCart.type === "personal" || cart.owner_id === currentUserId;
 	const submitDisabled = !cartName.trim();
 	const actionLabel =
 		managedCart.type === "shared"
@@ -81,8 +81,8 @@ export default function CartManageModal() {
 			{
 				cartId: managedCart.id,
 				body: {
-					cartName: cartName.trim(),
-					isPublic,
+					cart_name: cartName.trim(),
+					is_public: isPublic,
 					purpose: purpose.trim(),
 					budget: budget.trim()
 						? Number(budget.replaceAll(",", ""))

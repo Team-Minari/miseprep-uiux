@@ -30,7 +30,7 @@ export default function MainSection({ product }: MainSectionProps) {
 			<div className="overflow-hidden rounded-[28px] bg-[#F7F3E9]">
 				<div className="aspect-square">
 					<img
-						src={product.imageUrl}
+						src={product.image_url}
 						alt={product.name}
 						className="h-full w-full object-cover"
 					/>

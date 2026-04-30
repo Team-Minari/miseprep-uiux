@@ -32,14 +32,14 @@ export const useMyCarts = () => {
 export const usePersonalCarts = (): CartResponse[] => {
 	const userId = useAuthStore((s) => s.user?.id);
 	const { data: carts = [] } = useMyCarts();
-	return carts.filter((c) => c.ownerId === userId);
+	return carts.filter((c) => c.owner_id === userId);
 };
 
 /** 내 공유 장바구니 (ownerId !== 내 id) */
 export const useSharedCarts = (): CartResponse[] => {
 	const userId = useAuthStore((s) => s.user?.id);
 	const { data: carts = [] } = useMyCarts();
-	return carts.filter((c) => c.ownerId !== userId);
+	return carts.filter((c) => c.owner_id !== userId);
 };
 
 /** 내 장바구니 총 개수 */

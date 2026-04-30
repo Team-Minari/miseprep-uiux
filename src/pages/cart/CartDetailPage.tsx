@@ -41,10 +41,10 @@ const toUnifiedItem = (item: CartItem): UnifiedItem => ({
 // API CartItemResponse → UnifiedItem 변환
 const fromApiItem = (item: CartItemResponse): UnifiedItem => ({
 	id: item.id,
-	productId: item.productId,
-	productName: item.productName,
+	productId: item.product_id,
+	productName: item.product_name,
 	price: item.price,
-	imageUrl: item.imageUrl,
+	imageUrl: item.image_url,
 	quantity: item.quantity,
 	categoryLabel: getCategoryLabel("best"),
 });
@@ -83,10 +83,10 @@ export default function CartDetailPage() {
 	const isSharedCart = isPublic
 		? publicCart?.type === "shared"
 		: participants.length > 1;
-	const isOwner = !isPublic && apiCart?.ownerId === currentUserId;
+	const isOwner = !isPublic && apiCart?.owner_id === currentUserId;
 	const ownerName = isPublic ? publicCart?.ownerName : undefined;
 	const likeCount = isPublic ? publicCart?.likeCount : undefined;
-	const linkToken = !isPublic ? apiCart?.linkToken : undefined;
+	const linkToken = !isPublic ? apiCart?.link_token : undefined;
 
 	const allItems = useMemo<UnifiedItem[]>(() => {
 		if (isPublic && publicCart) {

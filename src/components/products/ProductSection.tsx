@@ -69,7 +69,7 @@ export default function ProductSection({ title }: ProductSectionProps) {
 								className="relative w-full rounded-xl overflow-hidden mb-3"
 								style={{ aspectRatio: "1 / 1" }}>
 								<img
-									src={product.imageUrl}
+									src={product.image_url}
 									alt={product.name}
 									className="w-full h-full object-cover"
 								/>

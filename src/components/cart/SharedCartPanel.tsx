@@ -26,7 +26,7 @@ export default function SharedCartPanel({
 
 	const currentUserId = useAuthStore((s) => s.user?.id);
 	const { data: cart } = useCartDetail(cartId);
-	const isCurrentUserOwner = cart?.ownerId === currentUserId;
+	const isCurrentUserOwner = cart?.owner_id === currentUserId;
 	const kickMutation = useKickParticipant();
 	const transferMutation = useTransferOwnership();
 
@@ -74,7 +74,7 @@ export default function SharedCartPanel({
 		if (!confirmed) return;
 		transferMutation.mutate({
 			cartId,
-			body: { newOwnerId: participantMemberId },
+			body: { new_owner_id: participantMemberId },
 		});
 	};
 
@@ -100,18 +100,18 @@ export default function SharedCartPanel({
 				</p>
 				<div className="flex flex-col gap-3">
 					{participants.map((participant) => {
-						const isOwner = participant.memberId === cart?.ownerId;
+						const isOwner = participant.member_id === cart?.owner_id;
 						const initial =
 							participant.username?.charAt(0)?.toUpperCase() ?? "?";
 
 						return (
 							<div
-								key={participant.memberId}
+								key={participant.member_id}
 								className="flex items-center justify-between rounded-xl bg-[#FAF8F3] px-4 py-3">
 								<div className="flex items-center gap-3">
-									{participant.profileImageUrl ? (
+									{participant.profile_image_url ? (
 										<img
-											src={participant.profileImageUrl}
+											src={participant.profile_image_url}
 											alt={participant.username}
 											className="h-10 w-10 rounded-full object-cover"
 										/>
@@ -136,7 +136,7 @@ export default function SharedCartPanel({
 											<button
 												type="button"
 												onClick={() =>
-													handleTransferOwnership(participant.memberId)
+													handleTransferOwnership(participant.member_id)
 												}
 												className="rounded-lg px-2 py-1 text-xs font-medium text-gray-700 transition-colors hover:bg-[#F7F3E9]">
 												소유자 넘기기
@@ -144,7 +144,7 @@ export default function SharedCartPanel({
 											<button
 												type="button"
 												onClick={() =>
-													handleRemoveParticipant(participant.memberId)
+													handleRemoveParticipant(participant.member_id)
 												}
 												className="rounded-lg px-2 py-1 text-xs font-medium text-red-500 transition-colors hover:bg-red-50">
 												강퇴
