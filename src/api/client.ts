@@ -25,8 +25,18 @@ apiClient.interceptors.response.use(
 	(response) => response,
 	async (error) => {
 		const original = error.config;
+		const status = error.response?.status;
 
-		if (error.response?.status !== 401 || original._retry) {
+		// 403: 인증 무효 — 토큰 정리 후 로그인 페이지로 이동
+		if (status === 403 && !original._authCleared) {
+			original._authCleared = true;
+			useAuthStore.getState().clear();
+			alert("로그인이 필요합니다.");
+			window.location.href = "/login";
+			return Promise.reject(error);
+		}
+
+		if (status !== 401 || original._retry) {
 			return Promise.reject(error);
 		}
 

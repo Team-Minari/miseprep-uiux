@@ -28,18 +28,16 @@ export const useMyCarts = () => {
 	});
 };
 
-/** 내 개인 장바구니 (ownerId === 내 id) */
+/** 내 개인 장바구니 */
 export const usePersonalCarts = (): CartResponse[] => {
-	const userId = useAuthStore((s) => s.user?.id);
 	const { data: carts = [] } = useMyCarts();
-	return carts.filter((c) => c.owner_id === userId);
+	return carts.filter((c) => c.cart_type === "PERSONAL");
 };
 
-/** 내 공유 장바구니 (ownerId !== 내 id) */
+/** 내 공유 장바구니 */
 export const useSharedCarts = (): CartResponse[] => {
-	const userId = useAuthStore((s) => s.user?.id);
 	const { data: carts = [] } = useMyCarts();
-	return carts.filter((c) => c.owner_id !== userId);
+	return carts.filter((c) => c.cart_type === "SHARED");
 };
 
 /** 내 장바구니 총 개수 */

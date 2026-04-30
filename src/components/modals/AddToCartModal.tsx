@@ -45,7 +45,7 @@ export default function AddToCartModal() {
 	};
 
 	// 폼 제출 핸들러
-	const handleSubmit = (_type: "personal" | "shared") => {
+	const handleSubmit = (type: "personal" | "shared") => {
 		const budgetValue = budget.trim()
 			? Number(budget.replaceAll(",", ""))
 			: undefined;
@@ -56,6 +56,7 @@ export default function AddToCartModal() {
 				purpose: purpose.trim(),
 				is_public: isPublic,
 				budget: budgetValue,
+				cart_type: type === "shared" ? "SHARED" : "PERSONAL",
 			},
 			{ onSuccess: () => handleClose() }
 		);

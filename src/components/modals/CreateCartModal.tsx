@@ -82,6 +82,7 @@ export default function CreateCartModal() {
 				purpose: purpose.trim(),
 				is_public: isPublic,
 				budget: budgetValue,
+				cart_type: isShared ? "SHARED" : "PERSONAL",
 			},
 			{
 				onSuccess: (cart) => {

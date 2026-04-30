@@ -82,13 +82,17 @@ function ProductCard({ product }: { product: Product }) {
 export default function CategoryProductListPage() {
 	const [searchParams] = useSearchParams();
 
-	// URL ?category= 파라미터로 카테고리 결정. 없으면 best(첫 번째 카테고리).
-	const categoryId = searchParams.get("category") ?? categories[0].id;
+	// URL ?category= 파라미터로 카테고리 결정. 없으면 전체.
+	const categoryId = searchParams.get("category") ?? "all";
 
-	const { data: products = [] } = useProducts({ category: categoryId });
+	const { data: products = [] } = useProducts(
+		categoryId === "all" ? undefined : { category: categoryId }
+	);
 	const filteredProducts = products.slice(0, PAGE_SIZE);
 	const categoryLabel =
-		categories.find((c) => c.id === categoryId)?.label ?? categoryId;
+		categoryId === "all"
+			? "전체"
+			: (categories.find((c) => c.id === categoryId)?.label ?? categoryId);
 
 	return (
 		<div className="min-h-screen bg-white">

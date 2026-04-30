@@ -9,7 +9,10 @@ import {
 	useOpenManageCartModal,
 } from "../../store/useCartModalStore.ts";
 import { usePersonalCarts, useSharedCarts } from "../../hooks/cart/useCart";
-import { useIsAuthenticated } from "../../store/auth/useAuthStore";
+import {
+	useIsAuthenticated,
+	useCurrentUser,
+} from "../../store/auth/useAuthStore";
 
 export default function Sidebar() {
 	const isSidebarOpen = useIsSidebarOpen();
@@ -18,6 +21,7 @@ export default function Sidebar() {
 	const openCreateSharedCartModal = useOpenCreateSharedCartModal();
 	const openManageCartModal = useOpenManageCartModal();
 	const isAuthenticated = useIsAuthenticated();
+	const user = useCurrentUser();
 	const personalCarts = usePersonalCarts();
 	const sharedCarts = useSharedCarts();
 	const navigate = useNavigate();
@@ -57,14 +61,22 @@ export default function Sidebar() {
 							{/* 유저 섹션 */}
 							<section className="p-3 border-b border-gray-200">
 								<div className="flex items-center justify-between">
-									<button className="flex items-center gap-2 p-1.5 hover:bg-gray-200/50 rounded transition-colors">
-										<div className="w-6 h-6 bg-linear-to-br from-orange-400 to-pink-400 rounded flex items-center justify-center text-white text-xs font-semibold">
-											K
-										</div>
+									<div className="flex items-center gap-2 p-1.5">
+										{user?.profile_image_url ? (
+											<img
+												src={user.profile_image_url}
+												alt={user.username}
+												className="w-7 h-7 rounded-full object-cover"
+											/>
+										) : (
+											<div className="w-7 h-7 bg-linear-to-br from-orange-400 to-pink-400 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+												{user?.username?.charAt(0)?.toUpperCase() ?? "?"}
+											</div>
+										)}
 										<span className="text-m font-medium text-gray-800">
-											장바구니 사용자
+											{user?.username ?? "사용자"}님의 장바구니
 										</span>
-									</button>
+									</div>
 									<button
 										onClick={closeSidebar}
 										className="p-1 hover:bg-gray-200/50 rounded transition-colors">

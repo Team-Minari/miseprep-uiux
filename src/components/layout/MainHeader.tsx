@@ -1,5 +1,6 @@
 import { Search, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router";
+import { categories } from "../../types/product";
 
 export default function MainHeader() {
 	const navigate = useNavigate();
@@ -9,21 +10,6 @@ export default function MainHeader() {
 	};
 	const handleCart = () => {
 		navigate("/cart");
-	};
-	const handleBest = () => {
-		navigate("/products?category=best");
-	};
-	const handleDaily = () => {
-		navigate("/products?category=living");
-	};
-	const handleIngredients = () => {
-		navigate("/products?category=ingredients");
-	};
-	const handleOffice = () => {
-		navigate("/products?category=office");
-	};
-	const handleCamping = () => {
-		navigate("/products?category=camping");
 	};
 	const handleSearch = () => {
 		alert("검색 기능은 현재 구현 예정입니다.");
@@ -71,30 +57,18 @@ export default function MainHeader() {
 						장바구니
 					</button>
 					<button
-						onClick={handleBest}
+						onClick={() => navigate("/products")}
 						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						베스트
+						전체
 					</button>
-					<button
-						onClick={handleDaily}
-						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						생활용품
-					</button>
-					<button
-						onClick={handleIngredients}
-						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						식재료
-					</button>
-					<button
-						onClick={handleOffice}
-						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						사무용품
-					</button>
-					<button
-						onClick={handleCamping}
-						className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
-						캠핑용품
-					</button>
+					{categories.map((cat) => (
+						<button
+							key={cat.id}
+							onClick={() => navigate(`/products?category=${cat.id}`)}
+							className="px-3 py-1.5 text-gray-800 hover:text-gray-900 hover:bg-gray-100 font-medium rounded transition-colors">
+							{cat.label}
+						</button>
+					))}
 				</nav>
 			</div>
 		</header>

@@ -84,7 +84,7 @@ export default function CartDetailPage() {
 	const cartBudget = isPublic ? publicCart?.budget : apiCart?.budget;
 	const isSharedCart = isPublic
 		? publicCart?.type === "shared"
-		: participants.length > 1;
+		: apiCart?.cart_type === "SHARED";
 	const isOwner = !isPublic && apiCart?.owner_id === currentUserId;
 	const ownerName = isPublic ? publicCart?.ownerName : undefined;
 	const likeCount = isPublic ? publicCart?.likeCount : undefined;
@@ -152,7 +152,7 @@ export default function CartDetailPage() {
 		(acc, item) => acc + item.price * item.quantity,
 		0
 	);
-	const showSharedPanel = !isPublic && isSharedCart && participants.length > 0;
+	const showSharedPanel = !isPublic && isSharedCart;
 	const budgetUsage = cartBudget
 		? Math.min((totalPrice / cartBudget) * 100, 100)
 		: 0;
