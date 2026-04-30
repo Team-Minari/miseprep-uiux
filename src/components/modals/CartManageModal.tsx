@@ -7,6 +7,11 @@ import {
 	useManagedCart,
 } from "../../store/useCartModalStore";
 import { usePersonalCarts, useSharedCarts } from "../../hooks/cart/useCart";
+import {
+	useUpdateCartSettings,
+	useDeleteCart,
+	useLeaveCart,
+} from "../../hooks/cart/useCartMutation";
 import { useAuthStore } from "../../store/auth/useAuthStore";
 
 const toBudgetInput = (budget?: number | null) =>
@@ -18,6 +23,9 @@ export default function CartManageModal() {
 	const personalCarts = usePersonalCarts();
 	const sharedCarts = useSharedCarts();
 	const currentUserId = useAuthStore((s) => s.user?.id);
+	const updateCartMutation = useUpdateCartSettings();
+	const deleteCartMutation = useDeleteCart();
+	const leaveCartMutation = useLeaveCart();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
@@ -69,14 +77,20 @@ export default function CartManageModal() {
 	};
 
 	const handleSave = () => {
-		// Commit 3에서 API 연동 예정
-		console.log("updateCart", managedCart.id, {
-			name: cartName.trim(),
-			isPublic,
-			purpose: purpose.trim(),
-			budget: budget.trim() ? Number(budget.replaceAll(",", "")) : undefined,
-		});
-		handleClose();
+		updateCartMutation.mutate(
+			{
+				cartId: managedCart.id,
+				body: {
+					cartName: cartName.trim(),
+					isPublic,
+					purpose: purpose.trim(),
+					budget: budget.trim()
+						? Number(budget.replaceAll(",", ""))
+						: undefined,
+				},
+			},
+			{ onSuccess: () => handleClose() }
+		);
 	};
 
 	const navigateIfViewingTargetCart = (
@@ -99,20 +113,24 @@ export default function CartManageModal() {
 		const confirmed = window.confirm("이 장바구니를 삭제하시겠어요?");
 		if (!confirmed) return;
 
-		// Commit 3에서 API 연동 예정
-		console.log("deleteCart", managedCart.id);
-		navigateIfViewingTargetCart(managedCart.type, managedCart.id);
-		handleClose();
+		deleteCartMutation.mutate(managedCart.id, {
+			onSuccess: () => {
+				navigateIfViewingTargetCart(managedCart.type, managedCart.id);
+				handleClose();
+			},
+		});
 	};
 
 	const handleLeave = () => {
 		const confirmed = window.confirm("이 공유 장바구니에서 탈퇴하시겠어요?");
 		if (!confirmed) return;
 
-		// Commit 3에서 API 연동 예정
-		console.log("leaveCart", managedCart.id);
-		navigateIfViewingTargetCart("shared", managedCart.id);
-		handleClose();
+		leaveCartMutation.mutate(managedCart.id, {
+			onSuccess: () => {
+				navigateIfViewingTargetCart("shared", managedCart.id);
+				handleClose();
+			},
+		});
 	};
 
 	return (

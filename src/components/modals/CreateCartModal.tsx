@@ -6,6 +6,7 @@ import {
 	useCloseCreateCartModal,
 	useCloseCreateSharedCartModal,
 } from "../../store/useCartModalStore.ts";
+import { useCreateCart } from "../../hooks/cart/useCartMutation";
 
 export default function CreateCartModal() {
 	// store에서 모달 모드 확인
@@ -22,6 +23,7 @@ export default function CreateCartModal() {
 	// 모달 닫기 액션 가져오기
 	const closeCreateCartModal = useCloseCreateCartModal();
 	const closeCreateSharedCartModal = useCloseCreateSharedCartModal();
+	const createCartMutation = useCreateCart();
 
 	// 모드에 따라 적절한 닫기 함수 선택
 	const handleClose = isShared
@@ -68,15 +70,23 @@ export default function CreateCartModal() {
 
 	// 폼 제출 핸들러
 	const handleSubmit = () => {
-		console.log({
-			isShared,
-			isPublic,
-			cartName,
-			budget,
-			purpose,
-			emails: emails.filter((email) => email.trim() !== ""),
-		});
-		handleClose();
+		const budgetValue = budget.trim()
+			? Number(budget.replaceAll(",", ""))
+			: undefined;
+
+		createCartMutation.mutate(
+			{
+				name: cartName.trim(),
+				purpose: purpose.trim(),
+				is_public: isPublic,
+				budget: budgetValue,
+			},
+			{
+				onSuccess: () => {
+					handleClose();
+				},
+			}
+		);
 	};
 
 	// ESC 키로 모달 닫기

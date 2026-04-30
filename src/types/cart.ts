@@ -33,3 +33,21 @@ export interface ParticipantResponse {
 	username: string;
 	profileImageUrl: string | null;
 }
+
+// ── 백엔드 요청 DTO ──
+
+/** POST /api/carts 장바구니 생성 */
+export interface CreateCartRequest {
+	name: string;
+	purpose: string;
+	is_public: boolean;
+	budget?: number | null;
+}
+
+/** PATCH /api/carts/{cartId}/settings 장바구니 설정 수정 */
+export interface UpdateCartSettingRequest {
+	cartName?: string;
+	isPublic?: boolean;
+	purpose?: string;
+	budget?: number | null;
+}

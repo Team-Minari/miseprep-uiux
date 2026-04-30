@@ -5,6 +5,8 @@ import type {
 	CartDetailResponse,
 	CartItemResponse,
 	ParticipantResponse,
+	CreateCartRequest,
+	UpdateCartSettingRequest,
 } from "../../types/cart";
 
 const BASE = "/api/carts";
@@ -32,3 +34,28 @@ export const getCartParticipants = (cartId: number) =>
 	apiClient
 		.get<ApiResponse<ParticipantResponse[]>>(`${BASE}/${cartId}/participants`)
 		.then((res) => res.data.data);
+
+// ── Mutation ──
+
+/** 장바구니 생성 */
+export const createCart = (body: CreateCartRequest) =>
+	apiClient
+		.post<ApiResponse<CartResponse>>(BASE, body)
+		.then((res) => res.data.data);
+
+/** 장바구니 설정 수정 (소유자 전용) */
+export const updateCartSettings = (
+	cartId: number,
+	body: UpdateCartSettingRequest
+) =>
+	apiClient
+		.patch<ApiResponse<CartResponse>>(`${BASE}/${cartId}/settings`, body)
+		.then((res) => res.data.data);
+
+/** 장바구니 삭제 (소유자 전용) */
+export const deleteCart = (cartId: number) =>
+	apiClient.delete(`${BASE}/${cartId}`);
+
+/** 장바구니 나가기 (소유자 외) */
+export const leaveCart = (cartId: number) =>
+	apiClient.delete(`${BASE}/${cartId}/leave`);
