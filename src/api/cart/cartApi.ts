@@ -7,6 +7,8 @@ import type {
 	ParticipantResponse,
 	CreateCartRequest,
 	UpdateCartSettingRequest,
+	AddCartItemRequest,
+	UpdateCartItemRequest,
 } from "../../types/cart";
 
 const BASE = "/api/carts";
@@ -59,3 +61,39 @@ export const deleteCart = (cartId: number) =>
 /** 장바구니 나가기 (소유자 외) */
 export const leaveCart = (cartId: number) =>
 	apiClient.delete(`${BASE}/${cartId}/leave`);
+
+// ── 아이템 Mutation ──
+
+/** 아이템 추가 */
+export const addCartItem = (cartId: number, body: AddCartItemRequest) =>
+	apiClient
+		.post<ApiResponse<CartItemResponse>>(`${BASE}/${cartId}/items`, body)
+		.then((res) => res.data.data);
+
+/** 아이템 수량 수정 */
+export const updateCartItem = (
+	cartId: number,
+	itemId: number,
+	body: UpdateCartItemRequest
+) =>
+	apiClient
+		.patch<
+			ApiResponse<CartItemResponse>
+		>(`${BASE}/${cartId}/items/${itemId}`, body)
+		.then((res) => res.data.data);
+
+/** 아이템 삭제 */
+export const deleteCartItem = (cartId: number, itemId: number) =>
+	apiClient.delete(`${BASE}/${cartId}/items/${itemId}`);
+
+/** 전체 아이템 삭제 */
+export const deleteAllCartItems = (cartId: number) =>
+	apiClient.delete(`${BASE}/${cartId}/items`);
+
+/** 아이템 체크 */
+export const checkCartItem = (cartId: number, itemId: number) =>
+	apiClient.post(`${BASE}/${cartId}/items/${itemId}/check`);
+
+/** 아이템 체크 해제 */
+export const uncheckCartItem = (cartId: number, itemId: number) =>
+	apiClient.delete(`${BASE}/${cartId}/items/${itemId}/check`);

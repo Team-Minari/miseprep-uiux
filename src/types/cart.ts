@@ -51,3 +51,14 @@ export interface UpdateCartSettingRequest {
 	purpose?: string;
 	budget?: number | null;
 }
+
+/** POST /api/carts/{cartId}/items 아이템 추가 */
+export interface AddCartItemRequest {
+	product_id: number;
+	quantity: number;
+}
+
+/** PATCH /api/carts/{cartId}/items/{itemId} 수량 수정 */
+export interface UpdateCartItemRequest {
+	quantity: number;
+}

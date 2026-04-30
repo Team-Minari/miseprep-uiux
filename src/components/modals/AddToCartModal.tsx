@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { X } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 import { useCloseAddToCartModal } from "../../store/useCartModalStore.ts";
+import { useCreateCart } from "../../hooks/cart/useCartMutation";
 
 // 장바구니 존재 X -> 장바구니 생성 모달
 export default function AddToCartModal() {
@@ -13,6 +14,7 @@ export default function AddToCartModal() {
 
 	// 모달 닫기 액션 가져오기
 	const closeAddToCartModal = useCloseAddToCartModal();
+	const createCartMutation = useCreateCart();
 
 	const handleClose = useCallback(() => {
 		closeAddToCartModal();
@@ -43,15 +45,20 @@ export default function AddToCartModal() {
 	};
 
 	// 폼 제출 핸들러
-	const handleSubmit = (type: "personal" | "shared") => {
-		console.log({
-			isShared: type === "shared",
-			isPublic,
-			cartName,
-			budget,
-			purpose,
-		});
-		handleClose();
+	const handleSubmit = (_type: "personal" | "shared") => {
+		const budgetValue = budget.trim()
+			? Number(budget.replaceAll(",", ""))
+			: undefined;
+
+		createCartMutation.mutate(
+			{
+				name: cartName.trim(),
+				purpose: purpose.trim(),
+				is_public: isPublic,
+				budget: budgetValue,
+			},
+			{ onSuccess: () => handleClose() }
+		);
 	};
 
 	// ESC 키로 모달 닫기

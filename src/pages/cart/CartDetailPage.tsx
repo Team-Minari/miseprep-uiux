@@ -10,6 +10,7 @@ import {
 import { useAuthStore } from "../../store/auth/useAuthStore";
 import SharedCartPanel from "../../components/cart/SharedCartPanel";
 import { useOpenSelectCartModal } from "../../store/useCartModalStore";
+import { useDeleteCartItem } from "../../hooks/cart/useCartMutation";
 import type { CartItemResponse } from "../../types/cart";
 import { publicCarts, type CartItem } from "../../mock/cartData";
 
@@ -52,6 +53,7 @@ export default function CartDetailPage() {
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const openSelectCartModal = useOpenSelectCartModal();
+	const deleteItemMutation = useDeleteCartItem();
 	const currentUserId = useAuthStore((s) => s.user?.id);
 
 	const cartId = Number(searchParams.get("id"));
@@ -124,12 +126,14 @@ export default function CartDetailPage() {
 		});
 	};
 
-	const handleDelete = (_id: number) => {
-		// Commit 4에서 API 연동 예정
+	const handleDelete = (itemId: number) => {
+		deleteItemMutation.mutate({ cartId, itemId });
 	};
 
 	const handleDeleteChecked = () => {
-		// Commit 4에서 API 연동 예정
+		checkedIds.forEach((itemId) => {
+			deleteItemMutation.mutate({ cartId, itemId });
+		});
 	};
 
 	const handleOpenProduct = (item: UnifiedItem) => {

@@ -4,9 +4,20 @@ import {
 	updateCartSettings,
 	deleteCart,
 	leaveCart,
+	addCartItem,
+	updateCartItem,
+	deleteCartItem,
+	deleteAllCartItems,
+	checkCartItem,
+	uncheckCartItem,
 } from "../../api/cart/cartApi";
 import { CART_KEYS } from "./useCart";
-import type { CreateCartRequest, UpdateCartSettingRequest } from "../../types/cart";
+import type {
+	CreateCartRequest,
+	UpdateCartSettingRequest,
+	AddCartItemRequest,
+	UpdateCartItemRequest,
+} from "../../types/cart";
 
 /** 장바구니 생성 */
 export const useCreateCart = () => {
@@ -61,6 +72,109 @@ export const useLeaveCart = () => {
 		mutationFn: (cartId: number) => leaveCart(cartId),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: CART_KEYS.myList() });
+		},
+	});
+};
+
+// ── 아이템 Mutation ──
+
+/** 아이템 추가 */
+export const useAddCartItem = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			cartId,
+			body,
+		}: {
+			cartId: number;
+			body: AddCartItemRequest;
+		}) => addCartItem(cartId, body),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.items(variables.cartId),
+			});
+		},
+	});
+};
+
+/** 아이템 수량 수정 */
+export const useUpdateCartItem = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			cartId,
+			itemId,
+			body,
+		}: {
+			cartId: number;
+			itemId: number;
+			body: UpdateCartItemRequest;
+		}) => updateCartItem(cartId, itemId, body),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.items(variables.cartId),
+			});
+		},
+	});
+};
+
+/** 아이템 삭제 */
+export const useDeleteCartItem = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ cartId, itemId }: { cartId: number; itemId: number }) =>
+			deleteCartItem(cartId, itemId),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.items(variables.cartId),
+			});
+		},
+	});
+};
+
+/** 전체 아이템 삭제 */
+export const useDeleteAllCartItems = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (cartId: number) => deleteAllCartItems(cartId),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.items(variables),
+			});
+		},
+	});
+};
+
+/** 아이템 체크 */
+export const useCheckCartItem = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ cartId, itemId }: { cartId: number; itemId: number }) =>
+			checkCartItem(cartId, itemId),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.items(variables.cartId),
+			});
+		},
+	});
+};
+
+/** 아이템 체크 해제 */
+export const useUncheckCartItem = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({ cartId, itemId }: { cartId: number; itemId: number }) =>
+			uncheckCartItem(cartId, itemId),
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: CART_KEYS.items(variables.cartId),
+			});
 		},
 	});
 };
