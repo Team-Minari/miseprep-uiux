@@ -1,4 +1,5 @@
-import { apiClient, tokenStorage } from "../client";
+import { apiClient } from "../client";
+import { useAuthStore } from "../../store/auth/useAuthStore";
 import type {
 	ApiResponse,
 	AuthTokens,
@@ -10,15 +11,17 @@ import type {
 const AUTH_BASE = "/api/auth";
 const MEMBER_BASE = "/api/members";
 
+const getRedirectUri = () => `${window.location.origin}/oauth/kakao/callback`;
+
 /** 카카오 OAuth 인가 URL 반환 */
 export const getKakaoAuthorizeUrl = () =>
-	`${apiClient.defaults.baseURL}${AUTH_BASE}/oauth/kakao/authorize`;
+	`${apiClient.defaults.baseURL}${AUTH_BASE}/oauth/kakao/authorize?redirect_uri=${encodeURIComponent(getRedirectUri())}`;
 
 /** 카카오 콜백 코드로 토큰 교환 */
 export const kakaoCallback = (code: string) =>
 	apiClient
 		.get<ApiResponse<AuthTokens>>(`${AUTH_BASE}/oauth/kakao/callback`, {
-			params: { code },
+			params: { code, redirect_uri: getRedirectUri() },
 		})
 		.then((res) => res.data.data);
 
@@ -33,7 +36,9 @@ export const refreshToken = (refreshToken: string) =>
 /** 로그아웃 */
 export const logout = () =>
 	apiClient.post(`${AUTH_BASE}/logout`, null, {
-		headers: { "Refresh-Token": tokenStorage.getRefresh() ?? "" },
+		headers: {
+			"Refresh-Token": useAuthStore.getState().refreshToken ?? "",
+		},
 	});
 
 /** 테스트 로그인 */

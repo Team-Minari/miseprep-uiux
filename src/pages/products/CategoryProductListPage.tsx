@@ -27,7 +27,7 @@ function ProductCard({ product }: { product: Product }) {
 		e.stopPropagation();
 		const hasCartData = cartCount > 0;
 		if (hasCartData) {
-			openSelectCartModal();
+			openSelectCartModal([{ productId: product.id, quantity: 1 }]);
 		} else {
 			openAddToCartModal();
 		}

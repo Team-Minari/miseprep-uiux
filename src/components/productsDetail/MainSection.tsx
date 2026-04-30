@@ -5,6 +5,7 @@ import {
 } from "../../store/useCartModalStore.ts";
 import { getCategoryLabel } from "../../types/product";
 import { useAllCartsCount } from "../../store/useCartStore.ts";
+import { useRequireAuth } from "../../hooks/auth/useRequireAuth";
 import type { Product } from "../../types/product";
 
 interface MainSectionProps {
@@ -15,15 +16,16 @@ export default function MainSection({ product }: MainSectionProps) {
 	const openAddToCartModal = useOpenAddToCartModal();
 	const openSelectCartModal = useOpenSelectCartModal();
 	const cartCount = useAllCartsCount();
+	const { requireAuth } = useRequireAuth();
 
-	const handleAddToCart = () => {
+	const handleAddToCart = requireAuth(() => {
 		const hasCartData = cartCount > 0;
 		if (hasCartData) {
-			openSelectCartModal();
+			openSelectCartModal([{ productId: product.id, quantity: 1 }]);
 		} else {
 			openAddToCartModal();
 		}
-	};
+	});
 
 	return (
 		<div className="mb-10 grid items-start gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(320px,0.95fr)]">

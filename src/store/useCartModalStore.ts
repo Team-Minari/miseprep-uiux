@@ -28,6 +28,8 @@ export const useCartModalStore = create(
 					id: number;
 					type: ManagedCartType;
 				},
+				// 장바구니에 담을 상품 목록
+				pendingItems: [] as { productId: number; quantity: number }[],
 			},
 			(set) => ({
 				// 사이드바 액션
@@ -75,13 +77,17 @@ export const useCartModalStore = create(
 					}),
 
 				// 장바구니 선택 모달 액션 (장바구니 데이터 있을 때)
-				openSelectCartModal: () =>
+				openSelectCartModal: (
+					items?: { productId: number; quantity: number }[]
+				) =>
 					set((state) => {
+						state.pendingItems = items ?? [];
 						state.isSelectCartModalOpen = true;
 					}),
 				closeSelectCartModal: () =>
 					set((state) => {
 						state.isSelectCartModalOpen = false;
+						state.pendingItems = [];
 					}),
 
 				openManageCartModal: (managedCart: {
@@ -107,6 +113,7 @@ export const useCartModalStore = create(
 						state.isSelectCartModalOpen = false;
 						state.isManageCartModalOpen = false;
 						state.managedCart = null;
+						state.pendingItems = [];
 					}),
 			})
 		)
@@ -203,6 +210,10 @@ export const useCloseManageCartModal = () => {
 
 export const useManagedCart = () => {
 	return useCartModalStore((state) => state.managedCart);
+};
+
+export const usePendingItems = () => {
+	return useCartModalStore((state) => state.pendingItems);
 };
 
 // ModalProvider에서 ModalKey로 해당 모달의 open 상태를 조회하는 유틸 훅

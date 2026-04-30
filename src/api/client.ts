@@ -1,9 +1,6 @@
 import axios from "axios";
-import type {
-	ApiResponse,
-	AuthTokens,
-	TokenRefreshRequest,
-} from "../types/auth/auth";
+import type { ApiResponse, AuthTokens } from "../types/auth/auth";
+import { useAuthStore } from "../store/auth/useAuthStore";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
@@ -12,26 +9,9 @@ export const apiClient = axios.create({
 	headers: { "Content-Type": "application/json" },
 });
 
-// ── 토큰 헬퍼 ──
-const TOKEN_KEY = "access_token";
-const REFRESH_KEY = "refresh_token";
-
-export const tokenStorage = {
-	getAccess: () => localStorage.getItem(TOKEN_KEY),
-	getRefresh: () => localStorage.getItem(REFRESH_KEY),
-	set: (tokens: AuthTokens) => {
-		localStorage.setItem(TOKEN_KEY, tokens.access_token);
-		localStorage.setItem(REFRESH_KEY, tokens.refresh_token);
-	},
-	clear: () => {
-		localStorage.removeItem(TOKEN_KEY);
-		localStorage.removeItem(REFRESH_KEY);
-	},
-};
-
 // ── 요청 인터셉터: Authorization 헤더 주입 ──
 apiClient.interceptors.request.use((config) => {
-	const token = tokenStorage.getAccess();
+	const token = useAuthStore.getState().accessToken;
 	if (token) {
 		config.headers.Authorization = `Bearer ${token}`;
 	}
@@ -50,9 +30,9 @@ apiClient.interceptors.response.use(
 			return Promise.reject(error);
 		}
 
-		const refreshToken = tokenStorage.getRefresh();
+		const refreshToken = useAuthStore.getState().refreshToken;
 		if (!refreshToken) {
-			tokenStorage.clear();
+			useAuthStore.getState().clear();
 			window.location.href = "/login";
 			return Promise.reject(error);
 		}
@@ -65,7 +45,7 @@ apiClient.interceptors.response.use(
 				refreshPromise = axios
 					.post<ApiResponse<AuthTokens>>(`${BASE_URL}/api/auth/refresh`, {
 						refresh_token: refreshToken,
-					} satisfies TokenRefreshRequest)
+					})
 					.then((res) => res.data.data)
 					.finally(() => {
 						refreshPromise = null;
@@ -73,11 +53,11 @@ apiClient.interceptors.response.use(
 			}
 
 			const tokens = await refreshPromise;
-			tokenStorage.set(tokens);
+			useAuthStore.getState().setTokens(tokens);
 			original.headers.Authorization = `Bearer ${tokens.access_token}`;
 			return apiClient(original);
 		} catch {
-			tokenStorage.clear();
+			useAuthStore.getState().clear();
 			window.location.href = "/login";
 			return Promise.reject(error);
 		}

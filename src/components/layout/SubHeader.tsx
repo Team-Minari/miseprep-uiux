@@ -1,18 +1,25 @@
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToggleSidebar } from "../../store/useCartModalStore.ts";
+import { useIsAuthenticated } from "../../store/auth/useAuthStore";
+import { useLogout } from "../../hooks/auth/useAuth";
 
 export default function SubHeader() {
 	const toggleSidebar = useToggleSidebar();
 	const navigate = useNavigate();
+	const isAuthenticated = useIsAuthenticated();
+	const logout = useLogout();
 
-	// 이벤트 핸들러
 	const handleNavigateHome = () => {
 		navigate("/");
 	};
 
-	const handleNavigateLogin = () => {
-		navigate("/login");
+	const handleAuth = () => {
+		if (isAuthenticated) {
+			logout.mutate();
+		} else {
+			navigate("/login");
+		}
 	};
 
 	const handleNavigateMyPage = () => {
@@ -26,10 +33,8 @@ export default function SubHeader() {
 	return (
 		<header className="h-12 bg-white border-b border-gray-100">
 			<div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
-				{/* 왼쪽 섹션 - 빈 공간 유지 */}
 				<section className="flex items-center gap-2" />
 
-				{/* 오른쪽 섹션 */}
 				<section className="flex items-center gap-1">
 					<button
 						onClick={handleNavigateHome}
@@ -42,9 +47,9 @@ export default function SubHeader() {
 						마이페이지
 					</button>
 					<button
-						onClick={handleNavigateLogin}
+						onClick={handleAuth}
 						className="px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded transition-colors">
-						로그인
+						{isAuthenticated ? "로그아웃" : "로그인"}
 					</button>
 					<button
 						onClick={handleToggleCart}

@@ -2,7 +2,6 @@ import { create } from "zustand";
 import { combine, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type { AuthTokens, Member } from "../../types/auth/auth";
-import { tokenStorage } from "../../api/client";
 
 export const useAuthStore = create(
 	persist(
@@ -16,7 +15,6 @@ export const useAuthStore = create(
 				},
 				(set) => ({
 					setTokens: (tokens: AuthTokens) => {
-						tokenStorage.set(tokens);
 						set((state) => {
 							state.accessToken = tokens.access_token;
 							state.refreshToken = tokens.refresh_token;
@@ -30,7 +28,6 @@ export const useAuthStore = create(
 						}),
 
 					clear: () => {
-						tokenStorage.clear();
 						set((state) => {
 							state.accessToken = null;
 							state.refreshToken = null;

@@ -25,11 +25,11 @@ export default function ProductSection({ title }: ProductSectionProps) {
 	const openSelectCartModal = useOpenSelectCartModal();
 	const cartCount = useAllCartsCount();
 
-	const handleAddToCart = (e: React.MouseEvent) => {
+	const handleAddToCart = (e: React.MouseEvent, productId: number) => {
 		e.stopPropagation(); // 상세 페이지로 이동하는 부모 클릭 이벤트 방지
 		const hasCartData = cartCount > 0;
 		if (hasCartData) {
-			openSelectCartModal();
+			openSelectCartModal([{ productId, quantity: 1 }]);
 		} else {
 			openAddToCartModal();
 		}
@@ -75,7 +75,7 @@ export default function ProductSection({ title }: ProductSectionProps) {
 								/>
 								{/* 장바구니 버튼 */}
 								<button
-									onClick={handleAddToCart}
+									onClick={(e) => handleAddToCart(e, product.id)}
 									className="absolute bottom-2.5 right-2.5 w-9 h-9 bg-white rounded-full shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-gray-50"
 									aria-label="장바구니 담기">
 									<ShoppingCart className="w-4 h-4 text-gray-700" />

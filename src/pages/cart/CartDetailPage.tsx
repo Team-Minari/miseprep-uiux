@@ -11,6 +11,7 @@ import { useAuthStore } from "../../store/auth/useAuthStore";
 import SharedCartPanel from "../../components/cart/SharedCartPanel";
 import { useOpenSelectCartModal } from "../../store/useCartModalStore";
 import { useDeleteCartItem } from "../../hooks/cart/useCartMutation";
+import { useRequireAuth } from "../../hooks/auth/useRequireAuth";
 import type { CartItemResponse } from "../../types/cart";
 import { publicCarts, type CartItem } from "../../mock/cartData";
 
@@ -54,6 +55,7 @@ export default function CartDetailPage() {
 	const navigate = useNavigate();
 	const openSelectCartModal = useOpenSelectCartModal();
 	const deleteItemMutation = useDeleteCartItem();
+	const { requireAuth } = useRequireAuth();
 	const currentUserId = useAuthStore((s) => s.user?.id);
 
 	const cartId = Number(searchParams.get("id"));
@@ -93,15 +95,20 @@ export default function CartDetailPage() {
 			return publicCart.items.map(toUnifiedItem);
 		}
 		return apiItems.map(fromApiItem);
-	}, [isPublic, publicCart, apiItems]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isPublic, publicCart?.id, apiItems.length]);
 
 	const [checkedIds, setCheckedIds] = useState<Set<number>>(new Set());
+	const [initializedCartId, setInitializedCartId] = useState<number | null>(
+		null
+	);
 
 	useEffect(() => {
-		if (allItems.length > 0) {
+		if (allItems.length > 0 && initializedCartId !== cartId) {
 			setCheckedIds(new Set(allItems.map((item) => item.id)));
+			setInitializedCartId(cartId);
 		}
-	}, [allItems]);
+	}, [allItems, cartId, initializedCartId]);
 
 	const isAllChecked =
 		allItems.length > 0 && checkedIds.size === allItems.length;
@@ -447,18 +454,27 @@ export default function CartDetailPage() {
 										<div className="flex flex-col gap-2">
 											<button
 												disabled={checkedItems.length === 0}
-												onClick={openSelectCartModal}
+												onClick={requireAuth(() =>
+													openSelectCartModal(
+														checkedItems.map((item) => ({
+															productId: item.productId,
+															quantity: item.quantity,
+														}))
+													)
+												)}
 												className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#F7F3E9] py-3.5 text-sm font-semibold tracking-wide text-black transition-colors hover:bg-[#F3EEE0] disabled:cursor-not-allowed disabled:opacity-40">
 												<ShoppingCart className="h-4 w-4" />
 												선택 상품 담기 ({checkedItems.length})
 											</button>
 											<button
-												onClick={() => {
-													setCheckedIds(
-														new Set(allItems.map((item) => item.id))
-													);
-													openSelectCartModal();
-												}}
+												onClick={requireAuth(() =>
+													openSelectCartModal(
+														allItems.map((item) => ({
+															productId: item.productId,
+															quantity: item.quantity,
+														}))
+													)
+												)}
 												className="flex w-full items-center justify-center gap-2 rounded-xl border border-[#D9CEBC] py-3.5 text-sm font-semibold tracking-wide text-gray-700 transition-colors hover:bg-[#FDFBF6]">
 												<ShoppingCart className="h-4 w-4" />
 												모두 담기 ({allItems.length})
