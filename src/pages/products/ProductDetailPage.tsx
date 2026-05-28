@@ -25,7 +25,7 @@ export default function ProductDetailPage() {
 
 	return (
 		<div className="min-h-screen w-full bg-white">
-			<div className="mx-auto mb-6 max-w-7xl px-4 py-8">
+			<div className="mx-auto mb-6 max-w-7xl px-4 sm:px-6 py-4 sm:py-6 lg:py-8">
 				<MainSection product={product} />
 			</div>
 		</div>

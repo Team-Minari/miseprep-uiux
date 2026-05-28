@@ -101,8 +101,8 @@ export default function CategoryProductListPage() {
 		<div className="min-h-screen bg-white">
 			{/* 페이지 헤더 */}
 			<div className="bg-white">
-				<div className="max-w-7xl mx-auto px-6 py-10">
-					<h1 className="text-3xl font-bold text-gray-900">{categoryLabel}</h1>
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-10">
+					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{categoryLabel}</h1>
 					<p className="mt-2 text-sm text-gray-500">
 						{categoryId === "best"
 							? "가장 인기 있는 베스트 상품을 모아봤어요"
@@ -112,7 +112,7 @@ export default function CategoryProductListPage() {
 			</div>
 
 			{/* 본문 */}
-			<div className="max-w-7xl mx-auto px-6 pb-16">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 pb-10 sm:pb-12 lg:pb-16">
 				{/* 결과 카운트 */}
 				<p className="text-sm text-gray-400 mb-6">
 					<span className="font-medium text-gray-700">
@@ -121,15 +121,15 @@ export default function CategoryProductListPage() {
 					의 상품
 				</p>
 
-				{/* 상품 그리드: 4열 × 6행 */}
+				{/* 상품 그리드: lg+ 4열, md 3열, sm 2열 */}
 				{filteredProducts.length > 0 ? (
-					<div className="grid grid-cols-4 gap-x-6 gap-y-16">
+					<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10 sm:gap-y-12 lg:gap-y-16">
 						{filteredProducts.map((product) => (
 							<ProductCard key={product.id} product={product} />
 						))}
 					</div>
 				) : (
-					<div className="flex flex-col items-center justify-center py-32 gap-4 text-gray-400">
+					<div className="flex flex-col items-center justify-center py-20 sm:py-32 gap-4 text-gray-400">
 						<ShoppingCart className="w-14 h-14 opacity-20" />
 						<p className="text-base">
 							{categoryLabel} 카테고리에 등록된 상품이 없습니다.

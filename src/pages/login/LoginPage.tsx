@@ -26,10 +26,10 @@ export default function LoginPage() {
 						<div className="inline-flex items-center justify-center w-20 h-20  rounded-2xl mb-6">
 							<ShoppingCart className="w-10 h-10 text-gray-900" />
 						</div>
-						<h1 className="text-4xl font-bold text-gray-900 mb-3">
+						<h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3">
 							공유 장바구니
 						</h1>
-						<p className="text-lg text-gray-600">
+						<p className="text-sm sm:text-base lg:text-lg text-gray-600">
 							함께 쇼핑하고, 함께 관리하세요
 						</p>
 					</motion.div>

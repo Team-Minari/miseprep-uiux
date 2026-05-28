@@ -96,8 +96,8 @@ export default function CartListPage() {
 		<div className="min-h-screen bg-white">
 			{/* 페이지 헤더 영역 */}
 			<div className="bg-white">
-				<div className="max-w-7xl mx-auto px-6 py-10">
-					<h1 className="text-3xl font-bold text-gray-900">
+				<div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-10">
+					<h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
 						{currentCategory.label} 장바구니
 					</h1>
 					<p className="mt-2 text-sm text-gray-500">
@@ -107,14 +107,14 @@ export default function CartListPage() {
 			</div>
 
 			{/* 본문 */}
-			<div className="max-w-7xl mx-auto px-6 py-10">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 lg:py-10">
 				{/* 카테고리 탭 */}
-				<div className="flex border-b border-gray-200 mb-8">
+				<div className="flex overflow-x-auto border-b border-gray-200 mb-8">
 					{CART_CATEGORIES.map((cat) => (
 						<button
 							key={cat.value}
 							onClick={() => setActiveCategory(cat.value)}
-							className={`px-5 py-2.5 text-sm font-medium rounded-t transition-all whitespace-nowrap ${
+							className={`px-3 sm:px-5 py-2.5 text-xs sm:text-sm font-medium rounded-t transition-all whitespace-nowrap ${
 								activeCategory === cat.value
 									? "bg-[#F6F0E4] text-gray-900 font-bold"
 									: "text-gray-500 hover:text-gray-800"
@@ -132,19 +132,19 @@ export default function CartListPage() {
 					의 장바구니
 				</p>
 
-				{/* 그리드 */}
+				{/* 그리드: lg+ 4열, md 3열, sm 2열 */}
 				{isLoading ? (
-					<div className="flex flex-col items-center justify-center py-32 gap-4 text-gray-400">
+					<div className="flex flex-col items-center justify-center py-20 sm:py-32 gap-4 text-gray-400">
 						<p className="text-base">불러오는 중...</p>
 					</div>
 				) : filteredCarts.length > 0 ? (
-					<div className="grid grid-cols-4 gap-x-6 gap-y-14">
+					<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10 sm:gap-y-12 lg:gap-y-14">
 						{filteredCarts.map((cart) => (
 							<CartCard key={cart.id} cart={cart} />
 						))}
 					</div>
 				) : (
-					<div className="flex flex-col items-center justify-center py-32 gap-4 text-gray-400">
+					<div className="flex flex-col items-center justify-center py-20 sm:py-32 gap-4 text-gray-400">
 						<ShoppingCart className="w-14 h-14 opacity-20" />
 						<p className="text-base">
 							{currentCategory.label} 카테고리의 공개 장바구니가 없습니다.

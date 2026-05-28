@@ -2,8 +2,8 @@ import { Facebook, Instagram, ShoppingCart } from "lucide-react";
 
 export default function Footer() {
 	return (
-		<footer className="w-full bg-white border-t border-[#EAEAEA] mt-16">
-			<div className="max-w-7xl mx-auto px-6 py-16 space-y-12">
+		<footer className="w-full bg-white border-t border-[#EAEAEA] mt-10 sm:mt-16">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 lg:py-16 space-y-8 sm:space-y-12">
 				<div className="flex flex-col gap-10 md:flex-row md:items-center md:justify-between">
 					<div className="space-y-3">
 						<div className="flex items-center gap-2">

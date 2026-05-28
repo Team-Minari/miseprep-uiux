@@ -160,6 +160,18 @@ function tagStyle(tag: string) {
 export default function MainCarousel() {
 	const [current, setCurrent] = useState(0);
 	const [isPlaying] = useState(true);
+	const [visible, setVisible] = useState(VISIBLE);
+
+	useEffect(() => {
+		const update = () => {
+			if (window.innerWidth >= 1024) setVisible(VISIBLE);
+			else if (window.innerWidth >= 640) setVisible(2);
+			else setVisible(1);
+		};
+		update();
+		window.addEventListener("resize", update);
+		return () => window.removeEventListener("resize", update);
+	}, []);
 
 	const next = useCallback(() => {
 		setCurrent((prev) => (prev + 1) % TOTAL);
@@ -176,17 +188,32 @@ export default function MainCarousel() {
 	}, [isPlaying, next]);
 
 	const visibleIndices = Array.from(
-		{ length: VISIBLE },
+		{ length: visible },
 		(_, i) => (current + i) % TOTAL
 	);
+	const isDesktop = visible === VISIBLE;
 
 	return (
-		<div className="w-full bg-white py-6">
-			<div className="overflow-hidden">
-				<div className="flex gap-4 -mx-[1%]">
+		<div className="w-full bg-white py-4 sm:py-6">
+			<div className="overflow-hidden px-4 sm:px-6 lg:px-0">
+				<div className="flex gap-3 sm:gap-4 lg:-mx-[1%]">
 					{visibleIndices.map((slideIdx, position) => {
 						const slide = slides[slideIdx];
-						const isFocused = position === 1 || position === 2;
+						const isFocused = isDesktop
+							? position === 1 || position === 2
+							: true;
+						const slideHeight = isDesktop
+							? isFocused
+								? "500px"
+								: "460px"
+							: visible === 1
+								? "360px"
+								: "420px";
+						const slideFlex = isDesktop
+							? position === 0 || position === VISIBLE - 1
+								? 0.82
+								: 1.18
+							: 1;
 
 						return (
 							<motion.div
@@ -198,12 +225,11 @@ export default function MainCarousel() {
 									delay: position * 0.06,
 									ease: "easeOut",
 								}}
-								className="relative rounded-2xl overflow-hidden cursor-pointer select-none group"
+								className="relative rounded-2xl overflow-hidden cursor-pointer select-none group min-w-0"
 								style={{
-									height: isFocused ? "500px" : "460px",
-									flex:
-										position === 0 || position === VISIBLE - 1 ? 0.82 : 1.18,
-									marginTop: isFocused ? 0 : "20px",
+									height: slideHeight,
+									flex: slideFlex,
+									marginTop: isDesktop && !isFocused ? "20px" : 0,
 								}}>
 								{/* 배경 이미지 */}
 								<img

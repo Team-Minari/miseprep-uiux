@@ -7,7 +7,7 @@ import AiSearchFab from "./AiSearchFab";
 
 export default function GlobalLayout() {
 	return (
-		<div className="min-h-screen flex flex-col bg-white">
+		<div className="min-h-screen flex flex-col bg-white overflow-x-hidden">
 			{/* 헤더 - 상단 네비게이션 */}
 			<SubHeader />
 			<MainHeader />
@@ -17,7 +17,7 @@ export default function GlobalLayout() {
 				<Sidebar />
 
 				{/* 메인 콘텐츠 영역 */}
-				<main className="flex-1">
+				<main className="flex-1 w-full min-w-0 overflow-x-hidden">
 					<Outlet />
 				</main>
 			</div>

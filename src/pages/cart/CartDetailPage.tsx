@@ -148,8 +148,8 @@ export default function CartDetailPage() {
 		<div className="bg-white">
 			{/* 헤더 */}
 			<div className="bg-white">
-				<div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pb-5 pt-8">
-					<div className="flex items-center gap-3 pl-6">
+				<div className="mx-auto flex max-w-7xl flex-col lg:flex-row lg:items-center lg:justify-between gap-4 px-4 sm:px-6 pb-5 pt-6 sm:pt-8">
+					<div className="flex flex-wrap items-center gap-3 lg:pl-6">
 						<h1 className="text-xl font-semibold text-gray-900">
 							{cartName ?? "장바구니"}
 						</h1>
@@ -191,12 +191,12 @@ export default function CartDetailPage() {
 			</div>
 
 			{/* 본문 */}
-			<div className="mx-auto max-w-7xl px-6 pb-4 pt-5">
+			<div className="mx-auto max-w-7xl w-full min-w-0 px-4 sm:px-6 pb-4 pt-5">
 				<div
-					className={`${
+					className={`w-full min-w-0 ${
 						showSharedPanel
-							? "grid gap-12 lg:grid-cols-[minmax(0,1fr)_320px]"
-							: "w-full"
+							? "grid grid-cols-1 gap-8 lg:gap-12 lg:grid-cols-[minmax(0,1fr)_320px]"
+							: ""
 					}`}>
 					<div className="min-w-0 flex flex-col gap-10">
 						{allItems.length === 0 ? (
@@ -220,7 +220,7 @@ export default function CartDetailPage() {
 							</div>
 						) : (
 							<>
-								<div className="mb-1 flex items-center justify-between px-6 py-3">
+								<div className="mb-1 flex items-center justify-between px-2 sm:px-6 py-3">
 									<label className="flex cursor-pointer select-none items-center gap-2.5">
 										<input
 											type="checkbox"
@@ -255,7 +255,7 @@ export default function CartDetailPage() {
 										return (
 											<div
 												key={item.id}
-												className={`flex items-center gap-5 px-6 py-5 transition-colors ${
+												className={`flex items-center gap-3 sm:gap-5 px-3 sm:px-6 py-4 sm:py-5 transition-colors ${
 													isChecked ? "bg-white" : "bg-gray-50/60"
 												}`}>
 												<input
@@ -268,7 +268,7 @@ export default function CartDetailPage() {
 												<button
 													type="button"
 													onClick={() => handleOpenProduct(item)}
-													className={`h-24 w-24 shrink-0 overflow-hidden rounded-2xl bg-[#F7F3E9] text-left transition hover:scale-[1.02] ${
+													className={`h-16 w-16 sm:h-24 sm:w-24 shrink-0 overflow-hidden rounded-2xl bg-[#F7F3E9] text-left transition hover:scale-[1.02] ${
 														!isChecked ? "opacity-40" : ""
 													}`}>
 													<img
@@ -308,7 +308,7 @@ export default function CartDetailPage() {
 													</div>
 												</div>
 
-												<div className="w-24 text-right">
+												<div className="hidden sm:block w-24 text-right">
 													<p className="text-sm font-bold text-gray-900">
 														{formatPrice(item.price * item.quantity)}
 													</p>

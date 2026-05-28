@@ -92,20 +92,20 @@ export default function CartSection() {
 	)!;
 
 	return (
-		<section className="w-full bg-white py-16">
-			<div className="max-w-7xl mx-auto px-6">
+		<section className="w-full bg-white py-10 sm:py-12 lg:py-16">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6">
 				{/* 섹션 타이틀 */}
-				<h2 className="text-2xl font-bold text-gray-900 mb-5">
+				<h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 lg:mb-5">
 					가장 인기있는 장바구니
 				</h2>
 
 				{/* 카테고리 탭 */}
-				<div className="flex border-b border-gray-200 mb-6">
+				<div className="flex overflow-x-auto border-b border-gray-200 mb-6">
 					{CART_CATEGORIES.map((cat) => (
 						<button
 							key={cat.value}
 							onClick={() => setActiveCategory(cat.value)}
-							className={`px-5 py-2.5 text-sm font-medium rounded-t transition-all whitespace-nowrap ${
+							className={`px-3 sm:px-5 py-2.5 text-xs sm:text-sm font-medium rounded-t transition-all whitespace-nowrap ${
 								activeCategory === cat.value
 									? "bg-[#F6F0E4] text-gray-900 font-bold"
 									: "text-gray-500 hover:text-gray-800"
@@ -115,13 +115,13 @@ export default function CartSection() {
 					))}
 				</div>
 
-				{/* 장바구니 그리드: 4열 */}
+				{/* 장바구니 그리드: lg+ 4열, md 3열, sm 2열, 모바일 2열 */}
 				{isLoading ? (
 					<div className="flex flex-col items-center justify-center py-24 gap-3 text-gray-400">
 						<p className="text-sm">불러오는 중...</p>
 					</div>
 				) : filteredCarts.length > 0 ? (
-					<div className="grid grid-cols-4 gap-x-6 gap-y-16">
+					<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 sm:gap-x-6 gap-y-10 sm:gap-y-12 lg:gap-y-16">
 						{filteredCarts.map((cart) => (
 							<CartCard key={cart.id} cart={cart} />
 						))}
@@ -137,10 +137,10 @@ export default function CartSection() {
 
 				{/* 전체보기 버튼 */}
 				{filteredCarts.length > 0 && (
-					<div className="flex justify-center mt-10">
+					<div className="flex justify-center mt-8 lg:mt-10">
 						<button
 							onClick={() => navigate("/cart")}
-							className="px-16 py-4 border border-gray-200 rounded-2xl flex items-center justify-center gap-1.5 text-gray-500 font-medium hover:bg-[#F6F0E4] hover:border-[#D4B896] transition-all">
+							className="px-8 sm:px-12 lg:px-16 py-3 lg:py-4 border border-gray-200 rounded-2xl flex items-center justify-center gap-1.5 text-sm sm:text-base text-gray-500 font-medium hover:bg-[#F6F0E4] hover:border-[#D4B896] transition-all">
 							<span>{currentCategory.label} 장바구니 전체보기</span>
 							<ChevronRight className="w-4 h-4" />
 						</button>

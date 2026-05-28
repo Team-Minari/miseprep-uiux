@@ -57,7 +57,7 @@ export default function Sidebar() {
 							animate={{ x: 0 }}
 							exit={{ x: 400 }}
 							transition={{ type: "spring", damping: 25, stiffness: 200 }}
-							className="fixed top-14 bottom-8 right-2 w-80 bg-[#FDFBF6] border border-[#EDE9E0] rounded-2xl z-50 flex flex-col shadow-lg overflow-hidden">
+							className="fixed top-14 bottom-4 sm:bottom-8 right-2 w-72 sm:w-80 max-w-[calc(100vw-1rem)] bg-[#FDFBF6] border border-[#EDE9E0] rounded-2xl z-50 flex flex-col shadow-lg overflow-hidden">
 							{/* 유저 섹션 */}
 							<section className="p-3 border-b border-gray-200">
 								<div className="flex items-center justify-between">

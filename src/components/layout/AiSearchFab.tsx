@@ -123,7 +123,9 @@ export default function AiSearchFab() {
 	}, [isOpen]);
 
 	return (
-		<div ref={containerRef} className="fixed bottom-10 right-10 z-50">
+		<div
+			ref={containerRef}
+			className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-10 lg:right-10 z-50">
 			{/* 채팅 패널 (absolute로 자리 차지 없음) */}
 			<div
 				aria-hidden={!isOpen}
@@ -132,28 +134,28 @@ export default function AiSearchFab() {
 						? "pointer-events-auto translate-y-0 scale-100 opacity-100"
 						: "pointer-events-none translate-y-3 scale-95 opacity-0"
 				}`}>
-				<div className="flex h-[720px] w-[540px] flex-col overflow-hidden rounded-2xl border border-[#EDE6D5] bg-[#FDFBF6] shadow-2xl">
+				<div className="flex h-[min(560px,calc(100dvh-6rem))] w-[min(380px,calc(100vw-1.5rem))] sm:h-[min(640px,calc(100dvh-4rem))] sm:w-[min(440px,calc(100vw-2rem))] lg:h-[min(720px,calc(100dvh-4rem))] lg:w-[min(540px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-[#EDE6D5] bg-[#FDFBF6] shadow-2xl">
 					{/* 헤더 */}
-					<div className="flex items-center justify-between gap-2 px-6 py-4">
-						<p className="px-2 py-1.5 text-base font-semibold text-gray-800">
+					<div className="flex items-center justify-between gap-2 px-4 py-3 lg:px-6 lg:py-4">
+						<p className="px-1 sm:px-2 py-1 sm:py-1.5 text-sm sm:text-base font-semibold text-gray-800">
 							AI 장바구니 검색
 						</p>
 						<button
 							onClick={() => setIsOpen(false)}
 							aria-label="닫기"
-							className="rounded-md p-2 text-gray-500 transition-colors hover:bg-[#F7F3E9] hover:text-gray-700">
-							<X className="h-5 w-5" />
+							className="rounded-md p-1.5 sm:p-2 text-gray-500 transition-colors hover:bg-[#F7F3E9] hover:text-gray-700">
+							<X className="h-4 w-4 sm:h-5 sm:w-5" />
 						</button>
 					</div>
 
 					{/* 본문 */}
-					<div className="flex-1 overflow-y-auto px-7 pb-4 pt-3">
+					<div className="flex-1 overflow-y-auto px-5 pb-3 pt-2 lg:px-7 lg:pb-4 lg:pt-3">
 						{!hasSubmitted ? (
-							<div className="flex flex-col gap-7">
-								<div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#F7F3E9] shadow-md ring-1 ring-[#E8E2D0]">
-									<Sparkles className="h-7 w-7 text-[#7A6E5A]" />
+							<div className="flex flex-col gap-5 lg:gap-7">
+								<div className="flex h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 items-center justify-center rounded-full bg-[#F7F3E9] shadow-md ring-1 ring-[#E8E2D0]">
+									<Sparkles className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-[#7A6E5A]" />
 								</div>
-								<h2 className="text-2xl font-bold text-gray-900">
+								<h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">
 									무엇을 찾고 계신가요?
 								</h2>
 								<ul className="flex flex-col gap-1">
@@ -161,8 +163,8 @@ export default function AiSearchFab() {
 										<li key={s}>
 											<button
 												onClick={() => handleSuggestionClick(s)}
-												className="flex w-full items-center gap-3 rounded-lg px-3 py-3.5 text-left text-base text-gray-700 transition-colors hover:bg-[#F7F3E9]">
-												<Sparkles className="h-5 w-5 shrink-0 text-[#C8A97A]" />
+												className="flex w-full items-center gap-2 sm:gap-3 rounded-lg px-2 sm:px-3 py-2.5 sm:py-3.5 text-left text-sm sm:text-base text-gray-700 transition-colors hover:bg-[#F7F3E9]">
+												<Sparkles className="h-4 w-4 sm:h-5 sm:w-5 shrink-0 text-[#C8A97A]" />
 												<span>{s}</span>
 											</button>
 										</li>
@@ -261,7 +263,7 @@ export default function AiSearchFab() {
 					{/* 입력 영역 */}
 					<form
 						onSubmit={handleSubmit}
-						className="border-t border-[#EDE6D5] px-5 py-4">
+						className="border-t border-[#EDE6D5] px-3 py-3 sm:px-4 sm:py-3 lg:px-5 lg:py-4">
 						<div className="rounded-2xl border border-[#E8E2D0] bg-white p-3 focus-within:border-[#C8A97A] focus-within:ring-2 focus-within:ring-[#C8A97A]/30">
 							<textarea
 								ref={inputRef}
@@ -310,8 +312,8 @@ export default function AiSearchFab() {
 				<button
 					onClick={() => setIsOpen(true)}
 					aria-label="AI 장바구니 검색 열기"
-					className="animate-wiggle-on-hover flex h-20 w-20 items-center justify-center rounded-full bg-[#F7F3E9] text-[#7A6E5A] shadow-xl ring-1 ring-[#E8E2D0] transition-all duration-200 hover:scale-105 hover:bg-[#F3EEE0]">
-					<Sparkles className="wiggle-target h-9 w-9" />
+					className="animate-wiggle-on-hover flex h-14 w-14 sm:h-16 sm:w-16 lg:h-20 lg:w-20 items-center justify-center rounded-full bg-[#F7F3E9] text-[#7A6E5A] shadow-xl ring-1 ring-[#E8E2D0] transition-all duration-200 hover:scale-105 hover:bg-[#F3EEE0]">
+					<Sparkles className="wiggle-target h-6 w-6 sm:h-7 sm:w-7 lg:h-9 lg:w-9" />
 				</button>
 			</div>
 		</div>
