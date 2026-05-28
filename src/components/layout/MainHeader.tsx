@@ -1,4 +1,4 @@
-import { Search, ShoppingCart } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router";
 import { categories } from "../../types/product";
 
@@ -10,9 +10,6 @@ export default function MainHeader() {
 	};
 	const handleCart = () => {
 		navigate("/cart");
-	};
-	const handleSearch = () => {
-		alert("검색 기능은 현재 구현 예정입니다.");
 	};
 
 	return (
@@ -26,20 +23,6 @@ export default function MainHeader() {
 						<div className="flex items-baseline gap-1.5">
 							<span className="text-5xl font-semibold text-gray-900">Mise</span>
 							<span className="text-3xl font-normal text-gray-800">Prep</span>
-						</div>
-					</div>
-					<div className="ml-8 w-full max-w-xl">
-						<div className="relative">
-							<input
-								type="text"
-								placeholder="상품명을 입력해 주세요"
-								className="w-full px-6 py-4 pr-16 rounded-full bg-white border-none focus:outline-none focus:ring-2 focus:ring-gray-900 text-base"
-							/>
-							<button
-								onClick={handleSearch}
-								className="absolute right-1.5 top-1/2 -translate-y-1/2 bg-gray-900 p-3 rounded-full hover:bg-gray-800 transition-colors">
-								<Search className="w-5 h-5 text-white" />
-							</button>
 						</div>
 					</div>
 				</div>

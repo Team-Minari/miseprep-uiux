@@ -3,6 +3,7 @@ import SubHeader from "./SubHeader";
 import Sidebar from "./Sidebar.tsx";
 import MainHeader from "./MainHeader";
 import Footer from "./Footer.tsx";
+import AiSearchFab from "./AiSearchFab";
 
 export default function GlobalLayout() {
 	return (
@@ -22,6 +23,9 @@ export default function GlobalLayout() {
 			</div>
 
 			<Footer />
+
+			{/* AI 장바구니 검색 FAB - 전역 노출 */}
+			<AiSearchFab />
 		</div>
 	);
 }
