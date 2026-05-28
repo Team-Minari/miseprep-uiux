@@ -1,3 +1,5 @@
+import type { CartCategory } from "./cart";
+
 // ── 백엔드 ProductResponse 매핑 ──
 export interface Product {
 	id: number;
@@ -5,24 +7,37 @@ export interface Product {
 	description: string;
 	price: number;
 	image_url: string;
-	category: string;
+	category: CartCategory;
 }
 
-// ── 카테고리 ──
+// ── 카테고리 탭 (best는 백엔드 enum에 없는 UI 전용 ID) ──
+export type ProductCategoryId = CartCategory | "best";
+
 export interface Category {
-	id: string;
+	id: ProductCategoryId;
 	label: string;
 }
 
 export const categories: Category[] = [
 	{ id: "best", label: "베스트" },
-	{ id: "living", label: "생활용품" },
-	{ id: "ingredients", label: "식재료" },
-	{ id: "office", label: "사무용품" },
-	{ id: "camping", label: "캠핑용품" },
+	{ id: "LIVING", label: "생활용품" },
+	{ id: "INGREDIENTS", label: "식재료" },
+	{ id: "OFFICE", label: "사무용품" },
+	{ id: "CAMPING", label: "캠핑용품" },
 ];
 
-const categoryMap = new Map(categories.map((c) => [c.id, c.label]));
+// mock 데이터의 소문자 카테고리와 백엔드 enum 둘 다 라벨로 매핑
+const labelMap = new Map<string, string>([
+	["best", "베스트"],
+	["LIVING", "생활용품"],
+	["living", "생활용품"],
+	["INGREDIENTS", "식재료"],
+	["ingredients", "식재료"],
+	["OFFICE", "사무용품"],
+	["office", "사무용품"],
+	["CAMPING", "캠핑용품"],
+	["camping", "캠핑용품"],
+]);
 
 export const getCategoryLabel = (categoryId: string): string =>
-	categoryMap.get(categoryId) ?? categoryId;
+	labelMap.get(categoryId) ?? categoryId;

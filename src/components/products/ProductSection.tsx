@@ -18,7 +18,9 @@ export default function ProductSection({ title }: ProductSectionProps) {
 	const [activeCategory, setActiveCategory] = useState(categories[0].id);
 
 	const currentCategory = categories.find((c) => c.id === activeCategory)!;
-	const { data: products = [] } = useProducts({ category: activeCategory });
+	const { data: products = [] } = useProducts(
+		activeCategory === "best" ? undefined : { category: activeCategory }
+	);
 	const currentProducts = products.slice(0, 8);
 
 	const openAddToCartModal = useOpenAddToCartModal();

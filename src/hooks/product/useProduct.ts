@@ -1,15 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { getProducts, getProduct } from "../../api/product/productApi";
+import type { CartCategory } from "../../types/cart";
 
 const PRODUCT_KEYS = {
 	all: ["products"] as const,
-	list: (params?: { category?: string; keyword?: string }) =>
+	list: (params?: { category?: CartCategory; keyword?: string }) =>
 		["products", "list", params] as const,
 	detail: (id: number) => ["products", "detail", id] as const,
 };
 
 /** 상품 목록 조회 */
-export const useProducts = (params?: { category?: string; keyword?: string }) =>
+export const useProducts = (params?: {
+	category?: CartCategory;
+	keyword?: string;
+}) =>
 	useQuery({
 		queryKey: PRODUCT_KEYS.list(params),
 		queryFn: () => getProducts(params),

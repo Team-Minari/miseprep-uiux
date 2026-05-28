@@ -5,6 +5,7 @@ import {
 	getCategoryLabel,
 	type Product,
 } from "../../types/product";
+import type { CartCategory } from "../../types/cart";
 import { useProducts } from "../../hooks/product/useProduct";
 import {
 	useOpenAddToCartModal,
@@ -86,7 +87,9 @@ export default function CategoryProductListPage() {
 	const categoryId = searchParams.get("category") ?? "all";
 
 	const { data: products = [] } = useProducts(
-		categoryId === "all" ? undefined : { category: categoryId }
+		categoryId === "all" || categoryId === "best"
+			? undefined
+			: { category: categoryId as CartCategory }
 	);
 	const filteredProducts = products.slice(0, PAGE_SIZE);
 	const categoryLabel =
