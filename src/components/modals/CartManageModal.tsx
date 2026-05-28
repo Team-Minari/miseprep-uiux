@@ -13,6 +13,7 @@ import {
 	useLeaveCart,
 } from "../../hooks/cart/useCartMutation";
 import { useAuthStore } from "../../store/auth/useAuthStore";
+import { CART_CATEGORIES, type CartCategory } from "../../types/cart";
 
 const toBudgetInput = (budget?: number | null) =>
 	budget ? String(budget) : "";
@@ -39,6 +40,7 @@ export default function CartManageModal() {
 	const [cartName, setCartName] = useState("");
 	const [purpose, setPurpose] = useState("");
 	const [budget, setBudget] = useState("");
+	const [category, setCategory] = useState<CartCategory | null>(null);
 
 	useEffect(() => {
 		if (!cart) return;
@@ -47,6 +49,7 @@ export default function CartManageModal() {
 		setCartName(cart.name);
 		setPurpose(cart.purpose ?? "");
 		setBudget(toBudgetInput(cart.budget));
+		setCategory(cart.category);
 	}, [cart]);
 
 	useEffect(() => {
@@ -83,6 +86,7 @@ export default function CartManageModal() {
 				body: {
 					cart_name: cartName.trim(),
 					is_public: isPublic,
+					category: category ?? undefined,
 					purpose: purpose.trim(),
 					budget: budget.trim()
 						? Number(budget.replaceAll(",", ""))
@@ -219,10 +223,31 @@ export default function CartManageModal() {
 					</div>
 
 					<div>
+						<label className="mb-2 block text-sm font-medium text-gray-700">
+							카테고리 <span className="text-red-500">*</span>
+						</label>
+						<div className="grid grid-cols-2 gap-2">
+							{CART_CATEGORIES.map((c) => (
+								<button
+									key={c.value}
+									type="button"
+									onClick={() => setCategory(c.value)}
+									className={`rounded-lg border-2 px-4 py-2 text-sm transition-all ${
+										category === c.value
+											? "border-[#D9CEBC] bg-[#FDFBF6] text-[#9E8E70]"
+											: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+									}`}>
+									{c.label}
+								</button>
+							))}
+						</div>
+					</div>
+
+					<div>
 						<label
 							htmlFor="manage-purpose"
 							className="mb-2 block text-sm font-medium text-gray-700">
-							목적 <span className="text-red-500">*</span>
+							목적 (선택사항)
 						</label>
 						<input
 							id="manage-purpose"

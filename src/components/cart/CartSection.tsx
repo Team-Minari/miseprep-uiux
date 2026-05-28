@@ -1,95 +1,76 @@
 import { useState } from "react";
 import { ShoppingCart, Users, User, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { publicCarts } from "../../mock/cartData";
-import type { PublicCart, CartCategory } from "../../mock/cartData";
+import { usePublicCarts, useCartItems } from "../../hooks/cart/useCart";
+import {
+	CART_CATEGORIES,
+	type CartCategory,
+	type CartResponse,
+} from "../../types/cart";
 
-// ─────────────────────────────────────────
-// 카테고리 탭 정의 (ProductSection과 동일 순서)
-// ─────────────────────────────────────────
-const cartCategories: { id: CartCategory; label: string }[] = [
-	{ id: "living", label: "생활용품" },
-	{ id: "ingredients", label: "식재료" },
-	{ id: "office", label: "사무용품" },
-	{ id: "camping", label: "캠핑용품" },
-];
-
-// ─────────────────────────────────────────
-// 유틸: 대표 썸네일 반환
-// ─────────────────────────────────────────
-function getRepresentativeThumbnail(items: PublicCart["items"]): string {
-	return items.length > 0
-		? items[0].thumbnail
-		: "https://images.unsplash.com/photo-1506617564039-2f3b650b7010?w=400&q=80";
-}
-
-// ─────────────────────────────────────────
-// 유틸: 장바구니 총 금액 계산
-// ─────────────────────────────────────────
-function calcTotalPrice(items: PublicCart["items"]): number {
-	return items.reduce((sum, item) => sum + item.price, 0);
-}
+const FALLBACK_THUMBNAIL =
+	"https://images.unsplash.com/photo-1506617564039-2f3b650b7010?w=400&q=80";
 
 // ─────────────────────────────────────────
 // CartCard 컴포넌트
 // ─────────────────────────────────────────
-function CartCard({ cart }: { cart: PublicCart }) {
+function CartCard({ cart }: { cart: CartResponse }) {
 	const navigate = useNavigate();
-	const isShared = cart.type === "shared";
-	const totalPrice = calcTotalPrice(cart.items);
-	const thumbnail = getRepresentativeThumbnail(cart.items);
+	const { data: items = [] } = useCartItems(cart.id);
+	const isShared = cart.cart_type === "SHARED";
+	const categoryLabel =
+		CART_CATEGORIES.find((c) => c.value === cart.category)?.label ??
+		cart.category;
+	const thumbnail = items[0]?.image_url ?? FALLBACK_THUMBNAIL;
 
 	const handleClick = () => {
-		navigate(`/cart/detail?id=${cart.id}&type=${cart.type}&source=public`);
+		navigate(`/cart/detail?id=${cart.id}&source=public`);
 	};
 
 	return (
-		<div className="group flex flex-col cursor-pointer" onClick={handleClick}>
-			{/* 대표 상품 이미지 */}
+		<div className="group flex cursor-pointer flex-col" onClick={handleClick}>
 			<div
-				className="relative w-full rounded-xl overflow-hidden mb-3"
+				className="relative mb-3 w-full overflow-hidden rounded-xl"
 				style={{ aspectRatio: "1 / 1" }}>
 				<img
 					src={thumbnail}
 					alt={cart.name}
-					className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+					className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
 				/>
 			</div>
-
-			{/* 장바구니 정보 */}
-			<div className="flex flex-col gap-1">
-				{/* 장바구니 이름 + 개인/공유 뱃지 (이름 오른쪽) */}
+			<div className="flex flex-col gap-1.5">
 				<div className="flex items-center gap-1.5">
-					<ShoppingCart className="w-3.5 h-3.5 text-[#C8A97A] shrink-0" />
-					<p className="text-sm font-semibold text-gray-900 leading-snug line-clamp-1 flex-1">
+					<ShoppingCart className="h-3.5 w-3.5 shrink-0 text-[#C8A97A]" />
+					<p className="flex-1 truncate text-sm font-semibold text-gray-900">
 						{cart.name}
 					</p>
 					<span
-						className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-xs font-semibold shrink-0 ${
+						className={`inline-flex shrink-0 items-center gap-0.5 rounded-full px-2 py-0.5 text-xs font-semibold ${
 							isShared ? "bg-[#D4B896] text-white" : "bg-gray-100 text-gray-600"
 						}`}>
 						{isShared ? (
-							<Users className="w-3 h-3" />
+							<Users className="h-3 w-3" />
 						) : (
-							<User className="w-3 h-3" />
+							<User className="h-3 w-3" />
 						)}
 						{isShared ? "공유" : "개인"}
 					</span>
 				</div>
-
-				{/* 소유자 닉네임 + 담긴 상품 개수 */}
-				<p className="text-xs text-gray-400">
-					<span className="font-medium text-gray-500">{cart.ownerName}</span>
-					{" · "}담긴 상품{" "}
-					<span className="font-medium text-gray-600">
-						{cart.items.length}개
+				<div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+					<span className="rounded-full bg-[#F6F0E4] px-2 py-0.5 text-[#7A6E5A]">
+						{categoryLabel}
 					</span>
-				</p>
-
-				{/* 총 금액 */}
-				<p className="text-base font-bold text-gray-900 mt-0.5">
-					{totalPrice.toLocaleString()}원
-				</p>
+					{cart.purpose && (
+						<span className="rounded-full bg-[#EEF4FF] px-2 py-0.5 text-[#456A9B]">
+							{cart.purpose}
+						</span>
+					)}
+				</div>
+				{cart.budget != null && cart.budget > 0 && (
+					<p className="mt-0.5 text-xs text-gray-500">
+						예산 {cart.budget.toLocaleString()}원
+					</p>
+				)}
 			</div>
 		</div>
 	);
@@ -101,16 +82,14 @@ function CartCard({ cart }: { cart: PublicCart }) {
 export default function CartSection() {
 	const navigate = useNavigate();
 	const [activeCategory, setActiveCategory] = useState<CartCategory>(
-		cartCategories[0].id
+		CART_CATEGORIES[0].value
 	);
+	const { data: carts = [], isLoading } = usePublicCarts(activeCategory);
 
-	// 선택된 카테고리로 필터링 후 인기순(likeCount 내림차순) 정렬, 최대 8개
-	const filteredCarts = publicCarts
-		.filter((c) => c.category === activeCategory)
-		.sort((a, b) => b.likeCount - a.likeCount)
-		.slice(0, 8);
-
-	const currentCategory = cartCategories.find((c) => c.id === activeCategory)!;
+	const filteredCarts = carts.slice(0, 8);
+	const currentCategory = CART_CATEGORIES.find(
+		(c) => c.value === activeCategory
+	)!;
 
 	return (
 		<section className="w-full bg-white py-16">
@@ -122,12 +101,12 @@ export default function CartSection() {
 
 				{/* 카테고리 탭 */}
 				<div className="flex border-b border-gray-200 mb-6">
-					{cartCategories.map((cat) => (
+					{CART_CATEGORIES.map((cat) => (
 						<button
-							key={cat.id}
-							onClick={() => setActiveCategory(cat.id)}
+							key={cat.value}
+							onClick={() => setActiveCategory(cat.value)}
 							className={`px-5 py-2.5 text-sm font-medium rounded-t transition-all whitespace-nowrap ${
-								activeCategory === cat.id
+								activeCategory === cat.value
 									? "bg-[#F6F0E4] text-gray-900 font-bold"
 									: "text-gray-500 hover:text-gray-800"
 							}`}>
@@ -137,7 +116,11 @@ export default function CartSection() {
 				</div>
 
 				{/* 장바구니 그리드: 4열 */}
-				{filteredCarts.length > 0 ? (
+				{isLoading ? (
+					<div className="flex flex-col items-center justify-center py-24 gap-3 text-gray-400">
+						<p className="text-sm">불러오는 중...</p>
+					</div>
+				) : filteredCarts.length > 0 ? (
 					<div className="grid grid-cols-4 gap-x-6 gap-y-16">
 						{filteredCarts.map((cart) => (
 							<CartCard key={cart.id} cart={cart} />

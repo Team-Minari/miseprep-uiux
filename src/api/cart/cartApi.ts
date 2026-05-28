@@ -4,6 +4,7 @@ import type {
 	CartResponse,
 	CartDetailResponse,
 	CartItemResponse,
+	CartCategory,
 	ParticipantResponse,
 	CreateCartRequest,
 	UpdateCartSettingRequest,
@@ -14,6 +15,20 @@ import type {
 } from "../../types/cart";
 
 const BASE = "/api/carts";
+
+/** 공개 장바구니 목록 조회 (비인증 가능, category 옵션 필터) */
+export const getPublicCarts = (category?: CartCategory) =>
+	apiClient
+		.get<ApiResponse<CartResponse[]>>(BASE, {
+			params: category ? { category } : undefined,
+		})
+		.then((res) => res.data.data);
+
+/** 자연어 장바구니 검색 (비인증 가능) */
+export const searchCarts = (query: string) =>
+	apiClient
+		.post<ApiResponse<CartResponse[]>>(`${BASE}/search`, { query })
+		.then((res) => res.data.data);
 
 /** 내 장바구니 목록 조회 */
 export const getMyCarts = () =>
@@ -112,10 +127,10 @@ export const transferOwnership = (cartId: number, body: OwnerTransferRequest) =>
 		.patch<ApiResponse<OwnerTransferResponse>>(`${BASE}/${cartId}/owner`, body)
 		.then((res) => res.data.data);
 
-/** 초대 링크로 장바구니 참여 */
+/** 초대 링크로 장바구니 참여 — 백엔드는 cartId(Long)만 반환 */
 export const joinCart = (token: string) =>
 	apiClient
-		.post<ApiResponse<CartResponse>>(`${BASE}/join`, null, {
+		.post<ApiResponse<number>>(`${BASE}/join`, null, {
 			params: { token },
 		})
 		.then((res) => res.data.data);

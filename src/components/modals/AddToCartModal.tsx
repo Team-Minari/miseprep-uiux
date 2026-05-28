@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import React, { useState, useEffect, useCallback } from "react";
 import { useCloseAddToCartModal } from "../../store/useCartModalStore.ts";
 import { useCreateCart } from "../../hooks/cart/useCartMutation";
+import { CART_CATEGORIES, type CartCategory } from "../../types/cart";
 
 // 장바구니 존재 X -> 장바구니 생성 모달
 export default function AddToCartModal() {
@@ -11,6 +12,7 @@ export default function AddToCartModal() {
 	const [cartName, setCartName] = useState("");
 	const [budget, setBudget] = useState("");
 	const [purpose, setPurpose] = useState("");
+	const [category, setCategory] = useState<CartCategory | null>(null);
 
 	// 모달 닫기 액션 가져오기
 	const closeAddToCartModal = useCloseAddToCartModal();
@@ -46,14 +48,18 @@ export default function AddToCartModal() {
 
 	// 폼 제출 핸들러
 	const handleSubmit = (type: "personal" | "shared") => {
+		if (!category) return;
+
 		const budgetValue = budget.trim()
 			? Number(budget.replaceAll(",", ""))
 			: undefined;
+		const purposeValue = purpose.trim() || undefined;
 
 		createCartMutation.mutate(
 			{
 				name: cartName.trim(),
-				purpose: purpose.trim(),
+				category,
+				purpose: purposeValue,
 				is_public: isPublic,
 				budget: budgetValue,
 				cart_type: type === "shared" ? "SHARED" : "PERSONAL",
@@ -150,6 +156,28 @@ export default function AddToCartModal() {
 						/>
 					</div>
 
+					{/* 카테고리 */}
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-2">
+							카테고리 <span className="text-red-500">*</span>
+						</label>
+						<div className="grid grid-cols-2 gap-2">
+							{CART_CATEGORIES.map((c) => (
+								<button
+									key={c.value}
+									type="button"
+									onClick={() => setCategory(c.value)}
+									className={`px-4 py-2 rounded-lg border-2 text-sm transition-all ${
+										category === c.value
+											? "border-[#D9CEBC] bg-[#FDFBF6] text-[#9E8E70]"
+											: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+									}`}>
+									{c.label}
+								</button>
+							))}
+						</div>
+					</div>
+
 					{/* 예산 */}
 					<div>
 						<label
@@ -199,13 +227,13 @@ export default function AddToCartModal() {
 					</button>
 					<button
 						onClick={() => handleSubmit("personal")}
-						disabled={!cartName.trim()}
+						disabled={!cartName.trim() || !category}
 						className="px-4 py-2 text-sm font-medium text-[#9E8E70] bg-[#FDFBF6] border-2 border-[#D9CEBC] hover:bg-[#F7F3E9] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed rounded-lg transition-colors">
 						개인 장바구니 생성
 					</button>
 					<button
 						onClick={() => handleSubmit("shared")}
-						disabled={!cartName.trim()}
+						disabled={!cartName.trim() || !category}
 						className="px-4 py-2 text-sm font-medium text-[#9E8E70] bg-[#FDFBF6] border-2 border-[#D9CEBC] hover:bg-[#F7F3E9] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed rounded-lg transition-colors">
 						공유 장바구니 생성
 					</button>

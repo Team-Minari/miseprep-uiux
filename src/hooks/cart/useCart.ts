@@ -4,9 +4,11 @@ import {
 	getCartDetail,
 	getCartItems,
 	getCartParticipants,
+	getPublicCarts,
+	searchCarts,
 } from "../../api/cart/cartApi";
 import { useAuthStore } from "../../store/auth/useAuthStore";
-import type { CartResponse } from "../../types/cart";
+import type { CartCategory, CartResponse } from "../../types/cart";
 
 export const CART_KEYS = {
 	all: ["carts"] as const,
@@ -14,7 +16,27 @@ export const CART_KEYS = {
 	detail: (cartId: number) => ["carts", "detail", cartId] as const,
 	items: (cartId: number) => ["carts", "items", cartId] as const,
 	participants: (cartId: number) => ["carts", "participants", cartId] as const,
+	publicList: (category?: CartCategory) =>
+		["carts", "public", category ?? "all"] as const,
+	search: (query: string) => ["carts", "search", query] as const,
 };
+
+/** 공개 장바구니 목록 (비인증 가능, category 필터 옵션) */
+export const usePublicCarts = (category?: CartCategory) =>
+	useQuery({
+		queryKey: CART_KEYS.publicList(category),
+		queryFn: () => getPublicCarts(category),
+		staleTime: 60 * 1000,
+	});
+
+/** 자연어 장바구니 검색 (query가 비어있으면 비활성) */
+export const useSearchCarts = (query: string) =>
+	useQuery({
+		queryKey: CART_KEYS.search(query),
+		queryFn: () => searchCarts(query),
+		enabled: query.trim().length > 0,
+		staleTime: 60 * 1000,
+	});
 
 /** 내 장바구니 전체 목록 */
 export const useMyCarts = () => {

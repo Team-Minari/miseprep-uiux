@@ -1,18 +1,28 @@
 // ── 장바구니 타입 ──
 export type CartType = "PERSONAL" | "SHARED";
 
+// 백엔드 global.enums.Category와 동일
+export type CartCategory = "LIVING" | "INGREDIENTS" | "OFFICE" | "CAMPING";
+
+export const CART_CATEGORIES: { value: CartCategory; label: string }[] = [
+	{ value: "LIVING", label: "생활용품" },
+	{ value: "INGREDIENTS", label: "식재료" },
+	{ value: "OFFICE", label: "사무용품" },
+	{ value: "CAMPING", label: "캠핑용품" },
+];
+
 // ── 백엔드 응답 DTO ──
 
-/** GET /api/carts/me 목록 아이템 */
+/** GET /api/carts/me, GET /api/carts 목록 아이템 */
 export interface CartResponse {
 	id: number;
 	name: string;
-	purpose: string;
+	category: CartCategory;
+	purpose: string | null;
 	is_public: boolean;
 	budget: number | null;
 	owner_id: number;
 	cart_type: CartType;
-	like_count: number;
 }
 
 /** GET /api/carts/{cartId} 상세 */
@@ -44,7 +54,8 @@ export interface ParticipantResponse {
 /** POST /api/carts 장바구니 생성 */
 export interface CreateCartRequest {
 	name: string;
-	purpose: string;
+	category: CartCategory;
+	purpose?: string;
 	is_public: boolean;
 	budget?: number | null;
 	cart_type: CartType;
@@ -54,6 +65,7 @@ export interface CreateCartRequest {
 export interface UpdateCartSettingRequest {
 	cart_name?: string;
 	is_public?: boolean;
+	category?: CartCategory;
 	purpose?: string;
 	budget?: number | null;
 }
@@ -79,4 +91,9 @@ export interface OwnerTransferResponse {
 	prev_owner_id: number;
 	new_owner_id: number;
 	new_owner_name: string;
+}
+
+/** POST /api/carts/search 자연어 검색 */
+export interface CartSearchRequest {
+	query: string;
 }

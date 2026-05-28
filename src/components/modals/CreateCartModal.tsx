@@ -8,6 +8,7 @@ import {
 } from "../../store/useCartModalStore.ts";
 import { useCreateCart } from "../../hooks/cart/useCartMutation";
 import { useSendInvitation } from "../../hooks/invitation/useInvitation";
+import { CART_CATEGORIES, type CartCategory } from "../../types/cart";
 
 export default function CreateCartModal() {
 	// store에서 모달 모드 확인
@@ -19,6 +20,7 @@ export default function CreateCartModal() {
 	const [cartName, setCartName] = useState("");
 	const [budget, setBudget] = useState("");
 	const [purpose, setPurpose] = useState("");
+	const [category, setCategory] = useState<CartCategory | null>(null);
 	const [emails, setEmails] = useState<string[]>([""]);
 
 	// 모달 닫기 액션 가져오기
@@ -72,14 +74,18 @@ export default function CreateCartModal() {
 
 	// 폼 제출 핸들러
 	const handleSubmit = () => {
+		if (!category) return;
+
 		const budgetValue = budget.trim()
 			? Number(budget.replaceAll(",", ""))
 			: undefined;
+		const purposeValue = purpose.trim() || undefined;
 
 		createCartMutation.mutate(
 			{
 				name: cartName.trim(),
-				purpose: purpose.trim(),
+				category,
+				purpose: purposeValue,
 				is_public: isPublic,
 				budget: budgetValue,
 				cart_type: isShared ? "SHARED" : "PERSONAL",
@@ -190,12 +196,34 @@ export default function CreateCartModal() {
 						/>
 					</div>
 
+					{/* 카테고리 */}
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-2">
+							카테고리 <span className="text-red-500">*</span>
+						</label>
+						<div className="grid grid-cols-2 gap-2">
+							{CART_CATEGORIES.map((c) => (
+								<button
+									key={c.value}
+									type="button"
+									onClick={() => setCategory(c.value)}
+									className={`px-4 py-2 rounded-lg border-2 text-sm transition-all ${
+										category === c.value
+											? "border-[#D9CEBC] bg-[#FDFBF6] text-[#9E8E70]"
+											: "border-gray-200 bg-white text-gray-600 hover:bg-gray-50"
+									}`}>
+									{c.label}
+								</button>
+							))}
+						</div>
+					</div>
+
 					{/* 목적 */}
 					<div>
 						<label
 							htmlFor="purpose"
 							className="block text-sm font-medium text-gray-700 mb-2">
-							목적 <span className="text-red-500">*</span>
+							목적 (선택사항)
 						</label>
 						<input
 							id="purpose"
@@ -276,7 +304,7 @@ export default function CreateCartModal() {
 					</button>
 					<button
 						onClick={() => handleSubmit()}
-						disabled={!cartName.trim()}
+						disabled={!cartName.trim() || !category}
 						className="px-4 py-2 text-sm font-medium text-[#9E8E70] bg-[#FDFBF6] border-2 border-[#D9CEBC] hover:bg-[#F7F3E9] disabled:bg-gray-100 disabled:text-gray-400 disabled:border-gray-200 disabled:cursor-not-allowed rounded-lg transition-colors">
 						생성하기
 					</button>
