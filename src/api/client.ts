@@ -36,40 +36,49 @@ apiClient.interceptors.response.use(
 			return Promise.reject(error);
 		}
 
-		if (status !== 401 || original._retry) {
-			return Promise.reject(error);
-		}
-
-		const refreshToken = useAuthStore.getState().refreshToken;
-		if (!refreshToken) {
-			useAuthStore.getState().clear();
-			window.location.href = "/login";
-			return Promise.reject(error);
-		}
-
-		original._retry = true;
-
-		try {
-			// 동시 요청 시 refresh 중복 방지
-			if (!refreshPromise) {
-				refreshPromise = axios
-					.post<ApiResponse<AuthTokens>>(`${BASE_URL}/api/auth/refresh`, {
-						refresh_token: refreshToken,
-					})
-					.then((res) => res.data.data)
-					.finally(() => {
-						refreshPromise = null;
-					});
+		// 401: 토큰 갱신 시도. 갱신 실패면 로그인 페이지로
+		if (status === 401 && !original._retry) {
+			const refreshToken = useAuthStore.getState().refreshToken;
+			if (!refreshToken) {
+				useAuthStore.getState().clear();
+				window.location.href = "/login";
+				return Promise.reject(error);
 			}
 
-			const tokens = await refreshPromise;
-			useAuthStore.getState().setTokens(tokens);
-			original.headers.Authorization = `Bearer ${tokens.access_token}`;
-			return apiClient(original);
-		} catch {
-			useAuthStore.getState().clear();
-			window.location.href = "/login";
-			return Promise.reject(error);
+			original._retry = true;
+
+			try {
+				// 동시 요청 시 refresh 중복 방지
+				if (!refreshPromise) {
+					refreshPromise = axios
+						.post<ApiResponse<AuthTokens>>(`${BASE_URL}/api/auth/refresh`, {
+							refresh_token: refreshToken,
+						})
+						.then((res) => res.data.data)
+						.finally(() => {
+							refreshPromise = null;
+						});
+				}
+
+				const tokens = await refreshPromise;
+				useAuthStore.getState().setTokens(tokens);
+				original.headers.Authorization = `Bearer ${tokens.access_token}`;
+				return apiClient(original);
+			} catch {
+				useAuthStore.getState().clear();
+				window.location.href = "/login";
+				return Promise.reject(error);
+			}
 		}
+
+		// mutation(POST/PATCH/PUT/DELETE) 실패만 alert.
+		// GET 조회는 사용자 액션이 아니므로 alert 생략 (각 화면에서 비어있음/로딩 UI로 처리).
+		const method = (original?.method ?? "get").toLowerCase();
+		const isMutation = method !== "get";
+		const message = error.response?.data?.message;
+		if (isMutation && message) {
+			alert(message);
+		}
+		return Promise.reject(error);
 	}
 );
